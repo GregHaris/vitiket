@@ -1,4 +1,3 @@
-import { EmailAddress } from '@clerk/nextjs/server';
 import { z } from 'zod';
 
 export const eventFormSchema = z.object({
@@ -16,13 +15,14 @@ export const eventFormSchema = z.object({
   endDateTime: z.date(),
   categoryId: z.string(),
   price: z.string(),
+  currency: z.string(),
   isFree: z.boolean(),
   url: z.string().url({ message: 'Invalid URL' }),
   contactDetails: z.object({
     phoneNumber: z
       .string()
       .min(10, { message: 'Phone number must be at least 10 characters' }),
-    EmailAddress: z.string().email({ message: 'Invalid email address' }),
+    email: z.string().email({ message: 'Invalid email address' }),
     website: z.string().optional(),
     instagram: z.string().optional(),
     facebook: z.string().optional(),

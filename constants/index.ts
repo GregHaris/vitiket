@@ -47,6 +47,7 @@ export const eventDefaultValues = {
   endDateTime: new Date(),
   categoryId: '',
   price: '',
+  currency: 'NGN',
   isFree: false,
   url: '',
   contactDetails: {
