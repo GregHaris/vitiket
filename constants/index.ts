@@ -32,8 +32,7 @@ export const heroContent = [
     backgroundImage: '/assets/images/hero4.png?height=800&width=1200',
   },
   {
-    title:
-      'Participate or Learn from Anywhere.',
+    title: 'Participate or Learn from Anywhere.',
     cta: 'Explore Virtual Events',
     backgroundImage: '/assets/images/hero5.png?height=800&width=1200',
   },
@@ -50,4 +49,14 @@ export const eventDefaultValues = {
   price: '',
   isFree: false,
   url: '',
+  contactDetails: {
+    phoneNumber: '',
+    email: '',
+    website: '',
+    instagram: '',
+    facebook: '',
+    x: '',
+  },
 };
+
+export const currencies = ['NGN', 'USD', 'EUR'];
