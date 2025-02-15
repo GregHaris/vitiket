@@ -1,12 +1,12 @@
 import Link from 'next/link';
 
-export const Footer = () => {
+const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="border-t">
       <div className="flex flex-col gap-4 p-5 text-center sm:flex-row sm:justify-between sm:items-center">
-        <p className="text-sm">©{currentYear} Vitiket</p>
+        <p className="text-sm">©{currentYear} Dac Haven</p>
         <p className="p-bold-20">
           Created by:{' '}
           <Link
@@ -20,3 +20,5 @@ export const Footer = () => {
     </footer>
   );
 };
+
+export default Footer;
