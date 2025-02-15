@@ -10,50 +10,50 @@ import { Button } from '@ui/button';
 import { convertFileToUrl } from '@/lib/utils';
 
 type FileUploaderProps = {
-  imageUrls: string[];
-  onFieldChange: (urls: string[]) => void;
+  imageUrl: string;
+  onFieldChange: (url: string) => void;
   setFiles: Dispatch<SetStateAction<File[]>>;
 };
 
 export default function FileUploader({
-  imageUrls = [],
+  imageUrl,
   onFieldChange,
   setFiles,
 }: FileUploaderProps) {
-  const [files, setFilesState] = useState<File[]>([]);
+  const [file, setFileState] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      const newFiles = [...files, ...acceptedFiles];
-      const totalSize = newFiles.reduce((acc, file) => acc + file.size, 0);
+      const newFile = acceptedFiles[0];
 
-      if (newFiles.length > 6 || totalSize > 128 * 1024 * 1024) {
-        alert('Maximum 6 files and total size of 128MB allowed.');
+      // Check if the file size exceeds 4MB
+      if (newFile.size > 4 * 1024 * 1024) {
+        alert('File size must not exceed 4MB.');
         return;
       }
 
-      setFilesState(newFiles);
-      setFiles(newFiles);
-      onFieldChange(newFiles.map((file) => convertFileToUrl(file)));
+      setFileState(newFile);
+      setFiles([newFile]);
+      onFieldChange(convertFileToUrl(newFile));
     },
-    [files, setFiles, onFieldChange]
+    [setFiles, onFieldChange]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: generateClientDropzoneAccept(['image/*']),
+    maxFiles: 1,
   });
 
   const handleAddMoreFiles = () => {
     fileInputRef.current?.click();
   };
 
-  const removeFile = (index: number) => {
-    const updatedFiles = files.filter((_, i) => i !== index);
-    setFiles(updatedFiles);
-    setFilesState(updatedFiles);
-    onFieldChange(updatedFiles.map((file) => convertFileToUrl(file)));
+  const removeFile = () => {
+    setFileState(null);
+    setFiles([]);
+    onFieldChange('');
   };
 
   const formatFileSize = (size: number) => {
@@ -72,53 +72,42 @@ export default function FileUploader({
       >
         <input {...getInputProps()} ref={fileInputRef} />
         {isDragActive ? (
-          <p>Drop the files here ...</p>
+          <p>Drop the file here ...</p>
         ) : (
-          <p>Drag & drop some files here, or click to select files</p>
+          <p>Drag & drop a file here, or click to select a file</p>
         )}
       </div>
-      {files.length > 0 && (
+      {file && (
         <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2">Selected Files:</h3>
-          <ul className="list-disc pl-5 mb-4">
-            {files.map((file, index) => (
-              <li
-                key={index}
-                className="flex items-center justify-between bg-gray-100 p-2 rounded"
-              >
-                <span className="truncate flex-1">
-                  {file.name} ({formatFileSize(file.size)})
-                </span>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeFile(index)}
-                  className="ml-2 text-red-500 hover:text-red-700 cursor-pointer"
-                  aria-label={`Remove ${file.name}`}
-                  title={`Remove ${file.name}`}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </li>
-            ))}
-          </ul>
+          <h3 className="text-lg font-semibold mb-2">Selected File:</h3>
+          <div className="flex items-center justify-between bg-gray-100 p-2 rounded">
+            <span className="truncate flex-1">
+              {file.name} ({formatFileSize(file.size)})
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={removeFile}
+              className="ml-2 text-red-500 hover:text-red-700 cursor-pointer"
+              aria-label={`Remove ${file.name}`}
+              title={`Remove ${file.name}`}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       )}
-      {Array.isArray(imageUrls) && imageUrls.length > 0 && (
+      {imageUrl && (
         <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2">Uploaded Images:</h3>
-          <ul className="list-disc pl-5 mb-4">
-            {imageUrls.map((url, index) => (
-              <li key={index}>
-                <Image
-                  src={url}
-                  alt={`Uploaded file ${index + 1}`}
-                  className="w-full h-auto"
-                />
-              </li>
-            ))}
-          </ul>
+          <h3 className="text-lg font-semibold mb-2">Uploaded Image:</h3>
+          <Image
+            src={imageUrl}
+            alt="Uploaded file"
+            width={300}
+            height={200}
+            className="w-full h-auto rounded-lg"
+          />
         </div>
       )}
       <Button
@@ -126,7 +115,7 @@ export default function FileUploader({
         onClick={handleAddMoreFiles}
         className="w-full mt-3 button"
       >
-        {files.length > 0 ? 'Add More Files' : 'Add Files'}
+        {file ? 'Replace File' : 'Add File'}
       </Button>
     </div>
   );
