@@ -20,15 +20,23 @@ export type CreateEventParams = {
   userId: string;
   event: {
     title: string;
-    description: string;
-    location: string;
+    description?: string;
+    location?: string;
     imageUrl: string;
     startDateTime: Date;
     endDateTime: Date;
     categoryId: string;
-    price: string;
+    price: number;
     isFree: boolean;
-    url: string;
+    url?: string;
+    contactDetails: {
+      phoneNumber: string;
+      email: string;
+      website?: string;
+      instagram?: string;
+      facebook?: string;
+      x?: string;
+    };
   };
   path: string;
 };
@@ -38,15 +46,23 @@ export type UpdateEventParams = {
   event: {
     _id: string;
     title: string;
+    description?: string;
+    location?: string;
     imageUrl: string;
-    description: string;
-    location: string;
     startDateTime: Date;
     endDateTime: Date;
     categoryId: string;
-    price: string;
+    price: number;
     isFree: boolean;
-    url: string;
+    url?: string;
+    contactDetails: {
+      phoneNumber: string;
+      email: string;
+      website?: string;
+      instagram?: string;
+      facebook?: string;
+      x?: string;
+    };
   };
   path: string;
 };
@@ -80,14 +96,14 @@ export type GetRelatedEventsByCategoryParams = {
 export type Event = {
   _id: string;
   title: string;
-  description: string;
-  price: string;
+  description?: string;
+  price: number;
   isFree: boolean;
   imageUrl: string;
-  location: string;
+  location?: string;
   startDateTime: Date;
   endDateTime: Date;
-  url: string;
+  url?: string;
   organizer: {
     _id: string;
     firstName: string;
@@ -96,6 +112,14 @@ export type Event = {
   category: {
     _id: string;
     name: string;
+  };
+  contactDetails: {
+    phoneNumber: string;
+    email: string;
+    website?: string;
+    instagram?: string;
+    facebook?: string;
+    x?: string;
   };
 };
 
@@ -108,7 +132,7 @@ export type CreateCategoryParams = {
 export type CheckoutOrderParams = {
   eventTitle: string;
   eventId: string;
-  price: string;
+  price: number;
   isFree: boolean;
   buyerId: string;
 };
@@ -117,7 +141,7 @@ export type CreateOrderParams = {
   stripeId: string;
   eventId: string;
   buyerId: string;
-  totalAmount: string;
+  totalAmount: number;
   createdAt: Date;
 };
 
@@ -146,5 +170,5 @@ export type RemoveUrlQueryParams = {
 
 export type SearchParamProps = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>; 
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
