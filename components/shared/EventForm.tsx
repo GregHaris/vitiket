@@ -1,6 +1,6 @@
 'use client';
 
-import { FiPhone } from 'react-icons/fi';
+import { FiPhone, FiMail } from 'react-icons/fi';
 import { RiLink } from 'react-icons/ri';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
@@ -94,7 +94,6 @@ export default function EventForm({
       x: values.contactDetails.x,
     };
 
-    
     if (type === 'Create') {
       try {
         const newEvent = await createEvent({
@@ -228,45 +227,47 @@ export default function EventForm({
                           Price <span className="text-red-400">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="0.00"
-                            {...field}
-                            className="input-field p-regular-14"
-                            onChange={(e) => {
-                              field.onChange(e);
-                              if (e.target.value) {
-                                form.setValue('isFree', false);
-                              }
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="isFree"
-                    render={({ field: isFreeField }) => (
-                      <FormItem>
-                        <FormControl>
-                          <div className="flex items-center">
-                            <label
-                              htmlFor="isFree"
-                              className="whitespace-nowrap pr-3 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Free Ticket
-                            </label>
-                            <Checkbox
-                              id="isFree"
-                              checked={isFreeField.value}
-                              onCheckedChange={(checked) => {
-                                isFreeField.onChange(checked);
-                                if (checked) {
-                                  form.setValue('price', '');
+                          <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
+                            <Input
+                              placeholder="0.00"
+                              {...field}
+                              className="nested-input-field p-regular-14"
+                              onChange={(e) => {
+                                field.onChange(e);
+                                if (e.target.value) {
+                                  form.setValue('isFree', false);
                                 }
                               }}
-                              className="mr-2 h-5 w-5 border-2 border-primary-500 cursor-pointer"
+                            />
+                            <FormField
+                              control={form.control}
+                              name="isFree"
+                              render={({ field: isFreeField }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    <div className="flex items-center">
+                                      <label
+                                        htmlFor="isFree"
+                                        className="whitespace-nowrap pr-3 leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                      >
+                                        Free Ticket
+                                      </label>
+                                      <Checkbox
+                                        id="isFree"
+                                        checked={isFreeField.value}
+                                        onCheckedChange={(checked) => {
+                                          isFreeField.onChange(checked);
+                                          if (checked) {
+                                            form.setValue('price', '');
+                                          }
+                                        }}
+                                        className="mr-2 h-5 w-5 border-2 border-primary-500 cursor-pointer"
+                                      />
+                                    </div>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
                             />
                           </div>
                         </FormControl>
@@ -274,7 +275,6 @@ export default function EventForm({
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
                     name="currency"
@@ -353,7 +353,7 @@ export default function EventForm({
                         <span className="text-red-400">*</span>
                       </FormLabel>
                       <FormControl>
-                        <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
+                        <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
                           <Image
                             src="/assets/icons/calendar.svg"
                             width={20}
@@ -390,7 +390,7 @@ export default function EventForm({
                         End Date & Time <span className="text-red-400">*</span>
                       </FormLabel>
                       <FormControl>
-                        <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
+                        <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
                           <Image
                             src="/assets/icons/calendar.svg"
                             width={20}
@@ -467,6 +467,7 @@ export default function EventForm({
                       <FormItem>
                         <FormControl>
                           <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
+                            <FiMail/>
                             <Input
                               placeholder="Your email"
                               {...field}
