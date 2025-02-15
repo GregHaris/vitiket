@@ -22,20 +22,24 @@ const config = {
     extend: {
       colors: {
         primary: {
+          50: '#e6f0f8',
+          100: '#cddfeb',
+          200: '#9bbfd7',
+          300: '#6a9fc3',
+          400: '#3870af',
           500: '#123f70',
-          50: '#F6F8FD',
+          600: '#0f335a',
+          700: '#0c2744',
+          800: '#091b2e',
+          900: '#060f18',
           DEFAULT: '#123f70',
           foreground: 'hsl(var(--primary-foreground))',
         },
-        coral: {
-          500: '#15BF59',
-        },
-
         grey: {
-          600: '#545454', // Subdued - color name in figma
+          600: '#545454',
           500: '#757575',
-          400: '#AFAFAF', // Disabled - color name in figma
-          50: '#F6F6F6', // White Grey - color name in figma
+          400: '#AFAFAF',
+          50: '#F6F6F6',
         },
         black: '#36454F',
         white: '#FFFFFF',
