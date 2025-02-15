@@ -28,8 +28,8 @@ export default async function Home({ searchParams }: SearchParamProps) {
     <>
       <section>
         <div className="wrapper">
-          <div className=" md:flex flex-col justify-center gap-8 md:text-center  bg-primary-50 bg-dotted-pattern bg-contain">
-            <h1 className="h1-bold">
+          <div className=" md:flex flex-col justify-center gap-8 md:text-center ">
+            <h1 className="h1-bold mb-10">
               Host, Connect, Celebrate: Your Event, Our Platform!
             </h1>
           </div>
