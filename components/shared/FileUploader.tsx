@@ -1,69 +1,133 @@
 'use client';
 
-import { useCallback, Dispatch, SetStateAction } from 'react';
-import { useDropzone } from '@uploadthing/react';
 import { generateClientDropzoneAccept } from 'uploadthing/client';
+import { Dispatch, SetStateAction, useCallback, useRef, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { X } from 'lucide-react';
 import Image from 'next/image';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@ui/button';
 import { convertFileToUrl } from '@/lib/utils';
 
 type FileUploaderProps = {
-  onFieldChange: (url: string) => void;
-  imageUrl: string;
+  imageUrls: string[];
+  onFieldChange: (urls: string[]) => void;
   setFiles: Dispatch<SetStateAction<File[]>>;
 };
 
 export default function FileUploader({
-  imageUrl,
+  imageUrls = [],
   onFieldChange,
   setFiles,
 }: FileUploaderProps) {
+  const [files, setFilesState] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      setFiles(acceptedFiles);
-      onFieldChange(convertFileToUrl(acceptedFiles[0]));
+      const newFiles = [...files, ...acceptedFiles];
+      const totalSize = newFiles.reduce((acc, file) => acc + file.size, 0);
+
+      if (newFiles.length > 6 || totalSize > 128 * 1024 * 1024) {
+        alert('Maximum 6 files and total size of 128MB allowed.');
+        return;
+      }
+
+      setFilesState(newFiles);
+      setFiles(newFiles);
+      onFieldChange(newFiles.map((file) => convertFileToUrl(file)));
     },
-    [setFiles, onFieldChange]
+    [files, setFiles, onFieldChange]
   );
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: generateClientDropzoneAccept(['image/*']),
   });
 
-  return (
-    <div
-      {...getRootProps()}
-      className="flex-center bg-dark-3 flex h-72 cursor-pointer flex-col overflow-hidden rounded-xl bg-grey-50"
-    >
-      <input {...getInputProps()} className="cursor-pointer" />
+  const handleAddMoreFiles = () => {
+    fileInputRef.current?.click();
+  };
 
-      {imageUrl ? (
-        <div className="flex h-full w-full flex-1 justify-center ">
-          <Image
-            src={imageUrl}
-            alt="image"
-            width={250}
-            height={250}
-            className="w-full object-cover object-center"
-          />
-        </div>
-      ) : (
-        <div className="flex-center flex-col py-5 text-grey-500">
-          <Image
-            src="/assets/icons/upload.svg"
-            width={77}
-            height={77}
-            alt="file upload"
-          />
-          <h3 className="mb-2 mt-2">Drag photo here</h3>
-          <p className="p-medium-12 mb-4">SVG, PNG, JPG</p>
-          <Button type="button" className="rounded-full cursor-pointer">
-            Select from computer
-          </Button>
+  const removeFile = (index: number) => {
+    const updatedFiles = files.filter((_, i) => i !== index);
+    setFiles(updatedFiles);
+    setFilesState(updatedFiles);
+    onFieldChange(updatedFiles.map((file) => convertFileToUrl(file)));
+  };
+
+  const formatFileSize = (size: number) => {
+    if (size < 1024) return `${size} B`;
+    if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
+    return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+  };
+
+  return (
+    <div className="w-full max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+      <div
+        {...getRootProps()}
+        className={`p-8 border-2 border-dashed rounded-lg text-center cursor-pointer ${
+          isDragActive ? 'border-primary bg-primary/10' : 'border-gray-300'
+        }`}
+      >
+        <input {...getInputProps()} ref={fileInputRef} />
+        {isDragActive ? (
+          <p>Drop the files here ...</p>
+        ) : (
+          <p>Drag & drop some files here, or click to select files</p>
+        )}
+      </div>
+      {files.length > 0 && (
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-2">Selected Files:</h3>
+          <ul className="list-disc pl-5 mb-4">
+            {files.map((file, index) => (
+              <li
+                key={index}
+                className="flex items-center justify-between bg-gray-100 p-2 rounded"
+              >
+                <span className="truncate flex-1">
+                  {file.name} ({formatFileSize(file.size)})
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeFile(index)}
+                  className="ml-2 text-red-500 hover:text-red-700 cursor-pointer"
+                  aria-label={`Remove ${file.name}`}
+                  title={`Remove ${file.name}`}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
+      {Array.isArray(imageUrls) && imageUrls.length > 0 && (
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-2">Uploaded Images:</h3>
+          <ul className="list-disc pl-5 mb-4">
+            {imageUrls.map((url, index) => (
+              <li key={index}>
+                <Image
+                  src={url}
+                  alt={`Uploaded file ${index + 1}`}
+                  className="w-full h-auto"
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <Button
+        type="button"
+        onClick={handleAddMoreFiles}
+        className="w-full mt-3 button"
+      >
+        {files.length > 0 ? 'Add More Files' : 'Add Files'}
+      </Button>
     </div>
   );
 }
