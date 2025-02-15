@@ -1,0 +1,35 @@
+.custom-swiper-button {
+  background-color: #fdfdfd;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #123f70;
+}
+
+.custom-swiper-button:hover {
+  background-color: #123f70;
+  color: #fdfdfd;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 20px;
+}
+
+.custom-bullet {
+  background-color: #fdfdfd;
+}
+
+.custom-bullet-active {
+  background-color: #fdfdfd;
+}
+
+/* Hide navigation buttons on mobile devices */
+@media (max-width: 768px) {
+  .custom-swiper-button {
+    display: none;
+  }
+}
