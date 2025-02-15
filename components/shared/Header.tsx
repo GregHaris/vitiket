@@ -1,22 +1,22 @@
 'use client';
 
+import { SignedOut, SignInButton, SignedIn } from '@clerk/nextjs';
 import { usePathname } from 'next/navigation';
-import { SignedOut, SignInButton, SignedIn, UserButton } from '@clerk/nextjs';
-import { Button } from '@ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import MobileNav from './MobileNav';
+
+import { Button } from '@ui/button';
 import NavItems from './NavItems';
 import SearchByName from './SearchByName';
 import SearchByLocation from './SearchByLocation';
 
-export const Header = () => {
+const Header = () => {
   const pathname = usePathname();
 
   return (
     <header className="w-full border-b pb-5">
-      <div className="mt-5 px-3 flex justify-between items-center">
+      <div className="mt-5 pl-3 flex justify-between items-center">
         <Link href={'/'} className="w-36">
           <Image
             src="/assets/images/logo.svg"
@@ -26,7 +26,7 @@ export const Header = () => {
           />
         </Link>
 
-        {(pathname === '/' || pathname === '/events') && (
+        {(pathname === '/' || pathname === '/productListings') && (
           <div className="hidden halfwayFlex flex-1 justify-center mx-4">
             <div className="flex w-full max-w-2xl items-center bg-[#F8F7FA] rounded-full shadow-sm">
               <SearchByName />
@@ -42,14 +42,10 @@ export const Header = () => {
             </div>
           </SignedIn>
           <div className="flex w-32 justify-end gap-3 mr-4">
-            <SignedIn>
-              <UserButton />
-              <MobileNav />
-            </SignedIn>
             <SignedOut>
               <Button
                 asChild
-                className="cursor-pointer rounded-full"
+                className="cursor-pointer rounded-md"
                 size={'lg'}
               >
                 <SignInButton />
@@ -59,7 +55,7 @@ export const Header = () => {
         </div>
       </div>
 
-      {(pathname === '/' || pathname === '/events') && (
+      {(pathname === '/' || pathname === '/productListings') && (
         <div className="wrapper halfwayHidden">
           <div className="flex w-full items-center bg-[#F8F7FA] rounded-full shadow-sm">
             <SearchByName />
@@ -70,3 +66,5 @@ export const Header = () => {
     </header>
   );
 };
+
+export default Header;
