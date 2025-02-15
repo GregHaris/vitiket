@@ -8,7 +8,7 @@ import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
 import { Input } from '@ui/input';
 
 export const NameSearch = ({
-  placeholder = 'Search events...',
+  placeholder = 'Search productListings...',
 }: {
   placeholder?: string;
 }) => {
@@ -24,13 +24,13 @@ export const NameSearch = ({
     const delayDebounceFn = setTimeout(() => {
       if (query) {
         newUrl = formUrlQuery({
-          params: searchParams.toString(),
+          params: searchParams?.toString() || '',
           key: 'query',
           value: query,
         });
       } else {
         newUrl = removeKeysFromQuery({
-          params: searchParams.toString(),
+          params: searchParams?.toString() || '',
           keysToRemove: ['query'],
         });
       }
@@ -53,7 +53,7 @@ export const NameSearch = ({
       <Input
         type="text"
         placeholder={placeholder}
-        className="input-field p-regular-16"
+        className="nested-input-field p-regular-16"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
