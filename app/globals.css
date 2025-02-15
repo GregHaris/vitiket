@@ -125,22 +125,28 @@
   }
   .select-field {
     /* SHADCN OVERRIDES */
-    @apply w-full! bg-grey-50! h-[54px]! placeholder:text-grey-500! rounded-full! px-5! py-3! border-none! focus-visible:ring-transparent! focus:ring-transparent!;
+    @apply w-full bg-grey-50  rounded-md h-[40px]  placeholder:text-gray-500  px-5  py-3  border-gray-300  focus-visible:ring-transparent  focus:ring-transparent;
   }
   .input-field {
-    @apply bg-grey-50 h-[54px] focus-visible:ring-offset-0 placeholder:text-grey-500 rounded-full px-4 py-3 border-none focus-visible:ring-transparent outline-none shadow-none;
+    @apply bg-grey-50 h-[40px] focus-visible:ring-offset-0 placeholder:text-gray-500 rounded-md px-4 py-3 border-gray-300 focus-visible:ring-transparent outline-none shadow-none;
+  }
+  .file-uploader {
+    @apply flex h-72 align-middle cursor-pointer flex-col overflow-hidden rounded-md bg-grey-50 border border-gray-300;
+  }
+  .nested-input-field {
+    @apply bg-grey-50 h-[40px] focus-visible:ring-offset-0 placeholder:text-gray-500 rounded-md px-4 py-3 border-none focus-visible:ring-transparent outline-none shadow-none;
   }
   .textarea {
-    @apply bg-grey-50! flex! flex-1! placeholder:text-grey-500! px-5! py-3! border-none! focus-visible:ring-transparent!;
+    @apply min-h-[150px] cursor-text rounded-md border-none p-5 focus-within:outline-none focus-within:ring-0 bg-grey-50;
   }
   .button {
-    @apply rounded-md h-[54px];
+    @apply rounded-md h-[40px] cursor-pointer text-primary-50;
   }
   .select-item {
     @apply py-3 cursor-pointer focus:bg-primary-50;
   }
   .toggle-switch {
-    @apply bg-gray-300!;
+    @apply border-gray-200 data-[state=checked]:bg-primary data-[state=checked]:border-primary;
   }
 
   .halfwayHidden {
@@ -261,7 +267,7 @@
 .cl-formButtonPrimary:hover,
 .cl-formButtonPrimary:focus,
 .cl-formButtonPrimary:active {
-  background-color: #705cf7;
+  background-color: #3870af;
 }
 
 /* ========================================== REACT-DATEPICKER STYLES */
@@ -277,13 +283,13 @@
 }
 
 .react-datepicker__day--selected {
-  background-color: #624cf5 !important;
+  background-color: #123f70 !important;
   color: #ffffff !important;
   border-radius: 4px;
 }
 
 .react-datepicker__time-list-item--selected {
-  background-color: #624cf5 !important;
+  background-color: #123f70 !important;
 }
 
 .hide-number-spinners {
