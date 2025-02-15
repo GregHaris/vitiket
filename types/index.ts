@@ -9,8 +9,8 @@ export type CreateEventParams = {
     startDateTime: Date;
     endDateTime: Date;
     categoryId: string;
-    price: number;
-    currency: string;  
+    price: string;
+    currency: string;
     isFree: boolean;
     url?: string;
     contactDetails: {
@@ -36,8 +36,8 @@ export type UpdateEventParams = {
     startDateTime: Date;
     endDateTime: Date;
     categoryId: string;
-    price: number;
-    currency: string;  
+    price: string;
+    currency: string;
     isFree: boolean;
     url?: string;
     contactDetails: {
@@ -56,7 +56,7 @@ export type Event = {
   _id: string;
   title: string;
   description?: string;
-  price: number;
+  price: string;
   currency: string;
   isFree: boolean;
   imageUrl: string;
