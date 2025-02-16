@@ -48,7 +48,7 @@ const Search = ({ placeholder = 'Location...' }: { placeholder?: string }) => {
       <Input
         type="text"
         placeholder={placeholder}
-        className="nested-input-field p-regular-16"
+        className="nested-input-field text-sm"
         value={location}
         onChange={(e) => setLocation(e.target.value)}
       />
