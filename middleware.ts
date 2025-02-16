@@ -1,8 +1,9 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
   '/',
-  '/events/:id', 
+  '/productListings/:id',
   '/api/webhooks',
   '/api/webhooks/(.*)',
   '/api/uploadthing',
@@ -10,9 +11,24 @@ const isPublicRoute = createRouteMatcher([
   '/sign-up(.*)',
 ]);
 
+// The route matcher defines routes that should be protected
+const isAdminRoute = createRouteMatcher(['/admin(.*)'])
+
 export default clerkMiddleware(async (auth, request) => {
   if (!isPublicRoute(request)) {
     await auth.protect();
+  }
+
+  // Fetch the user's role from the session claims
+  const userRole = (await auth()).sessionClaims?.metadata?.role;
+
+  // Protect all routes starting with `/admin`
+  if (
+    isAdminRoute(request) &&
+    !(userRole === 'admin')
+  ) {
+    const url = new URL('/', request.url);
+    return NextResponse.redirect(url);
   }
 });
 
