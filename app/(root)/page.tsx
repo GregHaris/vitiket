@@ -40,7 +40,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
         </div>
       </section>
       <div className="wrapper w-full">
-        <div className="flex items-center bg-[#F8F7FA] rounded-full shadow-sm w-full">
+        <div className="flex items-center bg-[#F8F7FA] rounded-md border-gray-300 border shadow-sm w-full">
           <SearchByName />
           <SearchByLocation />
         </div>
