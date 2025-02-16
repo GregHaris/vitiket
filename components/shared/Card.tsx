@@ -1,4 +1,3 @@
-import { auth } from '@clerk/nextjs/server';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -6,6 +5,7 @@ import { formatDateTime } from '@/lib/utils';
 import { IEvent } from '@/lib/database/models/event.model';
 
 import { DeleteConfirmation } from './DeleteConfirmation';
+import getUserId from '@/utils/userId';
 
 type CardProps = {
   event: IEvent;
@@ -14,13 +14,7 @@ type CardProps = {
 };
 
 const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
-  const { sessionClaims } = await auth();
-
-  // Type assertion to help TypeScript understand the structure
-  const claims = sessionClaims as CustomJwtSessionClaims;
-
-  // Access userId from the nested object
-  const userId = claims?.userId?.userId as string;
+  const userId = await getUserId();
 
   const isEventCreator = userId === event.organizer._id.toString();
 

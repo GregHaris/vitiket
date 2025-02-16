@@ -1,14 +1,8 @@
-import { auth } from '@clerk/nextjs/server';
 import EventForm from '@shared/EventForm';
+import getUserId from '@/utils/userId';
 
 const CreateEvent = async () => {
-  const { sessionClaims } = await auth();
-
-  // Type assertion to help TypeScript understand the structure
-  const claims = sessionClaims as CustomJwtSessionClaims;
-
-  // Access userId from the nested object
-  const userId = claims?.userId?.userId as string;
+  const userId = await getUserId();
 
   return (
     <>

@@ -1,4 +1,3 @@
-import { auth } from '@clerk/nextjs/server';
 import Link from 'next/link';
 
 import { Button } from '@ui/button';
@@ -7,16 +6,12 @@ import { getOrdersByUser } from '@/lib/actions/order.actions';
 import { IOrder } from '@/lib/database/models/order.model';
 import { SearchParamProps } from '@/types';
 import Collection from '@shared/Collection';
+import getUserId from '@/utils/userId';
 
 const Dashboard = async ({ searchParams }: SearchParamProps) => {
   const resolvedSearchParams = await searchParams;
-  const { sessionClaims } = await auth();
 
-  // Type assertion to help TypeScript understand the structure
-  const claims = sessionClaims as CustomJwtSessionClaims;
-
-  // Access userId from the nested object
-  const userId = claims?.userId?.userId as string;
+  const userId = await getUserId();
 
   const ordersPage = Number(resolvedSearchParams?.ordersPage) || 1;
 
