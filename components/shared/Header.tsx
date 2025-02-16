@@ -1,18 +1,18 @@
-'use client';
-
-import { SignedOut, SignInButton, SignedIn } from '@clerk/nextjs';
+import { SignedOut, SignInButton, SignedIn, UserButton } from '@clerk/nextjs';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { Button } from '@/components/ui/button';
 
-import { Button } from '@ui/button';
+import MobileNav from './MobileNav';
 import NavItems from './NavItems';
+import DisplayAdmin from './DisplayAdminButton';
 
-const Header = () => {
+const Header =  () => {
 
   return (
     <header className="w-full border-b pb-5">
-      <div className="mt-5 pl-3 flex justify-between items-center">
+      <div className="mt-5 px-3 flex justify-between items-center">
         <Link href={'/'} className="w-36">
           <Image
             src="/assets/images/logo.svg"
@@ -26,18 +26,21 @@ const Header = () => {
           <SignedIn>
             <div className="hidden md:flex-between w-full max-w-xs">
               <NavItems />
+              <DisplayAdmin />
             </div>
           </SignedIn>
           <div className="flex w-32 justify-end gap-3 mr-4">
             <SignedOut>
-              <Button
-                asChild
-                className="cursor-pointer rounded-md"
-                size={'lg'}
-              >
+              <Button asChild className="cursor-pointer rounded-md" size={'lg'}>
                 <SignInButton />
               </Button>
             </SignedOut>
+          </div>
+          <div className="flex w-32 justify-end gap-3 mr-4">
+            <SignedIn>
+              <UserButton />
+              <MobileNav />
+            </SignedIn>
           </div>
         </div>
       </div>
