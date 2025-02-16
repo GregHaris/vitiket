@@ -208,8 +208,8 @@ export default function ManageCategories() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete "{result.name}" category?
-                      This action cannot be undone.
+                      Are you sure you want to delete &quot;{result.name}&quot;
+                      category? This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -289,8 +289,8 @@ export default function ManageCategories() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Are you sure you want to delete "{category.name}"
-                          category? This action cannot be undone.
+                          Are you sure you want to delete &quot;{category.name}
+                          &quot; category? This action cannot be undone.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
