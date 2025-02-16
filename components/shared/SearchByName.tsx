@@ -8,7 +8,7 @@ import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
 import { Input } from '@ui/input';
 
 export const NameSearch = ({
-  placeholder = 'Search productListings...',
+  placeholder = 'Search events..',
 }: {
   placeholder?: string;
 }) => {
@@ -53,7 +53,7 @@ export const NameSearch = ({
       <Input
         type="text"
         placeholder={placeholder}
-        className="nested-input-field p-regular-16"
+        className="nested-input-field text-sm"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
