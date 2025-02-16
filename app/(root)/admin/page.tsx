@@ -10,7 +10,7 @@ export default async function AdminDashboard({
   const resolvedSearchParams = await searchParams;
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-100 wrapper">
       <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
         <h1 className="text-4xl font-bold text-center mb-4">Admin Dashboard</h1>
         <p className="mb-6 text-center">
