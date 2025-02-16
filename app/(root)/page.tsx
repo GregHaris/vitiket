@@ -5,6 +5,9 @@ import CategoryFilter from '@shared/CategoryFilter';
 import { getAllEvents } from '@/lib/actions/event.actions';
 import { HeroSection } from '@shared/HeroSection';
 
+import SearchByName from '@shared/SearchByName';
+import SearchByLocation from '@shared/SearchByLocation';
+
 export default async function Home({ searchParams }: SearchParamProps) {
   const resolvedSearchParams = await searchParams;
 
@@ -36,6 +39,12 @@ export default async function Home({ searchParams }: SearchParamProps) {
           <HeroSection />
         </div>
       </section>
+      <div className="wrapper w-full">
+        <div className="flex items-center bg-[#F8F7FA] rounded-full shadow-sm w-full">
+          <SearchByName />
+          <SearchByLocation />
+        </div>
+      </div>
 
       <section
         id="events"
