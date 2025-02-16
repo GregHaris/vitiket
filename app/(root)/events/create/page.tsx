@@ -1,4 +1,5 @@
 import EventForm from '@shared/EventForm';
+import EventFormHeading from '@shared/EventFormHeading';
 import getUserId from '@/utils/userId';
 
 const CreateEvent = async () => {
@@ -8,9 +9,7 @@ const CreateEvent = async () => {
     <>
       {' '}
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
-        <h3 className="wrapper h3-bold text-center sm:text-left">
-          Create Event
-        </h3>
+        <EventFormHeading/>
       </section>
       <div className="wrapper my-8">
         <EventForm userId={userId} type="Create" />
