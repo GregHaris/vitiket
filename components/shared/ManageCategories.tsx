@@ -147,9 +147,11 @@ export default function ManageCategories() {
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Manage Product Categories</h2>
-      <div className="flex gap-2">
+    <div className="space-y-4  wrapper">
+      <h2 className="text-xl font-semibold md:text-left text-center">
+        Manage Product Categories
+      </h2>
+      <div className="flex flex-col md:flex-row gap-2">
         <Input
           type="text"
           placeholder="Enter category name"
@@ -226,11 +228,14 @@ export default function ManageCategories() {
       {searchMessage && <p>{searchMessage}</p>}
       {successMessage && <p className="text-green-500">{successMessage}</p>}
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-      <div className="flex gap-2">
-        <Button onClick={handleAddCategory} className='button'>Add Category</Button>
+      <div className="flex gap-2 flex-col md:flex-row mb-10">
+        <Button onClick={handleAddCategory} className="button">
+          Add Category
+        </Button>
         <Button
           onClick={handleUpdateCategory}
-          disabled={!selectedCategoryId || !categoryName.trim()} className='button'
+          disabled={!selectedCategoryId || !categoryName.trim()}
+          className="button"
         >
           Update Category
         </Button>
@@ -243,50 +248,57 @@ export default function ManageCategories() {
           <h3 className="text-lg font-semibold">All Categories</h3>
           <ul>
             {categories.map((category) => (
-              <li key={category._id} className="flex gap-2 items-center">
+              <li
+                key={category._id}
+                className="flex gap-2 items-center justify-between"
+              >
                 <span>{category.name}</span>
-                <Button
-                  type="button"
-                  variant={'ghost'}
-                  size={'icon'}
-                  onClick={() => handleSelectCategory(category)}
-                  className="p-2 cursor-pointer"
-                  aria-label={'Edit'}
-                  title={'Edit'}
-                >
-                  <Edit />
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      type="button"
-                      variant={'ghost'}
-                      size={'icon'}
-                      className="p-2 text-red-500 hover:text-red-700 cursor-pointer"
-                      aria-label={'Edit'}
-                      title={'Edit'}
-                    >
-                      <X />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete this category? This
-                        action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => handleDeleteCategory(category._id)}
+                <div className="flex">
+                  <Button
+                    type="button"
+                    variant={'ghost'}
+                    size={'icon'}
+                    onClick={() => handleSelectCategory(category)}
+                    className="p-2 cursor-pointer"
+                    aria-label={'Edit'}
+                    title={'Edit'}
+                  >
+                    <Edit />
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        type="button"
+                        variant={'ghost'}
+                        size={'icon'}
+                        className="p-2 text-red-500 hover:text-red-700 cursor-pointer"
+                        aria-label={'Edit'}
+                        title={'Edit'}
                       >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                        <X />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="bg-white">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete {category.name} category? This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="cursor-pointer">
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeleteCategory(category._id)}
+                          className="cursor-pointer"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </li>
             ))}
           </ul>
