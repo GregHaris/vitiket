@@ -2,7 +2,7 @@
 
 import { useUser } from '@clerk/nextjs';
 
-const ProductListingHeading = () => {
+const EventFormHeading = () => {
   const { isLoaded, user } = useUser();
 
   if (!isLoaded) {
@@ -21,4 +21,4 @@ const ProductListingHeading = () => {
   );
 };
 
-export default ProductListingHeading;
+export default EventFormHeading;
