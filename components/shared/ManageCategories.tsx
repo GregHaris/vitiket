@@ -197,23 +197,26 @@ export default function ManageCategories() {
                     variant={'ghost'}
                     size={'icon'}
                     className="p-2 text-red-500 hover:text-red-700 cursor-pointer"
-                    aria-label={'Edit'}
-                    title={'Edit'}
+                    aria-label={'Delete'}
+                    title={'Delete'}
                   >
                     <X />
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className='bg-white'>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete this category? This action
-                      cannot be undone.
+                      Are you sure you want to delete {result.name} category?
+                      This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="cursor-pointer">
+                      Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
+                      className="cursor-pointer"
                       onClick={() => handleDeleteCategory(result._id)}
                     >
                       Delete
@@ -272,8 +275,8 @@ export default function ManageCategories() {
                         variant={'ghost'}
                         size={'icon'}
                         className="p-2 text-red-500 hover:text-red-700 cursor-pointer"
-                        aria-label={'Edit'}
-                        title={'Edit'}
+                        aria-label={'Delete'}
+                        title={'Delete'}
                       >
                         <X />
                       </Button>
@@ -282,7 +285,8 @@ export default function ManageCategories() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Are you sure you want to delete {category.name} category? This action cannot be undone.
+                          Are you sure you want to delete {category.name}{' '}
+                          category? This action cannot be undone.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
