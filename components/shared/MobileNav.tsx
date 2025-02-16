@@ -10,7 +10,7 @@ import {
 } from '@ui/sheet';
 
 import NavItems from './NavItems';
-import DisplayAdmin from './DisplayAdminButton';
+import DisplayAdmin from './displayAdmin';
 
 const MobileNav = () => {
   return (
@@ -40,7 +40,7 @@ const MobileNav = () => {
           />
           <Separator className="border border-gray-50" />
           <NavItems />
-          <DisplayAdmin/>
+          <DisplayAdmin />
         </SheetContent>
       </Sheet>
     </nav>

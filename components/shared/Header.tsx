@@ -6,10 +6,9 @@ import { Button } from '@/components/ui/button';
 
 import MobileNav from './MobileNav';
 import NavItems from './NavItems';
-import DisplayAdmin from './DisplayAdminButton';
+import DisplayAdmin from './displayAdmin';
 
-const Header =  () => {
-
+const Header = () => {
   return (
     <header className="w-full border-b pb-5">
       <div className="mt-5 px-3 flex justify-between items-center">
