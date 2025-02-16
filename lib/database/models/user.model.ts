@@ -9,6 +9,7 @@ const UserSchema = new Schema({
   image: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  role: { type: String, default: 'user' },
 });
 
 const User = models.User || model('User', UserSchema);
