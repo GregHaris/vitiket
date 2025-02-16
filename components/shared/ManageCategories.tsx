@@ -3,7 +3,6 @@
 import { Edit, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-import { Button } from '@ui/button';
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -15,6 +14,8 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@ui/alert-dialog';
+import { Button, buttonVariants } from '@ui/button';
+import { cn } from '@/lib/utils';
 import {
   createCategory,
   updateCategory,
@@ -203,11 +204,11 @@ export default function ManageCategories() {
                     <X />
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className='bg-white'>
+                <AlertDialogContent className="bg-white">
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete {result.name} category?
+                      Are you sure you want to delete "{result.name}" category?
                       This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
@@ -216,7 +217,10 @@ export default function ManageCategories() {
                       Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
-                      className="cursor-pointer"
+                      className={cn(
+                        buttonVariants({ variant: 'destructive' }),
+                        'cursor-pointer'
+                      )}
                       onClick={() => handleDeleteCategory(result._id)}
                     >
                       Delete
@@ -285,7 +289,7 @@ export default function ManageCategories() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Are you sure you want to delete {category.name}{' '}
+                          Are you sure you want to delete "{category.name}"
                           category? This action cannot be undone.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
@@ -295,7 +299,10 @@ export default function ManageCategories() {
                         </AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => handleDeleteCategory(category._id)}
-                          className="cursor-pointer"
+                          className={cn(
+                            buttonVariants({ variant: 'destructive' }),
+                            'cursor-pointer'
+                          )}
                         >
                           Delete
                         </AlertDialogAction>
