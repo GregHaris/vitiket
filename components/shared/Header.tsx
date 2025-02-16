@@ -1,18 +1,14 @@
 'use client';
 
 import { SignedOut, SignInButton, SignedIn } from '@clerk/nextjs';
-import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
 
 import { Button } from '@ui/button';
 import NavItems from './NavItems';
-import SearchByName from './SearchByName';
-import SearchByLocation from './SearchByLocation';
 
 const Header = () => {
-  const pathname = usePathname();
 
   return (
     <header className="w-full border-b pb-5">
@@ -25,15 +21,6 @@ const Header = () => {
             height={38}
           />
         </Link>
-
-        {(pathname === '/' || pathname === '/productListings') && (
-          <div className="hidden halfwayFlex flex-1 justify-center mx-4">
-            <div className="flex w-full max-w-2xl items-center bg-[#F8F7FA] rounded-full shadow-sm">
-              <SearchByName />
-              <SearchByLocation />
-            </div>
-          </div>
-        )}
 
         <div className="flex justify-between gap-3">
           <SignedIn>
@@ -54,15 +41,6 @@ const Header = () => {
           </div>
         </div>
       </div>
-
-      {(pathname === '/' || pathname === '/productListings') && (
-        <div className="wrapper halfwayHidden">
-          <div className="flex w-full items-center bg-[#F8F7FA] rounded-full shadow-sm">
-            <SearchByName />
-            <SearchByLocation />
-          </div>
-        </div>
-      )}
     </header>
   );
 };
