@@ -6,7 +6,7 @@ const DisplayAdmin = async () => {
   if (!(await checkRole('admin'))) return null;
 
   return (
-    <div className="hover:bg-grey-50 rounded-md">
+    <div className="hover:bg-grey-50 rounded-md ">
       <Link href="/admin">
         <Button variant="ghost" className="p-medium-16 cursor-pointer">
           Admin

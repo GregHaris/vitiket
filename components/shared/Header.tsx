@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 
 import MobileNav from './MobileNav';
 import NavItems from './NavItems';
-import DisplayAdmin from './displayAdmin';
+import DisplayAdmin from './DisplayAdminButton';
 
 const Header = () => {
   return (
@@ -21,9 +21,9 @@ const Header = () => {
           />
         </Link>
 
-        <div className="flex justify-between gap-3">
+        <div className="flex justify-between gap-8">
           <SignedIn>
-            <div className="hidden md:flex-between w-full max-w-xs">
+            <div className="hidden md:flex-between w-full max-w-xs gap-8">
               <NavItems />
               <DisplayAdmin />
             </div>
@@ -34,8 +34,6 @@ const Header = () => {
                 <SignInButton />
               </Button>
             </SignedOut>
-          </div>
-          <div className="flex w-32 justify-end gap-3 mr-4">
             <SignedIn>
               <UserButton />
               <MobileNav />
