@@ -33,9 +33,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { eventFormSchema } from '@/lib/validator/index';
+import CategoriesDropdown from './CategoriesDropdown';
 import FileUploader from './FileUploader';
 import TiptapEditor from './TiptapEditor';
-import CategoriesDropdown from './CategoriesDropdown';
+import TypesDropdown from './TypesDropdown';
 
 type EventFormProps = {
   userId: string;
@@ -308,6 +309,23 @@ export default function EventForm({
 
                 <FormField
                   control={form.control}
+                  name="typeId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium">
+                        Type <span className="text-red-400">*</span>
+                      </FormLabel>
+                      <TypesDropdown
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="categoryId"
                   render={({ field }) => (
                     <FormItem>
@@ -467,7 +485,7 @@ export default function EventForm({
                       <FormItem>
                         <FormControl>
                           <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
-                            <FiMail/>
+                            <FiMail />
                             <Input
                               placeholder="Your email"
                               {...field}
