@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import { getAllCategories } from '@/lib/actions/category.actions';
 import {
   Select,
@@ -8,14 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useEffect, useState } from 'react';
+import { DropdownProps } from '@/types';
 
-type CategoriesDropdownProps = {
-  value: string;
-  onChange: (value: string) => void;
-};
-
-const CategoriesDropdown = ({ value, onChange }: CategoriesDropdownProps) => {
+const CategoriesDropdown = ({ value, onChange }: DropdownProps) => {
   const [categories, setCategories] = useState<{ _id: string; name: string }[]>(
     []
   );
