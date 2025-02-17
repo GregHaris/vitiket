@@ -39,6 +39,7 @@ export default function ManageCategories() {
   const [searchMessage, setSearchMessage] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [showAllCategories, setShowAllCategories] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -93,7 +94,7 @@ export default function ManageCategories() {
   const handleDeleteCategory = async (categoryId: string) => {
     const deletedCategory = await deleteCategory(categoryId);
     if (deletedCategory) {
-      setSuccessMessage(
+      setDeleteMessage(
         `Category "${deletedCategory.name}" deleted successfully!`
       );
       setCategories(categories.filter((cat) => cat._id !== categoryId));
@@ -101,7 +102,7 @@ export default function ManageCategories() {
         setCategoryName('');
         setSelectedCategoryId(null);
       }
-      setTimeout(() => setSuccessMessage(''), 5000);
+      setTimeout(() => setDeleteMessage(''), 5000);
     }
   };
 
@@ -235,6 +236,7 @@ export default function ManageCategories() {
       {searchMessage && <p>{searchMessage}</p>}
       {successMessage && <p className="text-green-500">{successMessage}</p>}
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {deleteMessage && <p className="text-red-500">{deleteMessage}</p>}
       <div className="flex gap-2 flex-col md:flex-row mb-10">
         <Button onClick={handleAddCategory} className="button">
           Add Category
