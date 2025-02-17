@@ -11,6 +11,8 @@ import type { z } from 'zod';
 import DatePicker from 'react-datepicker';
 import Image from 'next/image';
 
+import 'react-datepicker/dist/react-datepicker.css';
+
 import { Button } from '@/components/ui/button';
 import { currencies, eventDefaultValues } from '@/constants';
 import { Checkbox } from '@/components/ui/checkbox';
