@@ -191,6 +191,11 @@ export type SearchParamProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+export type DropdownProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
 export interface TypeProps {
   name: string;
   icon: React.ComponentType<{ className?: string }>;
