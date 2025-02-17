@@ -17,12 +17,12 @@ export const heroContent = [
   {
     title:
       'From Blockchain to AI, and Beyond.\nYour Passport to Tech Innovation.',
-    cta: 'Explore Tech Events',
+    cta: 'Explore Events',
     backgroundImage: '/assets/images/hero1.png?height=800&width=1200',
   },
   {
     title: 'Connect, Learn, and Grow.\nFind Your Tribe at the Next Tech Event.',
-    cta: 'Explore events',
+    cta: 'Explore Events',
     backgroundImage: '/assets/images/hero3.png?height=800&width=1200',
   },
   {
