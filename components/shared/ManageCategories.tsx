@@ -56,7 +56,7 @@ export default function ManageCategories() {
       const existingCategories = await getCategoryByName(categoryName);
       if (existingCategories.length > 0) {
         setErrorMessage(`Category "${categoryName}" already exists.`);
-        setTimeout(() => setErrorMessage(''), 3000);
+        setTimeout(() => setErrorMessage(''), 5000);
         return;
       }
       const newCategory = await createCategory({ categoryName });
@@ -64,7 +64,7 @@ export default function ManageCategories() {
         setSuccessMessage(`Category "${categoryName}" added successfully!`);
         setCategoryName('');
         setCategories([...categories, newCategory]);
-        setTimeout(() => setSuccessMessage(''), 3000);
+        setTimeout(() => setSuccessMessage(''), 5000);
       }
     }
   };

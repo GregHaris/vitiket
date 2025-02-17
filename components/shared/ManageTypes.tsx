@@ -56,7 +56,7 @@ export default function ManageTypes() {
       const existingTypes = await getTypeByName(typeName);
       if (existingTypes.length > 0) {
         setErrorMessage(`Type "${typeName}" already exists.`);
-        setTimeout(() => setErrorMessage(''), 3000);
+        setTimeout(() => setErrorMessage(''), 5000);
         return;
       }
       const newType = await createType({ typeName });
@@ -64,7 +64,7 @@ export default function ManageTypes() {
         setSuccessMessage(`Type "${typeName}" added successfully!`);
         setTypeName('');
         setTypes([...types, newType]);
-        setTimeout(() => setSuccessMessage(''), 3000);
+        setTimeout(() => setSuccessMessage(''), 5000);
       }
     }
   };
