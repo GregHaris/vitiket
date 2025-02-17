@@ -5,6 +5,8 @@ export interface IEvent extends Document {
   title: string;
   description?: string;
   location?: string;
+  isOnline: boolean;
+  isHybrid: boolean;
   imageUrl: string;
   startDateTime: Date;
   endDateTime: Date;
@@ -32,6 +34,8 @@ const EventSchema = new Schema(
     title: { type: String, required: true },
     description: { type: String },
     location: { type: String },
+    isOnline: { type: Boolean, default: false },
+    isHybrid: { type: Boolean, default: false },
     imageUrl: { type: String, required: true },
     startDateTime: { type: Date, required: true, default: Date.now },
     endDateTime: { type: Date, required: true, default: Date.now },
