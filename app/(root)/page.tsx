@@ -1,6 +1,6 @@
 import { SearchParamProps } from '@/types';
 import Collection from '@shared/Collection';
-import CategoryFilter from '@shared/CategoryFilter';
+import EventTypeIcons from '@shared/EventTypeFilter';
 
 import { getAllEvents } from '@/lib/actions/event.actions';
 import { HeroSection } from '@shared/HeroSection';
@@ -50,7 +50,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
         id="events"
         className="wrapper my-8 flex flex-col gap-8 md:gap-12"
       >
-        <CategoryFilter />
+        <EventTypeIcons />
         <Collection
           data={events?.data}
           emptyTitle="No Events Found"
