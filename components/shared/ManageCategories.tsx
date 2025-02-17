@@ -151,7 +151,7 @@ export default function ManageCategories() {
   return (
     <div className="space-y-4  wrapper">
       <h2 className="text-xl font-semibold md:text-left text-center">
-        Manage Product Categories
+        Manage Event Categories
       </h2>
       <div className="flex flex-col md:flex-row gap-2">
         <Input
