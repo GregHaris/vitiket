@@ -21,18 +21,17 @@ export type CreateEventParams = {
   event: {
     title: string;
     description: string;
-    locationType: string;
+    locationType: 'Online' | 'In-Person' | 'Hybrid';
     location?: string;
-    isOnline: boolean;
-    isHybrid: boolean;
     imageUrl: string;
     startDateTime: Date;
     endDateTime: Date;
     typeId: string;
     categoryId: string;
-    price: string;
+    onlinePrice?: string; 
+    inPersonPrice?: string;
     isFree: boolean;
-    url: string;
+    url?: string;
   };
   contactDetails: {
     phoneNumber: string;
@@ -52,17 +51,16 @@ export type UpdateEventParams = {
     title: string;
     imageUrl: string;
     description: string;
-    locationType: string;
+    locationType: 'Online' | 'In-Person' | 'Hybrid';
     location?: string;
-    isOnline: boolean;
-    isHybrid: boolean;
     startDateTime: Date;
     endDateTime: Date;
     typeId: string;
     categoryId: string;
-    price: string;
+    onlinePrice?: string;
+    inPersonPrice?: string;
     isFree: boolean;
-    url: string;
+    url?: string;
   };
   contactDetails: {
     phoneNumber: string;
@@ -112,12 +110,11 @@ export type Event = {
   _id: string;
   title: string;
   description: string;
-  price: string;
+  onlinePrice: string;
+  inPersonPrice: string;
   isFree: boolean;
-  isOnline: boolean;
-  isHybrid: boolean;
   imageUrl: string;
-  locationType: string;
+  locationType: 'Online' | 'In-Person' | 'Hybrid';
   location?: string;
   startDateTime: Date;
   endDateTime: Date;
