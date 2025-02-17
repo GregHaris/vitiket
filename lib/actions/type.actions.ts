@@ -4,11 +4,7 @@ import { connectToDatabase } from '../database';
 import { handleError } from '../utils';
 import Type from '../database/models/type.model';
 
-export const createType = async ({
-  typeName,
-}: {
-  typeName: string;
-}) => {
+export const createType = async ({ typeName }: { typeName: string }) => {
   try {
     await connectToDatabase();
     const newType = await Type.create({ name: typeName });

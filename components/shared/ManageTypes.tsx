@@ -32,9 +32,7 @@ interface Type {
 
 export default function ManageTypes() {
   const [typeName, setTypeName] = useState('');
-  const [selectedTypeId, setSelectedTypeId] = useState<string | null>(
-    null
-  );
+  const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<Type[]>([]);
   const [searchMessage, setSearchMessage] = useState('');
   const [types, setTypes] = useState<Type[]>([]);
@@ -76,15 +74,11 @@ export default function ManageTypes() {
         typeName,
       });
       if (updatedType) {
-        setSuccessMessage(
-          `Type updated to "${typeName}" successfully!`
-        );
+        setSuccessMessage(`Type updated to "${typeName}" successfully!`);
         setTypeName('');
         setSelectedTypeId(null);
         setTypes(
-          types.map((cat) =>
-            cat._id === updatedType._id ? updatedType : cat
-          )
+          types.map((cat) => (cat._id === updatedType._id ? updatedType : cat))
         );
         setTimeout(() => setSuccessMessage(''), 5000);
       }
@@ -94,9 +88,7 @@ export default function ManageTypes() {
   const handleDeleteType = async (typeId: string) => {
     const deletedType = await deleteType(typeId);
     if (deletedType) {
-      setDeleteMessage(
-        `Type "${deletedType.name}" deleted successfully!`
-      );
+      setDeleteMessage(`Type "${deletedType.name}" deleted successfully!`);
       setTypes(types.filter((cat) => cat._id !== typeId));
       if (selectedTypeId === typeId) {
         setTypeName('');
