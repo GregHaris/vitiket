@@ -1,5 +1,6 @@
 import { SearchParamProps } from '@/types';
 import ManageCategories from '@shared/ManageCategories';
+import ManageTypes from '@shared/ManageTypes';
 
 import { SearchUsers } from './SearchUsers';
 import SetUsersRoles from './setUsersRoles';
@@ -25,6 +26,9 @@ export default async function AdminDashboard({
         </div>
         <div className="mb-6">
           <SetUsersRoles searchParams={resolvedSearchParams} />
+        </div>
+        <div className="mb-6">
+          <ManageTypes />
         </div>
         <div className="mb-6">
           <ManageCategories />
