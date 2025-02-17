@@ -6,17 +6,16 @@ export const eventFormSchema = z.object({
     .string()
     .min(10, { message: 'Description must be at least 3 characters' })
     .max(1500, { message: 'Description must be less than 1500 characters' }),
-  locationType: z.string(),
+  locationType: z.enum(['Online', 'In-Person', 'Hybrid']),
   location: z.string().optional(),
-  isOnline: z.boolean().optional(),
-  isHybrid: z.boolean().optional(),
   imageUrl: z.string(),
   startDateTime: z.date(),
   endDateTime: z.date(),
   categoryId: z.string(),
   typeId: z.string(),
-  price: z.string(),
   currency: z.string(),
+  onlinePrice: z.string().optional(),
+  inPersonPrice: z.string().optional(),
   isFree: z.boolean(),
   url: z.string().url({ message: 'Invalid URL' }).optional(),
   contactDetails: z.object({
