@@ -19,7 +19,7 @@ const types: TypeProps[] = [
   { name: 'Meetups', icon: Users },
   { name: 'WorkShops', icon: RiComputerLine },
   { name: 'Hackathons', icon: Calendar },
-  { name: 'Online Events', icon: Laptop },
+  { name: 'Webinars', icon: Laptop },
   { name: 'Fun & Games', icon: Gamepad2 },
   { name: 'Festivals', icon: BiParty },
   { name: 'Bootcamps', icon: Computer },
@@ -59,9 +59,7 @@ export default function EventTypeIcons() {
             className="flex flex-col items-center gap-3 text-center group cursor-pointer"
           >
             <div className="w-[72px] h-[72px] rounded-full border border-gray-200 flex items-center justify-center group-hover:border-primary transition-colors">
-              <type.icon
-                className="h-7 w-6 text-[#6f7287] group-hover:text-primary-500 transition-colors"
-              />
+              <type.icon className="h-7 w-6 text-[#6f7287] group-hover:text-primary-500 transition-colors" />
             </div>
             <span className="text-sm text-[#6f7287] group-hover:text-primary-500 transition-colors">
               {type.name}
