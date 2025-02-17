@@ -45,6 +45,7 @@ export const eventDefaultValues = {
   imageUrl: '',
   startDateTime: new Date(),
   endDateTime: new Date(),
+  typeId: '',
   categoryId: '',
   price: '',
   currency: 'NGN',
