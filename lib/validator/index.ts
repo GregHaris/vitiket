@@ -6,12 +6,10 @@ export const eventFormSchema = z.object({
     .string()
     .min(10, { message: 'Description must be at least 3 characters' })
     .max(1500, { message: 'Description must be less than 1500 characters' }),
-  location: z
-    .string()
-    .min(3, { message: 'Location must be at least 3 characters' })
-    .max(200, { message: 'Location must be less than 200 characters' }),
-  isOnline: z.boolean(),
-  isHybrid: z.boolean(),
+  locationType: z.string(),
+  location: z.string().optional(),
+  isOnline: z.boolean().optional(),
+  isHybrid: z.boolean().optional(),
   imageUrl: z.string(),
   startDateTime: z.date(),
   endDateTime: z.date(),
@@ -20,7 +18,7 @@ export const eventFormSchema = z.object({
   price: z.string(),
   currency: z.string(),
   isFree: z.boolean(),
-  url: z.string(),
+  url: z.string().url({ message: 'Invalid URL' }).optional(),
   contactDetails: z.object({
     phoneNumber: z
       .string()

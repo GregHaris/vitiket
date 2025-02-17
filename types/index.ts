@@ -21,7 +21,8 @@ export type CreateEventParams = {
   event: {
     title: string;
     description: string;
-    location: string;
+    locationType: string;
+    location?: string;
     isOnline: boolean;
     isHybrid: boolean;
     imageUrl: string;
@@ -51,7 +52,8 @@ export type UpdateEventParams = {
     title: string;
     imageUrl: string;
     description: string;
-    location: string;
+    locationType: string;
+    location?: string;
     isOnline: boolean;
     isHybrid: boolean;
     startDateTime: Date;
@@ -115,6 +117,7 @@ export type Event = {
   isOnline: boolean;
   isHybrid: boolean;
   imageUrl: string;
+  locationType: string;
   location?: string;
   startDateTime: Date;
   endDateTime: Date;
