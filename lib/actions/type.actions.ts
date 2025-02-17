@@ -48,11 +48,11 @@ export const deleteType = async (typeId: string) => {
   }
 };
 
-export const getAllCategories = async () => {
+export const getAllTypes = async () => {
   try {
     await connectToDatabase();
-    const categories = await Type.find().sort({ name: 1 });
-    return JSON.parse(JSON.stringify(categories));
+    const types = await Type.find().sort({ name: 1 });
+    return JSON.parse(JSON.stringify(types));
   } catch (error) {
     handleError(error);
   }
@@ -61,10 +61,10 @@ export const getAllCategories = async () => {
 export const getTypeByName = async (typeName: string) => {
   try {
     await connectToDatabase();
-    const categories = await Type.find({
+    const types = await Type.find({
       name: { $regex: new RegExp(typeName, 'i') },
     });
-    return JSON.parse(JSON.stringify(categories));
+    return JSON.parse(JSON.stringify(types));
   } catch (error) {
     handleError(error);
   }
