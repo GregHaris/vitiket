@@ -14,6 +14,7 @@ export interface IEvent extends Document {
   currency: string;
   isFree: boolean;
   url?: string;
+  type: { _id: string; name: string };
   category: { _id: string; name: string };
   organizer: { _id: string; firstName: string; lastName: string };
   contactDetails: {
@@ -38,6 +39,7 @@ const EventSchema = new Schema(
     currency: { type: String, required: true },
     isFree: { type: Boolean, default: false },
     url: { type: String },
+    type: { type: Schema.Types.ObjectId, ref: 'Type' },
     category: { type: Schema.Types.ObjectId, ref: 'Category' },
     organizer: { type: Schema.Types.ObjectId, ref: 'User' },
     contactDetails: {
