@@ -25,6 +25,7 @@ export type CreateEventParams = {
     imageUrl: string;
     startDateTime: Date;
     endDateTime: Date;
+    typeId: string;
     categoryId: string;
     price: string;
     isFree: boolean;
@@ -51,6 +52,7 @@ export type UpdateEventParams = {
     location: string;
     startDateTime: Date;
     endDateTime: Date;
+    typeId: string;
     categoryId: string;
     price: string;
     isFree: boolean;
@@ -93,6 +95,13 @@ export type GetRelatedEventsByCategoryParams = {
   page: number | string;
 };
 
+export type GetRelatedEventsByTypeParams = {
+  categoryId: string;
+  eventId: string;
+  limit?: number;
+  page: number | string;
+};
+
 export type Event = {
   _id: string;
   title: string;
@@ -108,6 +117,10 @@ export type Event = {
     _id: string;
     firstName: string;
     lastName: string;
+  };
+  type: {
+    _id: string;
+    name: string;
   };
   category: {
     _id: string;
@@ -126,6 +139,11 @@ export type Event = {
 // ====== CATEGORY PARAMS
 export type CreateCategoryParams = {
   categoryName: string;
+};
+
+// ====== TYPE PARAMS
+export type CreateTypeParams = {
+  typeName: string;
 };
 
 // ====== ORDER PARAMS
@@ -172,3 +190,8 @@ export type SearchParamProps = {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
+
+export interface TypeProps {
+  name: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
