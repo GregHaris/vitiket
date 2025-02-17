@@ -10,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { z } from 'zod';
 import DatePicker from 'react-datepicker';
 import Image from 'next/image';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -76,6 +77,8 @@ export default function EventForm({
     defaultValues: initialValues,
   });
 
+  const locationType = form.watch('locationType');
+
   async function onSubmit(values: z.infer<typeof eventFormSchema>) {
     let uploadedImageUrl: string = values.imageUrl;
 
@@ -87,6 +90,12 @@ export default function EventForm({
       }
       uploadedImageUrl = uploadedImages[0].url;
     }
+
+    const eventData = {
+      ...values,
+      location: values.locationType === 'Online' ? 'Online' : values.location,
+      imageUrl: uploadedImageUrl,
+    };
 
     const contactDetails = {
       phoneNumber: values.contactDetails.phoneNumber,
@@ -100,7 +109,7 @@ export default function EventForm({
     if (type === 'Create') {
       try {
         const newEvent = await createEvent({
-          event: { ...values, imageUrl: uploadedImageUrl },
+          event: eventData,
           userId,
           contactDetails,
           path: '/dashboard',
@@ -124,8 +133,7 @@ export default function EventForm({
         const updatedEvents = await updateEvent({
           userId,
           event: {
-            ...values,
-            imageUrl: uploadedImageUrl,
+            ...eventData,
             _id: eventId,
           },
           contactDetails,
@@ -200,6 +208,7 @@ export default function EventForm({
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="imageUrl"
@@ -220,94 +229,411 @@ export default function EventForm({
                   )}
                 />
 
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="price"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-medium">
-                          Price <span className="text-red-400">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
-                            <Input
-                              placeholder="0.00"
-                              {...field}
-                              className="nested-input-field p-regular-14"
-                              onChange={(e) => {
-                                field.onChange(e);
-                                if (e.target.value) {
-                                  form.setValue('isFree', false);
-                                }
-                              }}
-                            />
-                            <FormField
-                              control={form.control}
-                              name="isFree"
-                              render={({ field: isFreeField }) => (
-                                <FormItem>
-                                  <FormControl>
-                                    <div className="flex items-center">
-                                      <label
-                                        htmlFor="isFree"
-                                        className="whitespace-nowrap pr-3 leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                      >
-                                        Free Ticket
-                                      </label>
-                                      <Checkbox
-                                        id="isFree"
-                                        checked={isFreeField.value}
-                                        onCheckedChange={(checked) => {
-                                          isFreeField.onChange(checked);
-                                          if (checked) {
-                                            form.setValue('price', '');
-                                          }
-                                        }}
-                                        className="mr-2 h-5 w-5 border-2 border-primary-500 cursor-pointer"
-                                      />
-                                    </div>
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="currency"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-medium">
-                          Currency <span className="text-red-400">*</span>
-                        </FormLabel>
-                        <Select
+                <FormField
+                  control={form.control}
+                  name="locationType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium">
+                        Location Type <span className="text-red-400">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <RadioGroup
                           onValueChange={field.onChange}
                           defaultValue={field.value}
+                          className="flex gap-4 items-center"
                         >
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <RadioGroupItem value="Online" />
+                            </FormControl>
+                            <FormLabel>Online</FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <RadioGroupItem value="In-Person" />
+                            </FormControl>
+                            <FormLabel>In-Person</FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <RadioGroupItem value="Hybrid" />
+                            </FormControl>
+                            <FormLabel>Hybrid</FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {locationType === 'Online' && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="url"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">
+                            Online Event URL{' '}
+                            <span className="text-red-400">*</span>
+                          </FormLabel>
                           <FormControl>
-                            <SelectTrigger className="select-field p-regular-14">
-                              <SelectValue placeholder="Select currency" />
-                            </SelectTrigger>
+                            <Input
+                              placeholder="https://example.com"
+                              {...field}
+                              className="input-field p-regular-14"
+                            />
                           </FormControl>
-                          <SelectContent>
-                            {currencies.map((currency) => (
-                              <SelectItem key={currency} value={currency}>
-                                {currency}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="onlinePrice"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">
+                            Online Price <span className="text-red-400">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
+                              <Input
+                                placeholder="0.00"
+                                {...field}
+                                className="nested-input-field p-regular-14"
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  if (e.target.value) {
+                                    form.setValue('isFree', false);
+                                  }
+                                }}
+                              />
+                              <FormField
+                                control={form.control}
+                                name="isFree"
+                                render={({ field: isFreeField }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <div className="flex items-center">
+                                        <label
+                                          htmlFor="isFree"
+                                          className="whitespace-nowrap pr-3 leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        >
+                                          Free Ticket
+                                        </label>
+                                        <Checkbox
+                                          id="isFree"
+                                          checked={isFreeField.value}
+                                          onCheckedChange={(checked) => {
+                                            isFreeField.onChange(checked);
+                                            if (checked) {
+                                              form.setValue('onlinePrice', '');
+                                            }
+                                          }}
+                                          className="mr-2 h-5 w-5 border-2 border-primary-500 cursor-pointer"
+                                        />
+                                      </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
+                )}
+
+                {locationType === 'In-Person' && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="location"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">
+                            Event Location{' '}
+                            <span className="text-red-400">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter event address"
+                              {...field}
+                              className="input-field p-regular-14"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="inPersonPrice"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">
+                            In-Person Price{' '}
+                            <span className="text-red-400">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
+                              <Input
+                                placeholder="0.00"
+                                {...field}
+                                className="nested-input-field p-regular-14"
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  if (e.target.value) {
+                                    form.setValue('isFree', false);
+                                  }
+                                }}
+                              />
+                              <FormField
+                                control={form.control}
+                                name="isFree"
+                                render={({ field: isFreeField }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <div className="flex items-center">
+                                        <label
+                                          htmlFor="isFree"
+                                          className="whitespace-nowrap pr-3 leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        >
+                                          Free Ticket
+                                        </label>
+                                        <Checkbox
+                                          id="isFree"
+                                          checked={isFreeField.value}
+                                          onCheckedChange={(checked) => {
+                                            isFreeField.onChange(checked);
+                                            if (checked) {
+                                              form.setValue(
+                                                'inPersonPrice',
+                                                ''
+                                              );
+                                            }
+                                          }}
+                                          className="mr-2 h-5 w-5 border-2 border-primary-500 cursor-pointer"
+                                        />
+                                      </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
+                )}
+
+                {locationType === 'Hybrid' && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="location"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">
+                            Event Location{' '}
+                            <span className="text-red-400">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter event address"
+                              {...field}
+                              className="input-field p-regular-14"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="url"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">
+                            Online Event URL{' '}
+                            <span className="text-red-400">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="https://example.com"
+                              {...field}
+                              className="input-field p-regular-14"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="flex flex-col md:flex-row gap-5">
+                      <FormField
+                        control={form.control}
+                        name="inPersonPrice"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">
+                              In-Person Price{' '}
+                              <span className="text-red-400">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
+                                <Input
+                                  placeholder="0.00"
+                                  {...field}
+                                  className="nested-input-field p-regular-14"
+                                  onChange={(e) => {
+                                    field.onChange(e);
+                                    if (e.target.value) {
+                                      form.setValue('isFree', false);
+                                    }
+                                  }}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name="isFree"
+                                  render={({ field: isFreeField }) => (
+                                    <FormItem>
+                                      <FormControl>
+                                        <div className="flex items-center">
+                                          <label
+                                            htmlFor="isFree"
+                                            className="whitespace-nowrap pr-3 leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                          >
+                                            Free Ticket
+                                          </label>
+                                          <Checkbox
+                                            id="isFree"
+                                            checked={isFreeField.value}
+                                            onCheckedChange={(checked) => {
+                                              isFreeField.onChange(checked);
+                                              if (checked) {
+                                                form.setValue(
+                                                  'inPersonPrice',
+                                                  ''
+                                                );
+                                              }
+                                            }}
+                                            className="mr-2 h-5 w-5 border-2 border-primary-500 cursor-pointer"
+                                          />
+                                        </div>
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="onlinePrice"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">
+                              Online Price{' '}
+                              <span className="text-red-400">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
+                                <Input
+                                  placeholder="0.00"
+                                  {...field}
+                                  className="nested-input-field p-regular-14"
+                                  onChange={(e) => {
+                                    field.onChange(e);
+                                    if (e.target.value) {
+                                      form.setValue('isFree', false);
+                                    }
+                                  }}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name="isFree"
+                                  render={({ field: isFreeField }) => (
+                                    <FormItem>
+                                      <FormControl>
+                                        <div className="flex items-center">
+                                          <label
+                                            htmlFor="isFree"
+                                            className="whitespace-nowrap pr-3 leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                          >
+                                            Free Ticket
+                                          </label>
+                                          <Checkbox
+                                            id="isFree"
+                                            checked={isFreeField.value}
+                                            onCheckedChange={(checked) => {
+                                              isFreeField.onChange(checked);
+                                              if (checked) {
+                                                form.setValue(
+                                                  'onlinePrice',
+                                                  ''
+                                                );
+                                              }
+                                            }}
+                                            className="mr-2 h-5 w-5 border-2 border-primary-500 cursor-pointer"
+                                          />
+                                        </div>
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </>
+                )}
+
+                <FormField
+                  control={form.control}
+                  name="currency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium">
+                        Currency <span className="text-red-400">*</span>
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="select-field p-regular-14">
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {currencies.map((currency) => (
+                            <SelectItem key={currency} value={currency}>
+                              {currency}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}
@@ -338,26 +664,6 @@ export default function EventForm({
                         value={field.value}
                         onChange={field.onChange}
                       />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium">
-                        Location <span className="text-red-400">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="City, State"
-                          {...field}
-                          className="input-field p-regular-14"
-                        />
-                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -432,26 +738,6 @@ export default function EventForm({
                             wrapperClassName="datePicker"
                           />
                         </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium">
-                        URL <span className="text-red-400">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="https://example.com"
-                          {...field}
-                          className="input-field p-regular-14"
-                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -604,7 +890,7 @@ export default function EventForm({
                 >
                   {form.formState.isSubmitting
                     ? 'Submitting...'
-                    : `${type} Listing`}
+                    : `${type} Event`}
                 </Button>
               </form>
             </Form>

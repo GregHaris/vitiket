@@ -4,15 +4,15 @@ export interface IEvent extends Document {
   _id: string;
   title: string;
   description: string;
-  location?: string;
-  isOnline: boolean;
-  isHybrid: boolean;
   imageUrl: string;
+  location?: string;
+  locationType: 'Online' | 'In-Person' | 'Hybrid';
   startDateTime: Date;
   endDateTime: Date;
   createdAt: Date;
   updatedAt: Date;
-  price: string;
+  onlinePrice: string;
+  inPersonPrice: string;
   currency: string;
   isFree: boolean;
   url?: string;
@@ -33,13 +33,17 @@ const EventSchema = new Schema(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
+    locationType: {
+      type: String,
+      enum: ['Online', 'In-Person', 'Hybrid'],
+      required: true,
+    },
     location: { type: String },
-    isOnline: { type: Boolean, default: false },
-    isHybrid: { type: Boolean, default: false },
     imageUrl: { type: String, required: true },
     startDateTime: { type: Date, required: true, default: Date.now },
     endDateTime: { type: Date, required: true, default: Date.now },
-    price: { type: String },
+    onlinePrice: { type: String },
+    inPersonPrice: { type: String },
     currency: { type: String, required: true },
     isFree: { type: Boolean, default: false },
     url: { type: String },
