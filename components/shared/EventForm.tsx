@@ -243,23 +243,29 @@ export default function EventForm({
                           defaultValue={field.value}
                           className="flex gap-4 items-center"
                         >
-                          <FormItem className="flex items-center space-x-2">
-                            <FormControl>
-                              <RadioGroupItem value="Online" />
-                            </FormControl>
-                            <FormLabel>Online</FormLabel>
+                          <FormItem>
+                            <div className="flex items-center space-x-2">
+                              <FormControl>
+                                <RadioGroupItem value="Online" />
+                              </FormControl>
+                              <FormLabel>Online</FormLabel>
+                            </div>
                           </FormItem>
-                          <FormItem className="flex items-center space-x-2">
-                            <FormControl>
-                              <RadioGroupItem value="In-Person" />
-                            </FormControl>
-                            <FormLabel>In-Person</FormLabel>
+                          <FormItem>
+                            <div className="flex items-center space-x-2">
+                              <FormControl>
+                                <RadioGroupItem value="In-Person" />
+                              </FormControl>
+                              <FormLabel>In-Person</FormLabel>
+                            </div>
                           </FormItem>
-                          <FormItem className="flex items-center space-x-2">
-                            <FormControl>
-                              <RadioGroupItem value="Hybrid" />
-                            </FormControl>
-                            <FormLabel>Hybrid</FormLabel>
+                          <FormItem>
+                            <div className="flex items-center space-x-2">
+                              <FormControl>
+                                <RadioGroupItem value="Hybrid" />
+                              </FormControl>
+                              <FormLabel>Hybrid</FormLabel>
+                            </div>
                           </FormItem>
                         </RadioGroup>
                       </FormControl>
