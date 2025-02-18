@@ -30,12 +30,10 @@ export default async function Home({ searchParams }: SearchParamProps) {
   return (
     <>
       <section>
-        <div className="wrapper">
           <div className=" md:flex flex-col justify-center gap-8 md:text-center ">
-            <h1 className="h1-bold mb-10">
+            <h1 className="h1-bold mb-10 px-5">
               Host, Connect, Celebrate: Your Event, Our Platform!
             </h1>
-          </div>
           <HeroSection />
         </div>
       </section>
