@@ -1,3 +1,5 @@
+import { UseFormSetValue } from 'react-hook-form';
+
 // ====== USER PARAMS
 export type CreateUserParams = {
   clerkId: string;
@@ -208,4 +210,34 @@ export type DropdownProps = {
 export interface TypeProps {
   name: string;
   icon: React.ComponentType<{ className?: string }>;
+}
+
+export interface LocationSectionProps {
+  control: any;
+  locationType: string;
+}
+
+export interface FormTextInputProps {
+  control: any;
+  name: string;
+  label: string;
+  placeholder: string;
+  required?: boolean;
+}
+
+export interface FormDatePickerProps {
+  control: any;
+  name: string;
+  label: string;
+  required?: boolean;
+}
+
+export interface ContactDetailsSectionProps {
+  control: any;
+}
+
+export interface PricingSectionProps {
+  control: any;
+  locationType: string;
+  setValue: UseFormSetValue<any>; 
 }
