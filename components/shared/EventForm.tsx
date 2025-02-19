@@ -26,8 +26,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import type { IEvent } from '@/lib/database/models/event.model';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -38,6 +38,7 @@ import {
 import { eventFormSchema } from '@/lib/validator/index';
 import CategoriesDropdown from './CategoriesDropdown';
 import FileUploader from './FileUploader';
+import MapInput from './MapInput';
 import TiptapEditor from './TiptapEditor';
 import TypesDropdown from './TypesDropdown';
 
@@ -94,6 +95,7 @@ export default function EventForm({
     const eventData = {
       ...values,
       location: values.locationType === 'Online' ? 'Online' : values.location,
+      coordinates: values.coordinates,
       imageUrl: uploadedImageUrl,
     };
 
@@ -372,6 +374,25 @@ export default function EventForm({
                               placeholder="Enter event address"
                               {...field}
                               className="input-field p-regular-14"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="coordinates"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">
+                            Select Location on Map{' '}
+                            <span className="text-red-400">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <MapInput
+                              value={field.value}
+                              onChange={field.onChange}
                             />
                           </FormControl>
                           <FormMessage />
