@@ -370,29 +370,15 @@ export default function EventForm({
                             <span className="text-red-400">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Enter event address"
-                              {...field}
-                              className="input-field p-regular-14"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="coordinates"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium">
-                            Select Location on Map{' '}
-                            <span className="text-red-400">*</span>
-                          </FormLabel>
-                          <FormControl>
                             <MapInput
-                              value={field.value}
-                              onChange={field.onChange}
+                              value={{
+                                location: field.value,
+                                coordinates: form.getValues('coordinates'),
+                              }}
+                              onChange={(value) => {
+                                field.onChange(value.location);
+                                form.setValue('coordinates', value.coordinates);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -781,6 +767,7 @@ export default function EventForm({
                         <FormControl>
                           <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
                             <FiPhone />
+                            <span className="text-red-400">*</span>
                             <Input
                               placeholder="Your phone number"
                               {...field}
@@ -801,6 +788,7 @@ export default function EventForm({
                         <FormControl>
                           <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
                             <FiMail />
+                            <span className="text-red-400">*</span>
                             <Input
                               placeholder="Your email"
                               {...field}
@@ -822,7 +810,7 @@ export default function EventForm({
                           <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
                             <RiLink />
                             <Input
-                              placeholder="www.example.com"
+                              placeholder="Your website (www.example.com)"
                               {...field}
                               className="nested-input-field p-regular-14"
                             />
