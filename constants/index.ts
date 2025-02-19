@@ -43,6 +43,7 @@ export const eventDefaultValues = {
   description: '',
   locationType: ('Online' as 'Online' | 'In-Person' | 'Hybrid'),
   location: '',
+  cordinates: '',
   imageUrl: '',
   startDateTime: new Date(),
   endDateTime: new Date(),

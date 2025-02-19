@@ -6,6 +6,7 @@ export interface IEvent extends Document {
   description: string;
   imageUrl: string;
   location?: string;
+  coordinates?: string;
   locationType: 'Online' | 'In-Person' | 'Hybrid';
   startDateTime: Date;
   endDateTime: Date;
@@ -39,6 +40,7 @@ const EventSchema = new Schema(
       required: true,
     },
     location: { type: String },
+    coordinates: { type: String },
     imageUrl: { type: String, required: true },
     startDateTime: { type: Date, required: true, default: Date.now },
     endDateTime: { type: Date, required: true, default: Date.now },
