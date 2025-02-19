@@ -170,8 +170,19 @@ export default function EventForm({
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                  }
+                }}
                 className="space-y-6"
               >
+                {Object.keys(form.formState.errors).length > 0 && (
+                  <div className="text-red-500 mb-4">
+                    * Please fill out all required fields (*)
+                  </div>
+                )}
+
                 <FormField
                   control={form.control}
                   name="title"
