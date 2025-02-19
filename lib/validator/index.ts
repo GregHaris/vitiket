@@ -8,6 +8,7 @@ export const eventFormSchema = z.object({
     .max(1500, { message: 'Description must be less than 1500 characters' }),
   locationType: z.enum(['Online', 'In-Person', 'Hybrid']),
   location: z.string().optional(),
+  coordinates: z.string().optional(),
   imageUrl: z.string(),
   startDateTime: z.date(),
   endDateTime: z.date(),
