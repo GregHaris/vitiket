@@ -125,10 +125,10 @@
   }
   .select-field {
     /* SHADCN OVERRIDES */
-    @apply w-full bg-grey-50  rounded-md h-[40px]  placeholder:text-gray-500  px-5  py-3  border-gray-300  focus-visible:ring-transparent  focus:ring-transparent;
+    @apply w-full bg-grey-50  rounded-md h-[40px]  placeholder:text-gray-500  px-5  py-3  border-gray-300  focus-visible:ring-transparent border focus:ring-transparent;
   }
   .input-field {
-    @apply bg-grey-50 h-[40px] focus-visible:ring-offset-0 placeholder:text-gray-500 rounded-md px-4 py-3 border-gray-300 focus-visible:ring-transparent outline-none shadow-none;
+    @apply bg-grey-50 h-[40px] focus-visible:ring-offset-0 w-full placeholder:text-gray-500 rounded-md px-4 py-3 border border-gray-300 focus-visible:ring-transparent outline-none shadow-none;
   }
   .file-uploader {
     @apply flex h-72 align-middle cursor-pointer flex-col overflow-hidden rounded-md bg-grey-50 border border-gray-300;
