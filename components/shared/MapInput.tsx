@@ -17,7 +17,7 @@ const defaultCenter = {
 };
 
 type MapInputProps = {
-  value: { location: string; coordinates: string } | undefined;
+  value: { location: string; coordinates: string }
   onChange: (value: { location: string; coordinates: string }) => void;
 };
 
