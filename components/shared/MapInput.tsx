@@ -1,4 +1,3 @@
-// components/MapInput.tsx
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import {
   GoogleMap,
@@ -18,8 +17,8 @@ const defaultCenter = {
 };
 
 type MapInputProps = {
-  value: string | undefined;
-  onChange: (value: string) => void;
+  value: { location: string; coordinates: string } | undefined;
+  onChange: (value: { location: string; coordinates: string }) => void;
 };
 
 const MapInput: React.FC<MapInputProps> = ({ value, onChange }) => {
@@ -33,9 +32,10 @@ const MapInput: React.FC<MapInputProps> = ({ value, onChange }) => {
   const [markerPosition, setMarkerPosition] = useState(defaultCenter);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
+  // Parse the initial value (if provided) to set the marker position
   useEffect(() => {
-    if (value) {
-      const [lat, lng] = value.split(',').map(Number);
+    if (value?.coordinates) {
+      const [lat, lng] = value.coordinates.split(',').map(Number);
       if (!isNaN(lat) && !isNaN(lng)) {
         setMarkerPosition({ lat, lng });
       }
@@ -55,7 +55,7 @@ const MapInput: React.FC<MapInputProps> = ({ value, onChange }) => {
       const lat = event.latLng.lat();
       const lng = event.latLng.lng();
       setMarkerPosition({ lat, lng });
-      onChange(`${lat},${lng}`);
+      onChange({ location: '', coordinates: `${lat},${lng}` });
     }
   };
 
@@ -65,8 +65,9 @@ const MapInput: React.FC<MapInputProps> = ({ value, onChange }) => {
       if (place.geometry?.location) {
         const lat = place.geometry.location.lat();
         const lng = place.geometry.location.lng();
+        const location = place.formatted_address || '';
         setMarkerPosition({ lat, lng });
-        onChange(`${lat},${lng}`);
+        onChange({ location, coordinates: `${lat},${lng}` });
         map?.panTo({ lat, lng });
         map?.setZoom(15);
       }
