@@ -239,5 +239,5 @@ export interface ContactDetailsSectionProps {
 export interface PricingSectionProps {
   control: any;
   locationType: string;
-  setValue: UseFormSetValue<any>; 
+  setValue: UseFormSetValue<any>;
 }
