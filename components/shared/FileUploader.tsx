@@ -12,7 +12,7 @@ import { convertFileToUrl } from '@/lib/utils';
 type FileUploaderProps = {
   imageUrl: string;
   onFieldChange: (url: string) => void;
-  setFiles: Dispatch<SetStateAction<File[]>>;
+  setFiles: (files: File[]) => void; 
 };
 
 export default function FileUploader({
@@ -34,7 +34,7 @@ export default function FileUploader({
       }
 
       setFileState(newFile);
-      setFiles([newFile]);
+      setFiles([newFile]); // Use the function directly
       onFieldChange(convertFileToUrl(newFile));
     },
     [setFiles, onFieldChange]
