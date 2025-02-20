@@ -204,8 +204,13 @@ export default function EventForm({
                   <DateTimePicker
                     name="startDateTime"
                     label="Start Date & Time"
+                    placeholder="Start Date:"
                   />
-                  <DateTimePicker name="endDateTime" label="End Date & Time" />
+                  <DateTimePicker
+                    name="endDateTime"
+                    label="End Date & Time"
+                    placeholder="End Date:"
+                  />
                   <ContactDetails control={form.control} />
                   <Button
                     type="submit"
