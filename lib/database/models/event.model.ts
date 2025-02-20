@@ -14,6 +14,7 @@ export interface IEvent extends Document {
   updatedAt: Date;
   onlinePrice: string;
   inPersonPrice: string;
+  priceCategories: { name: string; price: string }[];
   currency: string;
   isFree: boolean;
   url?: string;
@@ -46,6 +47,7 @@ const EventSchema = new Schema(
     endDateTime: { type: Date, required: true, default: Date.now },
     onlinePrice: { type: String },
     inPersonPrice: { type: String },
+    priceCategories: [{ name: { type: String }, price: { type: String } }],
     currency: { type: String, required: true },
     isFree: { type: Boolean, default: false },
     url: { type: String },

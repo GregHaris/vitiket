@@ -29,6 +29,14 @@ export const eventFormSchema = z.object({
     facebook: z.string().optional(),
     x: z.string().optional(),
   }),
+  priceCategories: z
+    .array(
+      z.object({
+        name: z.string().min(1, { message: 'Category name is required' }),
+        price: z.string().min(1, { message: 'Price is required' }),
+      })
+    )
+    .optional(),
 });
 
 export type eventFormValues = z.infer<typeof eventFormSchema>;

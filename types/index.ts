@@ -34,6 +34,7 @@ export type CreateEventParams = {
     categoryId: string;
     onlinePrice?: string;
     inPersonPrice?: string;
+    priceCategories?: { name: string; price: string }[];
     isFree: boolean;
     url?: string;
   };
@@ -64,6 +65,7 @@ export type UpdateEventParams = {
     categoryId: string;
     onlinePrice?: string;
     inPersonPrice?: string;
+    priceCategories?: { name: string; price: string }[];
     isFree: boolean;
     url?: string;
   };
@@ -117,6 +119,7 @@ export type Event = {
   description: string;
   onlinePrice: string;
   inPersonPrice: string;
+  priceCategories?: { name: string; price: string }[];
   isFree: boolean;
   imageUrl: string;
   locationType: 'Online' | 'In-Person' | 'Hybrid';

@@ -10,7 +10,7 @@ export const headerLinks = [
   {
     label: 'Dashboard',
     route: '/dashboard',
-  },  
+  },
 ];
 
 export const heroContent = [
@@ -41,9 +41,9 @@ export const heroContent = [
 export const eventDefaultValues = {
   title: '',
   description: '',
-  locationType: ('Online' as 'Online' | 'In-Person' | 'Hybrid'),
+  locationType: 'Online' as 'Online' | 'In-Person' | 'Hybrid',
   location: '',
-  cordinates: '',
+  coordinates: '',
   imageUrl: '',
   startDateTime: new Date(),
   endDateTime: new Date(),
@@ -51,6 +51,7 @@ export const eventDefaultValues = {
   categoryId: '',
   inPersonPrice: '',
   onlinePrice: '',
+  priceCategories: [],
   currency: 'NGN',
   isFree: false,
   url: '',
