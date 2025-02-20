@@ -47,9 +47,14 @@ const EventSchema = new Schema(
     endDateTime: { type: Date, required: true, default: Date.now },
     onlinePrice: { type: String },
     inPersonPrice: { type: String },
-    priceCategories: [{ name: { type: String }, price: { type: String } }],
-    currency: { type: String, required: true },
     isFree: { type: Boolean, default: false },
+    priceCategories: [
+      {
+        name: { type: String, required: true },
+        price: { type: String, required: true },
+      },
+    ],
+    currency: { type: String, required: true },
     url: { type: String },
     type: { type: Schema.Types.ObjectId, ref: 'Type' },
     category: { type: Schema.Types.ObjectId, ref: 'Category' },
