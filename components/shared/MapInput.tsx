@@ -108,6 +108,9 @@ const MapInput: React.FC<MapInputProps> = ({ value, onChange }) => {
           onLoad={onLoad}
           onUnmount={onUnmount}
           onClick={handleMapClick}
+          options={{
+            gestureHandling: 'greedy',
+          }}
         >
           <Marker position={markerPosition} />
         </GoogleMap>
