@@ -283,3 +283,9 @@ export type LocationTypeSelectorProps = {
 export type PriceCategoriesInputProps = {
   control: Control<any>;
 };
+
+export type PriceCategoryField = {
+  id: string;
+  name: string;
+  price: string;
+};
