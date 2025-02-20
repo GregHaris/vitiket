@@ -1,7 +1,7 @@
 'use client';
 
 import { generateClientDropzoneAccept } from 'uploadthing/client';
-import { Dispatch, SetStateAction, useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { X } from 'lucide-react';
 import Image from 'next/image';
@@ -34,7 +34,7 @@ export default function FileUploader({
       }
 
       setFileState(newFile);
-      setFiles([newFile]); // Use the function directly
+      setFiles([newFile]); 
       onFieldChange(convertFileToUrl(newFile));
     },
     [setFiles, onFieldChange]
