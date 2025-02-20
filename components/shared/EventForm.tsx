@@ -26,6 +26,7 @@ import PriceInput from './FormPriceInput';
 import TitleInput from './FormTitleInput';
 import Url from './FormUrlInput';
 import UploadImage from './FormImageUploadSection';
+import PriceCategoriesInput from './PriceCategoriesInput';
 
 type EventFormProps = {
   userId: string;
@@ -196,6 +197,7 @@ export default function EventForm({
                       />
                     </>
                   )}
+                  <PriceCategoriesInput control={form.control} />
                   <Currency control={form.control} />
                   <EventTypeSelector control={form.control} />
                   <CategorySelector control={form.control} />
