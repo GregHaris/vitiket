@@ -11,6 +11,8 @@ import { MapInputProps } from '@/types';
 const containerStyle = {
   width: '100%',
   height: '400px',
+  maxWidth: '100%',
+  maxHeight: '100%',
 };
 
 const defaultCenter = {
@@ -98,16 +100,18 @@ const MapInput: React.FC<MapInputProps> = ({ value, onChange }) => {
       </div>
 
       {/* Google Map */}
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={markerPosition}
-        zoom={10}
-        onLoad={onLoad}
-        onUnmount={onUnmount}
-        onClick={handleMapClick}
-      >
-        <Marker position={markerPosition} />
-      </GoogleMap>
+      <div className="map-container">
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={markerPosition}
+          zoom={10}
+          onLoad={onLoad}
+          onUnmount={onUnmount}
+          onClick={handleMapClick}
+        >
+          <Marker position={markerPosition} />
+        </GoogleMap>
+      </div>
     </div>
   );
 };
