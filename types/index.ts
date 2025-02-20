@@ -1,4 +1,5 @@
-import { UseFormSetValue } from 'react-hook-form';
+import { ReactNode } from 'react';
+import { UseFormReturn, Control, UseFormSetValue } from 'react-hook-form';
 
 // ====== USER PARAMS
 export type CreateUserParams = {
@@ -207,37 +208,70 @@ export type DropdownProps = {
   onChange: (value: string) => void;
 };
 
-export interface TypeProps {
+export type TypeProps = {
   name: string;
   icon: React.ComponentType<{ className?: string }>;
-}
+};
 
-export interface LocationSectionProps {
+export type FormSectionProps = {
+  title?: string;
+  description?: string;
+  children: ReactNode;
+};
+
+export type DateTimePickerProps = {
+  name: string;
+  label: string;
+};
+
+export type ContactDetailsProps = {
   control: any;
-  locationType: string;
-}
+};
 
-export interface FormTextInputProps {
+export type PriceInputProps = {
+  control: Control<any> & { setValue: UseFormSetValue<any> };
+  name: string;
+  label: string;
+};
+
+export type UrlProps = {
   control: any;
   name: string;
   label: string;
-  placeholder: string;
-  required?: boolean;
-}
+  placeholder?: string;
+};
 
-export interface FormDatePickerProps {
+export type CurrencyProps = {
   control: any;
-  name: string;
-  label: string;
-  required?: boolean;
-}
+};
 
-export interface ContactDetailsSectionProps {
-  control: any;
-}
-
-export interface PricingSectionProps {
+export type LocationProps = {
   control: any;
   locationType: string;
-  setValue: UseFormSetValue<any>;
-}
+  form: UseFormReturn<any>;
+};
+
+export type MapInputProps = {
+  value: { location: string; coordinates: string };
+  onChange: (value: { location: string; coordinates: string }) => void;
+};
+
+export type EventTypeSelectorProps = {
+  control: any;
+};
+
+export type CategorySelectorProps = {
+  control: any;
+};
+
+export type TitleInputProps = {
+  control: any;
+};
+
+export type DescriptionEditorProps = {
+  control: any;
+};
+
+export type LocationTypeSelectorProps = {
+  control: any;
+};
