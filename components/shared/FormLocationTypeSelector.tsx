@@ -1,0 +1,60 @@
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { LocationTypeSelectorProps } from '@/types';
+
+export default function LocationTypeSelector({
+  control,
+}: LocationTypeSelectorProps) {
+  return (
+    <FormField
+      control={control}
+      name="locationType"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel className="text-sm font-medium">
+            Location Type <span className="text-red-400">*</span>
+          </FormLabel>
+          <FormControl>
+            <RadioGroup
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              className="flex gap-4 items-center"
+            >
+              <FormItem>
+                <div className="flex items-center space-x-2">
+                  <FormControl>
+                    <RadioGroupItem value="Online" />
+                  </FormControl>
+                  <FormLabel>Online</FormLabel>
+                </div>
+              </FormItem>
+              <FormItem>
+                <div className="flex items-center space-x-2">
+                  <FormControl>
+                    <RadioGroupItem value="In-Person" />
+                  </FormControl>
+                  <FormLabel>In-Person</FormLabel>
+                </div>
+              </FormItem>
+              <FormItem>
+                <div className="flex items-center space-x-2">
+                  <FormControl>
+                    <RadioGroupItem value="Hybrid" />
+                  </FormControl>
+                  <FormLabel>Hybrid</FormLabel>
+                </div>
+              </FormItem>
+            </RadioGroup>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
