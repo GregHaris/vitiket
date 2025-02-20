@@ -1,10 +1,12 @@
-import React, { useCallback, useState, useRef, useEffect } from 'react';
 import {
   GoogleMap,
   Marker,
   useJsApiLoader,
   Autocomplete,
 } from '@react-google-maps/api';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
+
+import { MapInputProps } from '@/types';
 
 const containerStyle = {
   width: '100%',
@@ -14,11 +16,6 @@ const containerStyle = {
 const defaultCenter = {
   lat: 0,
   lng: 0,
-};
-
-type MapInputProps = {
-  value: { location: string; coordinates: string }
-  onChange: (value: { location: string; coordinates: string }) => void;
 };
 
 const MapInput: React.FC<MapInputProps> = ({ value, onChange }) => {
