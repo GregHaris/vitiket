@@ -225,6 +225,7 @@ export type FormSectionProps = {
 export type DateTimePickerProps = {
   name: string;
   label: string;
+  placeholder: string;
 };
 
 export type ContactDetailsProps = {
