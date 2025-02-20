@@ -278,3 +278,7 @@ export type DescriptionEditorProps = {
 export type LocationTypeSelectorProps = {
   control: any;
 };
+
+export type PriceCategoriesInputProps = {
+  control: Control<any>;
+};
