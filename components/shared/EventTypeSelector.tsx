@@ -1,4 +1,5 @@
-import { EventTypeSelectorProps } from '@/types';
+import { useFormContext } from 'react-hook-form';
+
 import {
   FormField,
   FormItem,
@@ -7,7 +8,8 @@ import {
 } from '@/components/ui/form';
 import TypesDropdown from './TypesDropdown';
 
-export default function EventTypeSelector({ control }: EventTypeSelectorProps) {
+export default function EventTypeSelector() {
+  const { control } = useFormContext();
   return (
     <FormField
       control={control}

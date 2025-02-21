@@ -1,3 +1,5 @@
+import { useFormContext } from 'react-hook-form';
+
 import {
   FormField,
   FormItem,
@@ -5,9 +7,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import CategoriesDropdown from './CategoriesDropdown';
-import { CategorySelectorProps } from '@/types';
 
-export default function CategorySelector({ control }: CategorySelectorProps) {
+export default function CategorySelector() {
+  const { control } = useFormContext();
   return (
     <FormField
       control={control}
