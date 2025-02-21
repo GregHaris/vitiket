@@ -52,6 +52,7 @@ export const eventDefaultValues = {
   inPersonPrice: '',
   virtualPrice: '',
   priceCategories: [],
+  quantity: null,
   currency: 'NGN',
   isFree: false,
   url: '',
