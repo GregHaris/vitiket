@@ -18,8 +18,8 @@ export default function PriceCategoriesInput({
   });
 
   const locationType = watch('locationType') as
-    | 'Online'
-    | 'In-Person'
+    | 'Virtual'
+    | 'Physical'
     | 'Hybrid';
   const isFree = watch('isFree');
 

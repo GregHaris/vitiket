@@ -68,7 +68,7 @@ export default function EventForm({
   async function onSubmit(values: z.infer<typeof eventFormSchema>) {
     const eventData = {
       ...values,
-      location: values.locationType === 'Online' ? 'Online' : values.location,
+      location: values.locationType === 'Virtual' ? 'Virtual' : values.location,
       coordinates: values.coordinates,
     };
 
@@ -181,7 +181,7 @@ export default function EventForm({
                   </div>
                   {!isFree && (
                     <>
-                      {locationType === 'Online' && (
+                      {locationType === 'Virtual' && (
                         <>
                           <PriceCategoriesInput control={form.control} />
                           <Url
@@ -192,7 +192,7 @@ export default function EventForm({
                           />
                         </>
                       )}
-                      {locationType === 'In-Person' && (
+                      {locationType === 'Physical' && (
                         <>
                           <PriceCategoriesInput control={form.control} />
                         </>
@@ -203,7 +203,7 @@ export default function EventForm({
                           <Url
                             control={form.control}
                             name="url"
-                            label="Online Event URL"
+                            label="Virtual Event URL"
                             placeholder="https://example.com"
                           />
                         </>

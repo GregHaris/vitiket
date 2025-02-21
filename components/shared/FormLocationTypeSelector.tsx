@@ -29,17 +29,17 @@ export default function LocationTypeSelector({
               <FormItem>
                 <div className="flex items-center space-x-2">
                   <FormControl>
-                    <RadioGroupItem value="Online" />
+                    <RadioGroupItem value="Virtual" />
                   </FormControl>
-                  <FormLabel>Online</FormLabel>
+                  <FormLabel>Virtual</FormLabel>
                 </div>
               </FormItem>
               <FormItem>
                 <div className="flex items-center space-x-2">
                   <FormControl>
-                    <RadioGroupItem value="In-Person" />
+                    <RadioGroupItem value="Physical" />
                   </FormControl>
-                  <FormLabel>In-Person</FormLabel>
+                  <FormLabel>Physical</FormLabel>
                 </div>
               </FormItem>
               <FormItem>
