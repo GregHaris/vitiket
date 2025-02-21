@@ -67,4 +67,16 @@ export const eventDefaultValues = {
 
 export const currencies = ['NGN', 'USD', 'EUR'];
 
-export const predefinedPriceCategories = ['Early Bird', 'Regular', 'VIP'];
+export const predefinedCategories = {
+  Online: ['General Price', 'Early Bird', 'Regular', 'VIP', 'Other'],
+  'In-Person': ['General Price', 'Early Bird', 'Regular', 'VIP', 'Other'],
+  Hybrid: [
+    'General Price',
+    'Online Price',
+    'In-Person Price',
+    'Early Bird',
+    'Regular',
+    'VIP',
+    'Other',
+  ],
+};
