@@ -40,14 +40,24 @@ export const eventFormSchema = z
       .optional(),
   })
   .refine(
-    (data) =>
-      data.isFree ||
-      (data.priceCategories && data.priceCategories.length > 0) ||
-      (data.locationType === 'Virtual' && data.url) ||
-      (data.locationType === 'Physical' && data.location) ||
-      (data.locationType === 'Hybrid' && (data.url || data.location)),
+    (data) => {
+      if (data.isFree) {
+        return true;
+      }
+
+      switch (data.locationType) {
+        case 'Virtual':
+          return !!data.url;
+        case 'Physical':
+          return !!data.location;
+        case 'Hybrid':
+          return !!data.url || !!data.location;
+        default:
+          return false;
+      }
+    },
     {
-      message: 'At least one price category is required for non-free events',
+      message: 'Please fill all required fields for non-free events',
       path: ['priceCategories'],
     }
   );
