@@ -16,7 +16,7 @@ import { PriceCategoriesInputProps, PriceCategory } from '@/types';
 export default function PriceCategoriesInput({
   control,
 }: PriceCategoriesInputProps) {
-  const { register, watch } = useFormContext();
+  const { watch } = useFormContext();
   const { fields, append, remove } = useFieldArray<{
     priceCategories: PriceCategory[];
   }>({
