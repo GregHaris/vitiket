@@ -7,12 +7,12 @@ export interface IEvent extends Document {
   imageUrl: string;
   location?: string;
   coordinates?: string;
-  locationType: 'Online' | 'In-Person' | 'Hybrid';
+  locationType: 'Virtual' | 'Physical' | 'Hybrid';
   startDateTime: Date;
   endDateTime: Date;
   createdAt: Date;
   updatedAt: Date;
-  onlinePrice: string;
+  virtualPrice: string;
   inPersonPrice: string;
   priceCategories: { name: string; price: string }[];
   currency: string;
@@ -37,7 +37,7 @@ const EventSchema = new Schema(
     description: { type: String, required: true },
     locationType: {
       type: String,
-      enum: ['Online', 'In-Person', 'Hybrid'],
+      enum: ['Virtual', 'Physical', 'Hybrid'],
       required: true,
     },
     location: { type: String },
@@ -45,7 +45,7 @@ const EventSchema = new Schema(
     imageUrl: { type: String, required: true },
     startDateTime: { type: Date, required: true, default: Date.now },
     endDateTime: { type: Date, required: true, default: Date.now },
-    onlinePrice: { type: String },
+    virtualPrice: { type: String },
     inPersonPrice: { type: String },
     isFree: { type: Boolean, default: false },
     priceCategories: [
