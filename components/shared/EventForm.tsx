@@ -205,12 +205,12 @@ export default function EventForm({
                       )}
                     </>
                   )}
+                  <Currency control={form.control} />
                   <LocationSection
                     control={form.control}
                     locationType={locationType}
                     form={form}
                   />
-                  <Currency control={form.control} />
                   <EventTypeSelector control={form.control} />
                   <CategorySelector control={form.control} />
                   <DateTimePicker
