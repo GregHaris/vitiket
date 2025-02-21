@@ -157,6 +157,11 @@ export default function EventForm({
                   <DescriptionEditor control={form.control} />
                   <UploadImage />
                   <LocationTypeSelector control={form.control} />
+                  <LocationSection
+                    control={form.control}
+                    locationType={locationType}
+                    form={form}
+                  />
                   <div className="flex items-center mb-4">
                     <Checkbox
                       id="isFree"
@@ -182,7 +187,7 @@ export default function EventForm({
                           <Url
                             control={form.control}
                             name="url"
-                            label="Online Event URL"
+                            label="Event URL"
                             placeholder="https://example.com"
                           />
                         </>
@@ -206,11 +211,6 @@ export default function EventForm({
                     </>
                   )}
                   <Currency control={form.control} />
-                  <LocationSection
-                    control={form.control}
-                    locationType={locationType}
-                    form={form}
-                  />
                   <EventTypeSelector control={form.control} />
                   <CategorySelector control={form.control} />
                   <DateTimePicker
