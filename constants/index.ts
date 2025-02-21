@@ -66,3 +66,5 @@ export const eventDefaultValues = {
 };
 
 export const currencies = ['NGN', 'USD', 'EUR'];
+
+export const predefinedPriceCategories = ['Early Bird', 'Regular', 'VIP'];
