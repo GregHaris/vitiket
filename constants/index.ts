@@ -41,7 +41,7 @@ export const heroContent = [
 export const eventDefaultValues = {
   title: '',
   description: '',
-  locationType: 'Online' as 'Online' | 'In-Person' | 'Hybrid',
+  locationType: 'Virtual' as 'Virtual' | 'Physical' | 'Hybrid',
   location: '',
   coordinates: '',
   imageUrl: '',
@@ -50,7 +50,7 @@ export const eventDefaultValues = {
   typeId: '',
   categoryId: '',
   inPersonPrice: '',
-  onlinePrice: '',
+  virtualPrice: '',
   priceCategories: [],
   currency: 'NGN',
   isFree: false,
@@ -68,12 +68,12 @@ export const eventDefaultValues = {
 export const currencies = ['NGN', 'USD', 'EUR'];
 
 export const predefinedCategories = {
-  Online: ['General Price', 'Early Bird', 'Regular', 'VIP', 'Other'],
-  'In-Person': ['General Price', 'Early Bird', 'Regular', 'VIP', 'Other'],
+  Virtual: ['General Admission', 'Early Bird', 'Regular', 'VIP', 'Other'],
+  Physical: ['General Admission', 'Early Bird', 'Regular', 'VIP', 'Other'],
   Hybrid: [
-    'General Price',
-    'Online Price',
-    'In-Person Price',
+    'General Admission',
+    'Virtual',
+    'Physical Attendance',
     'Early Bird',
     'Regular',
     'VIP',
