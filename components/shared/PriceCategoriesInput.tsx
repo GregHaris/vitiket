@@ -35,10 +35,10 @@ export default function PriceCategoriesInput({
   };
 
   return (
-    <div className="space-y-6 py-10 wrapper">
+    <div className="space-y-6 py-5 wrapper">
       <h3 className="text-lg font-semibold">Price Categories</h3>
       <p className="text-sm text-gray-500">Please add price categories:</p>
-      <div className="flex gap-4 mb-4">
+      <div className="flex gap-4 mb-4 flex-wrap">
         {availableCategories.map((category) => (
           <Button
             key={category}
@@ -51,9 +51,11 @@ export default function PriceCategoriesInput({
         ))}
       </div>
       {fields.map((field, index) => (
-        <div key={field.id} className="flex gap-4 items-center mb-2">
+        <div key={field.id} className="flex gap-4 items-center">
           <div className="flex flex-col">
-            <label className="text-sm font-medium">Name</label>
+            <label className="text-sm font-medium">
+              Name <span className="text-red-400">*</span>
+            </label>
             <Input
               {...register(`priceCategories.${index}.name`)}
               placeholder="Category Name"
@@ -62,7 +64,9 @@ export default function PriceCategoriesInput({
             />
           </div>
           <div className="flex flex-col">
-            <label className="text-sm font-medium">Price</label>
+            <label className="text-sm font-medium">
+              Price <span className="text-red-400">*</span>
+            </label>
             <Input
               {...register(`priceCategories.${index}.price`)}
               placeholder="Enter price"
@@ -74,7 +78,7 @@ export default function PriceCategoriesInput({
             variant="ghost"
             size="icon"
             onClick={() => remove(index)}
-            className="text-red-500 hover:text-red-700 cursor-pointer mr-4"
+            className="text-red-500 hover:text-red-700 cursor-pointer"
             aria-label="Remove category"
             title="Remove category"
           >
