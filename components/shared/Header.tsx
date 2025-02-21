@@ -23,7 +23,7 @@ const Header = () => {
 
         <div className="flex justify-between gap-8">
           <SignedIn>
-            <div className="hidden md:flex-between w-full max-w-xs gap-8">
+            <div className="hidden md:flex-between w-full max-w-sm gap-8">
               <NavItems />
               <DisplayAdmin />
             </div>
