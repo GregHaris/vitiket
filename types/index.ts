@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { UseFormReturn, Control, UseFormSetValue } from 'react-hook-form';
+import { UseFormReturn, Control,} from 'react-hook-form';
 
 // ====== USER PARAMS
 export type CreateUserParams = {
@@ -225,29 +225,13 @@ export type DateTimePickerProps = {
   placeholder: string;
 };
 
-export type ContactDetailsProps = {
-  control: any;
-};
-
-export type PriceInputProps = {
-  control: Control<any> & { setValue: UseFormSetValue<any> };
-  name: string;
-  label: string;
-};
-
 export type UrlProps = {
-  control: any;
   name: string;
   label: string;
   placeholder?: string;
 };
 
-export type CurrencyProps = {
-  control: any;
-};
-
 export type LocationProps = {
-  control: any;
   locationType: string;
   form: UseFormReturn<any>;
 };
@@ -255,26 +239,6 @@ export type LocationProps = {
 export type MapInputProps = {
   value: { location: string; coordinates: string };
   onChange: (value: { location: string; coordinates: string }) => void;
-};
-
-export type EventTypeSelectorProps = {
-  control: any;
-};
-
-export type CategorySelectorProps = {
-  control: any;
-};
-
-export type TitleInputProps = {
-  control: any;
-};
-
-export type DescriptionEditorProps = {
-  control: any;
-};
-
-export type LocationTypeSelectorProps = {
-  control: any;
 };
 
 export type PriceCategoriesInputProps = {
