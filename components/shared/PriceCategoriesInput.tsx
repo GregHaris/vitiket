@@ -3,36 +3,72 @@ import { X } from 'lucide-react';
 
 import { Button } from '@ui/button';
 import { Input } from '@ui/input';
-import { PriceCategoriesInputProps } from '@/types';
+import { predefinedCategories } from '@/constants';
+import { PriceCategoriesInputProps, PriceCategory } from '@/types';
 
 export default function PriceCategoriesInput({
   control,
 }: PriceCategoriesInputProps) {
-  const { register } = useFormContext();
-  const { fields, append, remove } = useFieldArray({
+  const { register, watch } = useFormContext();
+  const { fields, append, remove } = useFieldArray<{
+    priceCategories: PriceCategory[];
+  }>({
     control,
     name: 'priceCategories',
   });
 
-  const addCategory = () => {
-    append({ name: '', price: '' });
+  const locationType = watch('locationType') as
+    | 'Online'
+    | 'In-Person'
+    | 'Hybrid';
+  const isFree = watch('isFree');
+
+  if (isFree) return null;
+
+  const selectedCategories = fields.map((field) => field.name);
+  const availableCategories = predefinedCategories[locationType].filter(
+    (category) => !selectedCategories.includes(category)
+  );
+
+  const addCategory = (category: string) => {
+    append({ name: category, price: category === 'Other' ? '' : '0.00' });
   };
 
   return (
-    <div className="space-y-6 py-10">
+    <div className="space-y-6 py-10 wrapper">
       <h3 className="text-lg font-semibold">Price Categories</h3>
+      <p className="text-sm text-gray-500">Please add price categories:</p>
+      <div className="flex gap-4 mb-4">
+        {availableCategories.map((category) => (
+          <Button
+            key={category}
+            type="button"
+            onClick={() => addCategory(category)}
+            className="button"
+          >
+            {category}
+          </Button>
+        ))}
+      </div>
       {fields.map((field, index) => (
         <div key={field.id} className="flex gap-4 items-center mb-2">
-          <Input
-            {...register(`priceCategories.${index}.name`)}
-            placeholder="Category Name"
-            className="input-field p-regular-14"
-          />
-          <Input
-            {...register(`priceCategories.${index}.price`)}
-            placeholder="Price"
-            className="input-field p-regular-14"
-          />
+          <div className="flex flex-col">
+            <label className="text-sm font-medium">Name</label>
+            <Input
+              {...register(`priceCategories.${index}.name`)}
+              placeholder="Category Name"
+              className="input-field p-regular-14"
+              disabled={field.name !== 'Other'}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className="text-sm font-medium">Price</label>
+            <Input
+              {...register(`priceCategories.${index}.price`)}
+              placeholder="Enter price"
+              className="input-field p-regular-14"
+            />
+          </div>
           <Button
             type="button"
             variant="ghost"
@@ -46,9 +82,6 @@ export default function PriceCategoriesInput({
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={addCategory} className="button">
-        Add Category
-      </Button>
     </div>
   );
 }
