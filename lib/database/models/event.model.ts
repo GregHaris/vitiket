@@ -48,7 +48,7 @@ const EventSchema = new Schema(
       {
         name: { type: String, required: true, trim: true },
         price: { type: String, required: true, trim: true },
-        quantity: { type: Number, default: null },
+        quantity: { type: Number, default: 0 },
       },
     ],
     currency: { type: String, required: true },
