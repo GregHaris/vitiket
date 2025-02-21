@@ -12,7 +12,7 @@ export interface IEvent extends Document {
   endDateTime: Date;
   createdAt: Date;
   updatedAt: Date;
-  priceCategories?: { name: string; price: string; quantity?: number }[];
+  priceCategories?: { name: string; price: string; quantity?: number | null }[];
   currency: string;
   isFree?: boolean;
   url?: string;
@@ -48,7 +48,7 @@ const EventSchema = new Schema(
       {
         name: { type: String, required: true, trim: true },
         price: { type: String, required: true, trim: true },
-        quantity: { type: Number, default: 0 },
+        quantity: { type: Number, default: null },
       },
     ],
     currency: { type: String, required: true },
