@@ -25,9 +25,10 @@ export default function PriceCategoriesInput({
 
   if (isFree) return null;
 
+  // Filter available categories
   const selectedCategories = fields.map((field) => field.name);
   const availableCategories = predefinedCategories[locationType].filter(
-    (category) => !selectedCategories.includes(category)
+    (category) => !selectedCategories.includes(category) || category === 'Other'
   );
 
   const addCategory = (category: string) => {
