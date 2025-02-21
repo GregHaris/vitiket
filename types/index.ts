@@ -281,4 +281,5 @@ export type PriceCategoriesInputProps = {
 export type PriceCategory = {
   name: string;
   price: string;
+  quantity: number;
 };
