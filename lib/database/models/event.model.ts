@@ -12,7 +12,8 @@ export interface IEvent extends Document {
   endDateTime: Date;
   createdAt: Date;
   updatedAt: Date;
-  priceCategories?: { name: string; price: string; quantity?: number | null }[];
+  priceCategories?: { name: string; price: string }[];
+  quantity?: number | null;
   currency: string;
   isFree?: boolean;
   url?: string;
@@ -48,9 +49,9 @@ const EventSchema = new Schema(
       {
         name: { type: String, required: true, trim: true },
         price: { type: String, required: true, trim: true },
-        quantity: { type: Number, default: null },
       },
     ],
+    quantity: { type: Number, default: null },
     currency: { type: String, required: true },
     url: { type: String },
     type: { type: Schema.Types.ObjectId, ref: 'Type' },
