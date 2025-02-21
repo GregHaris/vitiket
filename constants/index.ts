@@ -41,7 +41,7 @@ export const heroContent = [
 export const eventDefaultValues = {
   title: '',
   description: '',
-  locationType: 'Virtual' as 'Virtual' | 'Physical' | 'Hybrid',
+  locationType: 'Virtual' as 'Virtual',
   location: '',
   coordinates: '',
   imageUrl: '',
