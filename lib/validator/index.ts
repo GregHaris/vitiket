@@ -18,8 +18,6 @@ export const eventFormSchema = z
     categoryId: z.string(),
     typeId: z.string(),
     currency: z.string(),
-    onlinePrice: z.string().optional(),
-    inPersonPrice: z.string().optional(),
     isFree: z.boolean(),
     url: z.string().url({ message: 'Invalid URL' }).optional(),
     contactDetails: z.object({
@@ -44,13 +42,14 @@ export const eventFormSchema = z
   .refine(
     (data) =>
       data.isFree ||
-      (data.locationType === 'Online' && data.onlinePrice) ||
-      (data.locationType === 'In-Person' && data.inPersonPrice) ||
-      (data.locationType === 'Hybrid' &&
-        data.onlinePrice &&
-        data.inPersonPrice),
+      (data.priceCategories && data.priceCategories.length > 0) ||
+      (data.locationType === 'Online' && data.url) ||
+      (data.locationType === 'In-Person' && data.location) ||
+      (data.locationType === 'Hybrid' && (data.url || data.location)),
     {
-      message: 'Price is required for non-free events',
-      path: ['onlinePrice', 'inPersonPrice'],
+      message: 'At least one price category is required for non-free events',
+      path: ['priceCategories'],
     }
   );
+
+export type eventFormValues = z.infer<typeof eventFormSchema>;
