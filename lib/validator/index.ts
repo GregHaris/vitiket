@@ -9,7 +9,7 @@ export const eventFormSchema = z
       .string()
       .min(10, { message: 'Description must be at least 3 characters' })
       .max(1500, { message: 'Description must be less than 1500 characters' }),
-    locationType: z.enum(['Online', 'In-Person', 'Hybrid']),
+    locationType: z.enum(['Virtual', 'Physical', 'Hybrid']),
     location: z.string().optional().default(''),
     coordinates: z.string().optional().default(''),
     imageUrl: z.string(),
@@ -43,8 +43,8 @@ export const eventFormSchema = z
     (data) =>
       data.isFree ||
       (data.priceCategories && data.priceCategories.length > 0) ||
-      (data.locationType === 'Online' && data.url) ||
-      (data.locationType === 'In-Person' && data.location) ||
+      (data.locationType === 'Virtual' && data.url) ||
+      (data.locationType === 'Physical' && data.location) ||
       (data.locationType === 'Hybrid' && (data.url || data.location)),
     {
       message: 'At least one price category is required for non-free events',

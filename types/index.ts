@@ -24,7 +24,7 @@ export type CreateEventParams = {
   event: {
     title: string;
     description: string;
-    locationType: 'Online' | 'In-Person' | 'Hybrid';
+    locationType: 'Virtual' | 'Physical' | 'Hybrid';
     location?: string;
     coordinates?: string;
     imageUrl: string;
@@ -32,7 +32,7 @@ export type CreateEventParams = {
     endDateTime: Date;
     typeId: string;
     categoryId: string;
-    onlinePrice?: string;
+    virtualPrice?: string;
     inPersonPrice?: string;
     priceCategories?: PriceCategory[];
     isFree: boolean;
@@ -56,14 +56,14 @@ export type UpdateEventParams = {
     title: string;
     imageUrl: string;
     description: string;
-    locationType: 'Online' | 'In-Person' | 'Hybrid';
+    locationType: 'Virtual' | 'Physical' | 'Hybrid';
     location?: string;
     coordinates?: string;
     startDateTime: Date;
     endDateTime: Date;
     typeId: string;
     categoryId: string;
-    onlinePrice?: string;
+    virtualPrice?: string;
     inPersonPrice?: string;
     priceCategories?: PriceCategory[];
     isFree: boolean;
@@ -117,12 +117,12 @@ export type Event = {
   _id: string;
   title: string;
   description: string;
-  onlinePrice: string;
+  virtualPrice: string;
   inPersonPrice: string;
   priceCategories?: PriceCategory[];
   isFree: boolean;
   imageUrl: string;
-  locationType: 'Online' | 'In-Person' | 'Hybrid';
+  locationType: 'Virtual' | 'Physical' | 'Hybrid';
   location?: string;
   coordinates?: string;
   startDateTime: Date;
