@@ -2,7 +2,14 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import { X } from 'lucide-react';
 
 import { Button } from '@ui/button';
-import { Input } from '@ui/input';
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { predefinedCategories } from '@/constants';
 import { PriceCategoriesInputProps, PriceCategory } from '@/types';
 
@@ -54,24 +61,46 @@ export default function PriceCategoriesInput({
       {fields.map((field, index) => (
         <div key={field.id} className="flex gap-4 items-center">
           <div className="flex flex-col">
-            <label className="text-sm font-medium">
-              Name <span className="text-red-400">*</span>
-            </label>
-            <Input
-              {...register(`priceCategories.${index}.name`)}
-              placeholder="Category Name"
-              className="input-field p-regular-14"
-              disabled={field.name !== 'Other'}
+            <FormField
+              control={control}
+              name={`priceCategories.${index}.name`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
+                    Name <span className="text-red-400">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Category Name"
+                      className="input-field p-regular-14"
+                      disabled={field.value !== 'Other'}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
           </div>
           <div className="flex flex-col">
-            <label className="text-sm font-medium">
-              Price <span className="text-red-400">*</span>
-            </label>
-            <Input
-              {...register(`priceCategories.${index}.price`)}
-              placeholder="Enter price"
-              className="input-field p-regular-14"
+            <FormField
+              control={control}
+              name={`priceCategories.${index}.price`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
+                    Price <span className="text-red-400">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Enter price"
+                      className="input-field p-regular-14"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
           </div>
           <Button
