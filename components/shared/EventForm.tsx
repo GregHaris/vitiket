@@ -178,13 +178,13 @@ export default function EventForm({
                     <>
                       {locationType === 'Online' && (
                         <>
+                          <PriceCategoriesInput control={form.control} />
                           <Url
                             control={form.control}
                             name="url"
                             label="Online Event URL"
                             placeholder="https://example.com"
                           />
-                          <PriceCategoriesInput control={form.control} />
                         </>
                       )}
                       {locationType === 'In-Person' && (
