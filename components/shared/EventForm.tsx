@@ -53,6 +53,7 @@ export default function EventForm({
                 name: event.category.name,
               }
             : { _id: '', name: '' },
+          priceCategories: event.priceCategories || [],
           imageUrl: event.imageUrl || '',
         }
       : { ...eventDefaultValues, imageUrl: '' };
