@@ -12,11 +12,9 @@ export interface IEvent extends Document {
   endDateTime: Date;
   createdAt: Date;
   updatedAt: Date;
-  virtualPrice: string;
-  inPersonPrice: string;
   priceCategories: { name: string; price: string }[];
   currency: string;
-  isFree: boolean;
+  isFree?: boolean;
   url?: string;
   type: { _id: string; name: string };
   category: { _id: string; name: string };
@@ -45,8 +43,6 @@ const EventSchema = new Schema(
     imageUrl: { type: String, required: true },
     startDateTime: { type: Date, required: true, default: Date.now },
     endDateTime: { type: Date, required: true, default: Date.now },
-    virtualPrice: { type: String },
-    inPersonPrice: { type: String },
     isFree: { type: Boolean, default: false },
     priceCategories: [
       {

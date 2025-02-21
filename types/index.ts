@@ -35,7 +35,7 @@ export type CreateEventParams = {
     virtualPrice?: string;
     inPersonPrice?: string;
     priceCategories?: PriceCategory[];
-    isFree: boolean;
+    isFree?: boolean;
     url?: string;
   };
   contactDetails: {
@@ -66,7 +66,7 @@ export type UpdateEventParams = {
     virtualPrice?: string;
     inPersonPrice?: string;
     priceCategories?: PriceCategory[];
-    isFree: boolean;
+    isFree?: boolean;
     url?: string;
   };
   contactDetails: {
@@ -120,7 +120,7 @@ export type Event = {
   virtualPrice: string;
   inPersonPrice: string;
   priceCategories?: PriceCategory[];
-  isFree: boolean;
+  isFree?: boolean;
   imageUrl: string;
   locationType: 'Virtual' | 'Physical' | 'Hybrid';
   location?: string;
