@@ -39,7 +39,7 @@ export default function PriceCategoriesInput({
   );
 
   const addCategory = (category: string) => {
-    append({ name: category, price: '0.00' });
+    append({ name: category, price: '0.00', quantity: 0 });
   };
 
   return (
@@ -59,7 +59,7 @@ export default function PriceCategoriesInput({
         ))}
       </div>
       {fields.map((field, index) => (
-        <div key={field.id} className="flex gap-4 items-center">
+        <div key={field.id} className="flex flex-col md:flex-row gap-4 items-center">
           <div className="flex flex-col">
             <FormField
               control={control}
@@ -96,6 +96,26 @@ export default function PriceCategoriesInput({
                       {...field}
                       placeholder="Enter price"
                       className="input-field p-regular-14"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div><div className="flex flex-col">
+            <FormField
+              control={control}
+              name={`priceCategories.${index}.quantity`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
+                    Ticket Quantity
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Ticket Quantity"
+                      className="input-field w-1 p-regular-14"
                     />
                   </FormControl>
                   <FormMessage />
