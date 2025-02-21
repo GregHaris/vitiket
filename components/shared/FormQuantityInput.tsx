@@ -26,7 +26,7 @@ export default function QuantityInput() {
                 {...field}
                 type="number"
                 placeholder="Quantity"
-                className="input-field w-24 p-regular-14" // Short width
+                className="input-field hide-number-spinners p-regular-14"
                 value={field.value || ''}
                 onChange={(e) =>
                   field.onChange(
