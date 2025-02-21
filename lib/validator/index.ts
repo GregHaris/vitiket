@@ -18,7 +18,7 @@ export const eventFormSchema = z
     categoryId: z.string(),
     typeId: z.string(),
     currency: z.string(),
-    isFree: z.boolean(),
+    isFree: z.boolean().optional(),
     url: z.string().url({ message: 'Invalid URL' }).optional(),
     contactDetails: z.object({
       phoneNumber: z
