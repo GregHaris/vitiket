@@ -2,6 +2,7 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import { X } from 'lucide-react';
 
 import { Button } from '@ui/button';
+import { eventFormValues } from '@/lib/validator';
 import {
   FormField,
   FormItem,
@@ -11,15 +12,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { predefinedCategories } from '@/constants';
-import { PriceCategoriesInputProps, PriceCategory } from '@/types';
 
-export default function PriceCategoriesInput({
-  control,
-}: PriceCategoriesInputProps) {
-  const { watch } = useFormContext();
-  const { fields, append, remove } = useFieldArray<{
-    priceCategories: PriceCategory[];
-  }>({
+export default function PriceCategoriesInput() {
+  const { control, watch } = useFormContext<eventFormValues>();
+  const { fields, append, remove } = useFieldArray<eventFormValues>({
     control,
     name: 'priceCategories',
   });
