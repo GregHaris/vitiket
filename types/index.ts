@@ -32,8 +32,6 @@ export type CreateEventParams = {
     endDateTime: Date;
     typeId: string;
     categoryId: string;
-    virtualPrice?: string;
-    inPersonPrice?: string;
     priceCategories?: PriceCategory[];
     isFree?: boolean;
     url?: string;
@@ -63,8 +61,6 @@ export type UpdateEventParams = {
     endDateTime: Date;
     typeId: string;
     categoryId: string;
-    virtualPrice?: string;
-    inPersonPrice?: string;
     priceCategories?: PriceCategory[];
     isFree?: boolean;
     url?: string;
@@ -117,8 +113,6 @@ export type Event = {
   _id: string;
   title: string;
   description: string;
-  virtualPrice: string;
-  inPersonPrice: string;
   priceCategories?: PriceCategory[];
   isFree?: boolean;
   imageUrl: string;
