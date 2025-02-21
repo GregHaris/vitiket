@@ -33,6 +33,7 @@ export type CreateEventParams = {
     typeId: string;
     categoryId: string;
     priceCategories?: PriceCategory[];
+    quantity?: number | null;
     isFree?: boolean;
     url?: string;
   };
@@ -62,6 +63,7 @@ export type UpdateEventParams = {
     typeId: string;
     categoryId: string;
     priceCategories?: PriceCategory[];
+    quantity?: number | null;
     isFree?: boolean;
     url?: string;
   };
@@ -114,6 +116,7 @@ export type Event = {
   title: string;
   description: string;
   priceCategories?: PriceCategory[];
+  quantity?: number | null;
   isFree?: boolean;
   imageUrl: string;
   locationType: 'Virtual' | 'Physical' | 'Hybrid';
@@ -281,5 +284,4 @@ export type PriceCategoriesInputProps = {
 export type PriceCategory = {
   name: string;
   price: string;
-  quantity: number;
 };
