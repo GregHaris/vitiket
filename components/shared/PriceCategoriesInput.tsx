@@ -32,7 +32,7 @@ export default function PriceCategoriesInput({
   );
 
   const addCategory = (category: string) => {
-    append({ name: category, price: category === 'Other' ? '' : '0.00' });
+    append({ name: category, price: '0.00' });
   };
 
   return (
