@@ -1,3 +1,5 @@
+import { useFormContext } from 'react-hook-form';
+
 import {
   FormControl,
   FormField,
@@ -8,11 +10,8 @@ import {
 import { LocationProps } from '@/types';
 import MapInput from './MapInput';
 
-export default function LocationSection({
-  control,
-  locationType,
-  form,
-}: LocationProps) {
+export default function LocationSection({ locationType, form }: LocationProps) {
+  const { control } = useFormContext();
   return (
     <>
       {(locationType === 'Physical' || locationType === 'Hybrid') && (

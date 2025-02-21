@@ -1,3 +1,5 @@
+import { useFormContext } from 'react-hook-form';
+
 import {
   FormControl,
   FormField,
@@ -8,7 +10,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { UrlProps } from '@/types';
 
-export default function Url({ control, name, label, placeholder }: UrlProps) {
+export default function Url({ name, label, placeholder }: UrlProps) {
+  const { control } = useFormContext();
   return (
     <FormField
       control={control}

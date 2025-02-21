@@ -1,3 +1,5 @@
+import { useFormContext } from 'react-hook-form';
+
 import {
   FormControl,
   FormField,
@@ -6,9 +8,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { TitleInputProps } from '@/types';
 
-export default function TitleInput({ control }: TitleInputProps) {
+export default function TitleInput() {
+  const { control } = useFormContext();
   return (
     <FormField
       control={control}

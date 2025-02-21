@@ -1,3 +1,5 @@
+import { useFormContext } from 'react-hook-form';
+
 import {
   FormControl,
   FormField,
@@ -6,9 +8,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import TiptapEditor from './TiptapEditor';
-import { DescriptionEditorProps } from '@/types';
 
-export default function DescriptionEditor({ control }: DescriptionEditorProps) {
+export default function DescriptionEditor() {
+  const { control } = useFormContext();
   return (
     <FormField
       control={control}

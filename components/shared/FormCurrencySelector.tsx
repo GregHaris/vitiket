@@ -1,5 +1,6 @@
+import { useFormContext } from 'react-hook-form';
+
 import { currencies } from '@/constants';
-import { CurrencyProps } from '@/types';
 import {
   FormControl,
   FormField,
@@ -15,7 +16,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-export default function Currency({ control }: CurrencyProps) {
+export default function Currency() {
+  const { control } = useFormContext();
   return (
     <FormField
       control={control}

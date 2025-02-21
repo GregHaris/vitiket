@@ -1,8 +1,8 @@
+import { useFormContext } from 'react-hook-form';
 import { FiMail, FiPhone } from 'react-icons/fi';
 import { RiLink } from 'react-icons/ri';
 import Image from 'next/image';
 
-import { ContactDetailsProps } from '@/types';
 import {
   FormControl,
   FormField,
@@ -11,7 +11,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-export default function ContactDetails({ control }: ContactDetailsProps) {
+export default function ContactDetails() {
+  const { control } = useFormContext();
   return (
     <div className="space-y-6 py-10">
       <h3 className="text-lg font-semibold">Contact Details</h3>
