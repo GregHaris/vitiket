@@ -34,7 +34,7 @@ export type CreateEventParams = {
     categoryId: string;
     onlinePrice?: string;
     inPersonPrice?: string;
-    priceCategories?: { name: string; price: string }[];
+    priceCategories?: PriceCategory[];
     isFree: boolean;
     url?: string;
   };
@@ -65,7 +65,7 @@ export type UpdateEventParams = {
     categoryId: string;
     onlinePrice?: string;
     inPersonPrice?: string;
-    priceCategories?: { name: string; price: string }[];
+    priceCategories?: PriceCategory[];
     isFree: boolean;
     url?: string;
   };
@@ -119,7 +119,7 @@ export type Event = {
   description: string;
   onlinePrice: string;
   inPersonPrice: string;
-  priceCategories?: { name: string; price: string }[];
+  priceCategories?: PriceCategory[];
   isFree: boolean;
   imageUrl: string;
   locationType: 'Online' | 'In-Person' | 'Hybrid';
@@ -284,8 +284,7 @@ export type PriceCategoriesInputProps = {
   control: Control<any>;
 };
 
-export type PriceCategoryField = {
-  id: string;
+export type PriceCategory = {
   name: string;
   price: string;
 };
