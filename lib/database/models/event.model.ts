@@ -50,8 +50,8 @@ const EventSchema = new Schema(
     isFree: { type: Boolean, default: false },
     priceCategories: [
       {
-        name: { type: String, required: true },
-        price: { type: String, required: true },
+        name: { type: String, required: true, trim: true },
+        price: { type: String, required: true, trim: true },
       },
     ],
     currency: { type: String, required: true },
