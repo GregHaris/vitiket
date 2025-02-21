@@ -12,7 +12,7 @@ export interface IEvent extends Document {
   endDateTime: Date;
   createdAt: Date;
   updatedAt: Date;
-  priceCategories: { name: string; price: string }[];
+  priceCategories?: { name: string; price: string }[];
   currency: string;
   isFree?: boolean;
   url?: string;
