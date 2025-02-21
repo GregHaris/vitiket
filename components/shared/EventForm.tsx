@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
@@ -67,6 +67,7 @@ export default function EventForm({
   const locationType = form.watch('locationType');
   const isFree = form.watch('isFree');
 
+  const methods = useForm();
   async function onSubmit(values: z.infer<typeof eventFormSchema>) {
     const eventData = {
       ...values,
@@ -139,93 +140,92 @@ export default function EventForm({
                   : 'Update the details of your event'
               }
             >
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                    }
-                  }}
-                  className="space-y-6"
-                >
-                  {Object.keys(form.formState.errors).length > 0 && (
-                    <div className="text-red-500 mb-4">
-                      * Please fill out all required fields (*)
-                    </div>
-                  )}
-
-                  <TitleInput />
-                  <DescriptionEditor />
-                  <UploadImage />
-                  <LocationTypeSelector />
-                  <LocationSection
-                    locationType={locationType}
-                    form={form}
-                  />
-                  <IsFreeCheckbox
-                    onCheckedChange={(isChecked) => {
-                      if (isChecked) {
-                        form.setValue('priceCategories', []);
+              <FormProvider {...methods}>
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
                       }
                     }}
-                  />
-                  <QuantityInput />
-                  {!isFree && (
-                    <>
-                      {locationType === 'Virtual' && (
-                        <>
-                          <PriceCategoriesInput control={form.control} />
-                          <Url
-                            name="url"
-                            label="Event URL"
-                            placeholder="https://example.com"
-                          />
-                        </>
-                      )}
-                      {locationType === 'Physical' && (
-                        <>
-                          <PriceCategoriesInput control={form.control} />
-                        </>
-                      )}
-                      {locationType === 'Hybrid' && (
-                        <>
-                          <PriceCategoriesInput control={form.control} />
-                          <Url
-                            name="url"
-                            label="Virtual Event URL"
-                            placeholder="https://example.com"
-                          />
-                        </>
-                      )}
-                    </>
-                  )}
-                  <Currency />
-                  <EventTypeSelector />
-                  <CategorySelector />
-                  <DateTimePicker
-                    name="startDateTime"
-                    label="Start Date & Time"
-                    placeholder="Start Date:"
-                  />
-                  <DateTimePicker
-                    name="endDateTime"
-                    label="End Date & Time"
-                    placeholder="End Date:"
-                  />
-                  <ContactDetails />
-                  <Button
-                    type="submit"
-                    size={'lg'}
-                    className="button w-full"
-                    disabled={form.formState.isSubmitting}
+                    className="space-y-6"
                   >
-                    {form.formState.isSubmitting
-                      ? 'Submitting...'
-                      : `${type} Event`}
-                  </Button>
-                </form>
-              </Form>
+                    {Object.keys(form.formState.errors).length > 0 && (
+                      <div className="text-red-500 mb-4">
+                        * Please fill out all required fields (*)
+                      </div>
+                    )}
+
+                    <TitleInput />
+                    <DescriptionEditor />
+                    <UploadImage />
+                    <LocationTypeSelector />
+                    <LocationSection locationType={locationType} form={form} />
+                    <IsFreeCheckbox
+                      onCheckedChange={(isChecked) => {
+                        if (isChecked) {
+                          form.setValue('priceCategories', []);
+                        }
+                      }}
+                    />
+                    <QuantityInput />
+                    {!isFree && (
+                      <>
+                        {locationType === 'Virtual' && (
+                          <>
+                            <PriceCategoriesInput />
+                            <Url
+                              name="url"
+                              label="Event URL"
+                              placeholder="https://example.com"
+                            />
+                          </>
+                        )}
+                        {locationType === 'Physical' && (
+                          <>
+                            <PriceCategoriesInput />
+                          </>
+                        )}
+                        {locationType === 'Hybrid' && (
+                          <>
+                            <PriceCategoriesInput />
+                            <Url
+                              name="url"
+                              label="Virtual Event URL"
+                              placeholder="https://example.com"
+                            />
+                          </>
+                        )}
+                      </>
+                    )}
+                    <Currency />
+                    <EventTypeSelector />
+                    <CategorySelector />
+                    <DateTimePicker
+                      name="startDateTime"
+                      label="Start Date & Time"
+                      placeholder="Start Date:"
+                    />
+                    <DateTimePicker
+                      name="endDateTime"
+                      label="End Date & Time"
+                      placeholder="End Date:"
+                    />
+                    <ContactDetails />
+                    <Button
+                      type="submit"
+                      size={'lg'}
+                      className="button w-full"
+                      disabled={form.formState.isSubmitting}
+                    >
+                      {form.formState.isSubmitting
+                        ? 'Submitting...'
+                        : `${type} Event`}
+                    </Button>
+                  </form>
+                </Form>
+              </FormProvider>
             </FormSection>
           </div>
 
