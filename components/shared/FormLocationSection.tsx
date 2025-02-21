@@ -1,5 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 
+import { eventFormValues } from '@/lib/validator';
 import {
   FormControl,
   FormField,
@@ -11,7 +12,7 @@ import { LocationProps } from '@/types';
 import MapInput from './MapInput';
 
 export default function LocationSection({ locationType, form }: LocationProps) {
-  const { control } = useFormContext();
+  const { control } = useFormContext<eventFormValues>();
   return (
     <>
       {(locationType === 'Physical' || locationType === 'Hybrid') && (
@@ -27,8 +28,8 @@ export default function LocationSection({ locationType, form }: LocationProps) {
                 <FormControl>
                   <MapInput
                     value={{
-                      location: field.value,
-                      coordinates: form.getValues('coordinates'),
+                      location: field.value || '',
+                      coordinates: form.getValues('coordinates') || '',
                     }}
                     onChange={(value) => {
                       field.onChange(value.location);
