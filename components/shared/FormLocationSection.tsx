@@ -15,7 +15,7 @@ export default function LocationSection({
 }: LocationProps) {
   return (
     <>
-      {locationType === 'In-Person' && (
+      {(locationType === 'In-Person' || locationType=== 'Hybrid') &&   (
         <>
           <FormField
             control={control}
