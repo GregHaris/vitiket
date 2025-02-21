@@ -6,7 +6,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
 import { PriceInputProps } from '@/types';
 
 export default function PriceInput({ control, name, label }: PriceInputProps) {
@@ -31,36 +30,6 @@ export default function PriceInput({ control, name, label }: PriceInputProps) {
                     control.setValue('isFree', false);
                   }
                 }}
-              />
-              <FormField
-                control={control}
-                name="isFree"
-                render={({ field: isFreeField }) => (
-                  <FormItem>
-                    <FormControl>
-                      <div className="flex items-center">
-                        <label
-                          htmlFor="isFree"
-                          className="whitespace-nowrap pr-3 leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Free Ticket
-                        </label>
-                        <Checkbox
-                          id="isFree"
-                          checked={isFreeField.value}
-                          onCheckedChange={(checked) => {
-                            isFreeField.onChange(checked);
-                            if (checked) {
-                              control.setValue(name, '');
-                            }
-                          }}
-                          className="mr-2 h-5 w-5 border-2 border-primary-500 cursor-pointer"
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
               />
             </div>
           </FormControl>
