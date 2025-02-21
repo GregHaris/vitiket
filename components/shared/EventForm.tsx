@@ -1,5 +1,3 @@
-'use client';
-
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
@@ -19,14 +17,15 @@ import Currency from './FormCurrencySelector';
 import DateTimePicker from './FormDatePicker';
 import DescriptionEditor from './FormDescriptionEditor';
 import EventTypeSelector from './EventTypeSelector';
-import LocationSection from './FormLocationSection';
 import FormSection from './FormSection';
+import IsFreeCheckbox from './FormIsFreeCheckbox';
+import LocationSection from './FormLocationSection';
 import LocationTypeSelector from './FormLocationTypeSelector';
+import PriceCategoriesInput from './PriceCategoriesInput';
 import TitleInput from './FormTitleInput';
+import QuantityInput from './FormQuantityInput';
 import Url from './FormUrlInput';
 import UploadImage from './FormImageUploadSection';
-import PriceCategoriesInput from './PriceCategoriesInput';
-import { Checkbox } from '@ui/checkbox';
 
 type EventFormProps = {
   userId: string;
@@ -154,39 +153,28 @@ export default function EventForm({
                     </div>
                   )}
 
-                  <TitleInput control={form.control} />
-                  <DescriptionEditor control={form.control} />
+                  <TitleInput />
+                  <DescriptionEditor />
                   <UploadImage />
-                  <LocationTypeSelector control={form.control} />
+                  <LocationTypeSelector />
                   <LocationSection
-                    control={form.control}
                     locationType={locationType}
                     form={form}
                   />
-                  <div className="flex items-center mb-4">
-                    <Checkbox
-                      id="isFree"
-                      {...form.register('isFree')}
-                      className="mr-2 h-5 w-5 border-2 border-primary-500 cursor-pointer"
-                      onCheckedChange={(checked) => {
-                        const isChecked = checked === true;
-                        form.setValue('isFree', isChecked);
-                        if (isChecked) {
-                          form.setValue('priceCategories', []);
-                        }
-                      }}
-                    />
-                    <label htmlFor="isFree" className="text-sm">
-                      Free Event?
-                    </label>
-                  </div>
+                  <IsFreeCheckbox
+                    onCheckedChange={(isChecked) => {
+                      if (isChecked) {
+                        form.setValue('priceCategories', []);
+                      }
+                    }}
+                  />
+                  <QuantityInput />
                   {!isFree && (
                     <>
                       {locationType === 'Virtual' && (
                         <>
                           <PriceCategoriesInput control={form.control} />
                           <Url
-                            control={form.control}
                             name="url"
                             label="Event URL"
                             placeholder="https://example.com"
@@ -202,7 +190,6 @@ export default function EventForm({
                         <>
                           <PriceCategoriesInput control={form.control} />
                           <Url
-                            control={form.control}
                             name="url"
                             label="Virtual Event URL"
                             placeholder="https://example.com"
@@ -211,9 +198,9 @@ export default function EventForm({
                       )}
                     </>
                   )}
-                  <Currency control={form.control} />
-                  <EventTypeSelector control={form.control} />
-                  <CategorySelector control={form.control} />
+                  <Currency />
+                  <EventTypeSelector />
+                  <CategorySelector />
                   <DateTimePicker
                     name="startDateTime"
                     label="Start Date & Time"
@@ -224,7 +211,7 @@ export default function EventForm({
                     label="End Date & Time"
                     placeholder="End Date:"
                   />
-                  <ContactDetails control={form.control} />
+                  <ContactDetails />
                   <Button
                     type="submit"
                     size={'lg'}
