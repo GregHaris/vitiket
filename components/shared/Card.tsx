@@ -3,9 +3,9 @@ import Link from 'next/link';
 
 import { formatDateTime } from '@/lib/utils';
 import { IEvent } from '@/lib/database/models/event.model';
+import getUserId from '@/utils/userId';
 
 import { DeleteConfirmation } from './DeleteConfirmation';
-import getUserId from '@/utils/userId';
 
 type CardProps = {
   event: IEvent;
@@ -18,6 +18,12 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
 
   const isEventCreator = userId === event.organizer?._id.toString();
 
+  // Calculate the lowest price from priceCategories
+  const lowestPrice = event.priceCategories?.reduce((min, category) => {
+    const price = parseFloat(category.price);
+    return price < min ? price : min;
+  }, Infinity);
+
   return (
     <div className="group relative flex min-h-[380px] w-full max-w-[400px] flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-lg md:min-h-[438px]">
       <Link
@@ -25,7 +31,6 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
         style={{ backgroundImage: `url(${event.imageUrl})` }}
         className="flex-center flex-grow bg-gray-50 bg-cover bg-center text-gray-500"
       />
-      {/* {IS EVENT CREATOR ...} */}
       {isEventCreator && !hidePrice && (
         <div className="absolute right-2 top-2 flex flex-col gap-4 rounded-xl bg-white p-3 shadow-sm transition-all">
           <Link href={`/events/${event._id}/update`}>
@@ -43,7 +48,7 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
         {!hidePrice && (
           <div className="flex gap-2">
             <span className="p-semi-bold-14 w-min rounded-full bg-green-100 px-4 py-1 text-green-60">
-              {event.isFree ? 'Free' : `$${event.price}`}
+              {event.isFree ? 'Free' : `$${lowestPrice?.toFixed(2)}`}
             </span>
             <p className="p-semi-bold-14 w-min rounded-full bg-grey-500/10 px-4 py-1 text-grey-500 whitespace-nowrap line-clamp-1">
               {event.category.name}
