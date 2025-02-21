@@ -27,6 +27,11 @@ export const eventFormSchema = z.object({
     facebook: z.string().optional(),
     x: z.string().optional(),
   }),
+  quantity: z
+    .number()
+    .nullable()
+    .optional()
+    .transform((val) => (val === null || val === undefined ? null : val)),
   priceCategories: z
     .array(
       z.object({
