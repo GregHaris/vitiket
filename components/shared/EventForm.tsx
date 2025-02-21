@@ -19,14 +19,14 @@ import Currency from './FormCurrencySelector';
 import DateTimePicker from './FormDatePicker';
 import DescriptionEditor from './FormDescriptionEditor';
 import EventTypeSelector from './EventTypeSelector';
-import FormSection from './FormSection';
 import LocationSection from './FormLocationSection';
+import FormSection from './FormSection';
 import LocationTypeSelector from './FormLocationTypeSelector';
-import PriceInput from './FormPriceInput';
 import TitleInput from './FormTitleInput';
 import Url from './FormUrlInput';
 import UploadImage from './FormImageUploadSection';
 import PriceCategoriesInput from './PriceCategoriesInput';
+import { Checkbox } from '@ui/checkbox';
 
 type EventFormProps = {
   userId: string;
@@ -63,6 +63,7 @@ export default function EventForm({
   });
 
   const locationType = form.watch('locationType');
+  const isFree = form.watch('isFree');
 
   async function onSubmit(values: z.infer<typeof eventFormSchema>) {
     const eventData = {
@@ -156,48 +157,59 @@ export default function EventForm({
                   <DescriptionEditor control={form.control} />
                   <UploadImage />
                   <LocationTypeSelector control={form.control} />
+                  <div className="flex items-center mb-4">
+                    <Checkbox
+                      id="isFree"
+                      {...form.register('isFree')}
+                      className="mr-2 h-5 w-5 border-2 border-primary-500 cursor-pointer"
+                      onCheckedChange={(checked) => {
+                        const isChecked = checked === true;
+                        form.setValue('isFree', isChecked);
+                        if (isChecked) {
+                          form.setValue('priceCategories', []);
+                        }
+                      }}
+                    />
+                    <label htmlFor="isFree" className="text-sm">
+                      Free Event?
+                    </label>
+                  </div>
+                  {!isFree && (
+                    <>
+                      {locationType === 'Online' && (
+                        <>
+                          <Url
+                            control={form.control}
+                            name="url"
+                            label="Online Event URL"
+                            placeholder="https://example.com"
+                          />
+                          <PriceCategoriesInput control={form.control} />
+                        </>
+                      )}
+                      {locationType === 'In-Person' && (
+                        <>
+                          <PriceCategoriesInput control={form.control} />
+                        </>
+                      )}
+                      {locationType === 'Hybrid' && (
+                        <>
+                          <PriceCategoriesInput control={form.control} />
+                          <Url
+                            control={form.control}
+                            name="url"
+                            label="Online Event URL"
+                            placeholder="https://example.com"
+                          />
+                        </>
+                      )}
+                    </>
+                  )}
                   <LocationSection
                     control={form.control}
                     locationType={locationType}
                     form={form}
                   />
-                  {locationType === 'Online' && (
-                    <>
-                      <Url
-                        control={form.control}
-                        name="url"
-                        label="Online Event URL"
-                        placeholder="https://example.com"
-                      />
-                      <PriceInput
-                        control={{ ...form.control, setValue: form.setValue }}
-                        name="onlinePrice"
-                        label="Price"
-                      />
-                    </>
-                  )}
-                  {locationType === 'In-Person' && (
-                    <PriceInput
-                      control={{ ...form.control, setValue: form.setValue }}
-                      name="inPersonPrice"
-                      label="Price"
-                    />
-                  )}
-                  {locationType === 'Hybrid' && (
-                    <>
-                      <PriceInput
-                        control={{ ...form.control, setValue: form.setValue }}
-                        name="inPersonPrice"
-                        label="In-Person Price"
-                      />
-                      <PriceInput
-                        control={{ ...form.control, setValue: form.setValue }}
-                        name="onlinePrice"
-                        label="Online Price"
-                      />
-                    </>
-                  )}
-                  <PriceCategoriesInput control={form.control} />
                   <Currency control={form.control} />
                   <EventTypeSelector control={form.control} />
                   <CategorySelector control={form.control} />
