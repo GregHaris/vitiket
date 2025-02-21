@@ -39,36 +39,13 @@ export default function PriceCategoriesInput({
   );
 
   const addCategory = (category: string) => {
-    append({ name: category, price: '0.00', quantity: 0 });
+    append({ name: category, price: '0.00' });
   };
 
   return (
     <div className="space-y-6 py-5 wrapper">
       <h3 className="text-lg font-semibold">Price Categories</h3>
       <p className="text-sm text-gray-500">Please add price categories:</p>
-      <div className="mb-4">
-        <FormField
-          control={control}
-          name="quantity"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm font-medium">
-                Ticket Quantity{' '}
-                <span className="italic text-gray-400">(optional)</span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  type="number"
-                  placeholder="Quantity"
-                  className="input-field p-regular-14 hide-number-spinners"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
       <div className="flex gap-4 mb-4 flex-wrap">
         {availableCategories.map((category) => (
           <Button
