@@ -51,8 +51,6 @@ export const eventDefaultValues = {
   endTime: new Date(),
   typeId: '',
   categoryId: '',
-  inPersonPrice: '',
-  virtualPrice: '',
   priceCategories: [],
   quantity: null,
   currency: 'NGN',
