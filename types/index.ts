@@ -31,8 +31,10 @@ export type CreateEventParams = {
     location?: string;
     coordinates?: string;
     imageUrl: string;
-    startDateTime: Date;
-    endDateTime: Date;
+    startDate: Date;
+    endDate: Date;
+    startTime: Date;
+    endTime: Date;
     typeId: string;
     categoryId: string;
     priceCategories?: PriceCategory[];
@@ -61,8 +63,10 @@ export type UpdateEventParams = {
     locationType: 'Virtual' | 'Physical' | 'Hybrid';
     location?: string;
     coordinates?: string;
-    startDateTime: Date;
-    endDateTime: Date;
+    startDate: Date;
+    endDate: Date;
+    startTime: Date;
+    endTime: Date;
     typeId: string;
     categoryId: string;
     priceCategories?: PriceCategory[];
@@ -125,8 +129,10 @@ export type Event = {
   locationType: 'Virtual' | 'Physical' | 'Hybrid';
   location?: string;
   coordinates?: string;
-  startDateTime: Date;
-  endDateTime: Date;
+  startDate: Date;
+  endDate: Date;
+  startTime: Date;
+  endTime: Date;
   url?: string;
   organizer: {
     _id: string;
@@ -235,8 +241,14 @@ export type FormSectionProps = {
   children: ReactNode;
 };
 
-export type DateTimePickerProps = {
-  name: 'startDateTime' | 'endDateTime';
+export type DatePickerProps = {
+  name: 'startDate' | 'endDate';
+  label: string;
+  placeholder: string;
+};
+
+export type TimePickerProps = {
+  name: 'startTime' | 'endTime';
   label: string;
   placeholder: string;
 };
