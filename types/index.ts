@@ -265,3 +265,7 @@ export type PriceCategory = {
 export type IsFreeCheckboxProps = {
   onCheckedChange: (checked: boolean) => void;
 };
+
+export type AddImageProps = {
+  setFiles: (files: File[]) => void;
+};
