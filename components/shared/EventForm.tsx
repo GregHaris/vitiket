@@ -17,7 +17,7 @@ import { useUploadThing } from '@/lib/uploadthing';
 import CategorySelector from './FormCategorySelector';
 import ContactDetails from './FormContactDetails';
 import Currency from './FormCurrencySelector';
-import DateTimePicker from './FormDatePicker';
+import DatePickerComponent from './FormDatePicker';
 import DescriptionEditor from './FormDescriptionEditor';
 import EventTypeSelector from './EventTypeSelector';
 import FormSection from './FormSection';
@@ -25,6 +25,7 @@ import IsFreeCheckbox from './FormIsFreeCheckbox';
 import LocationSection from './FormLocationSection';
 import LocationTypeSelector from './FormLocationTypeSelector';
 import PriceCategoriesInput from './PriceCategoriesInput';
+import TimePickerComponent from './FormTimePicker';
 import TitleInput from './FormTitleInput';
 import QuantityInput from './FormQuantityInput';
 import Url from './FormUrlInput';
@@ -45,8 +46,10 @@ export default function EventForm({
     event && type === 'Update'
       ? {
           ...event,
-          startDateTime: new Date(event.startDateTime),
-          endDateTime: new Date(event.endDateTime),
+          startDate: new Date(event.startDate),
+          endDate: new Date(event.endDate),
+          startTime: new Date(event.startTime),
+          endTime: new Date(event.endTime),
           category: event.category
             ? {
                 _id: event.category._id,
@@ -208,15 +211,25 @@ export default function EventForm({
                     <Currency />
                     <EventTypeSelector />
                     <CategorySelector />
-                    <DateTimePicker
-                      name="startDateTime"
-                      label="Start Date & Time"
+                    <DatePickerComponent
+                      name="startDate"
+                      label="Start Date"
                       placeholder="Start Date:"
                     />
-                    <DateTimePicker
-                      name="endDateTime"
-                      label="End Date & Time"
+                    <DatePickerComponent
+                      name="endDate"
+                      label="End Date"
                       placeholder="End Date:"
+                    />
+                    <TimePickerComponent
+                      name="startTime"
+                      label="Start Time"
+                      placeholder="Start Time:"
+                    />
+                    <TimePickerComponent
+                      name="endTime"
+                      label="End Time"
+                      placeholder="End Time:"
                     />
                     <ContactDetails />
                     <Button
