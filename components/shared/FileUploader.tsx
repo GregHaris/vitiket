@@ -1,18 +1,18 @@
 'use client';
 
 import { generateClientDropzoneAccept } from 'uploadthing/client';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { X } from 'lucide-react';
 import Image from 'next/image';
+import { useUploadThing } from '@/lib/uploadthing';
 
 import { Button } from '@ui/button';
-import { convertFileToUrl } from '@/lib/utils';
 
 type FileUploaderProps = {
   imageUrl: string;
   onFieldChange: (url: string) => void;
-  setFiles: (files: File[]) => void; 
+  setFiles: (files: File[]) => void;
 };
 
 export default function FileUploader({
@@ -21,10 +21,10 @@ export default function FileUploader({
   setFiles,
 }: FileUploaderProps) {
   const [file, setFileState] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { startUpload } = useUploadThing('imageUploader');
 
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
+    async (acceptedFiles: File[]) => {
       const newFile = acceptedFiles[0];
 
       // Check if the file size exceeds 4MB
@@ -34,10 +34,15 @@ export default function FileUploader({
       }
 
       setFileState(newFile);
-      setFiles([newFile]); 
-      onFieldChange(convertFileToUrl(newFile));
+      setFiles([newFile]);
+
+      // Upload the file to UploadThing
+      const res = await startUpload([newFile]);
+      if (res && res[0]?.url) {
+        onFieldChange(res[0].url);
+      }
     },
-    [setFiles, onFieldChange]
+    [setFiles, onFieldChange, startUpload]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -45,10 +50,6 @@ export default function FileUploader({
     accept: generateClientDropzoneAccept(['image/*']),
     maxFiles: 1,
   });
-
-  const handleAddMoreFiles = () => {
-    fileInputRef.current?.click();
-  };
 
   const removeFile = () => {
     setFileState(null);
@@ -70,7 +71,7 @@ export default function FileUploader({
           isDragActive ? 'border-primary bg-primary/10' : 'border-gray-300'
         }`}
       >
-        <input {...getInputProps()} ref={fileInputRef} />
+        <input {...getInputProps()} />
         {isDragActive ? (
           <p>Drop the file here ...</p>
         ) : (
@@ -110,13 +111,6 @@ export default function FileUploader({
           />
         </div>
       )}
-      <Button
-        type="button"
-        onClick={handleAddMoreFiles}
-        className="w-full mt-3 button"
-      >
-        {file ? 'Replace File' : 'Add File'}
-      </Button>
     </div>
   );
 }
