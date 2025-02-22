@@ -12,6 +12,9 @@ export default function ContactDetails() {
   return (
     <div className="space-y-6 py-10">
       <h3 className="text-lg font-semibold">Contact Details</h3>
+      <p className="italic text-gray-500 text-sm">
+        Required <span className="text-red-400">*</span>
+      </p>
       <FormField
         control={control}
         name="contactDetails.phoneNumber"
@@ -53,7 +56,7 @@ export default function ContactDetails() {
           </FormItem>
         )}
       />
-
+      <p className="italic text-gray-500 text-sm">Optional</p>
       <FormField
         control={control}
         name="contactDetails.website"
