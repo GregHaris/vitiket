@@ -39,7 +39,7 @@ export default function EventForm({
 }: EventFormProps) {
   const { startUpload } = useUploadThing('imageUploader');
   const router = useRouter();
-  const [files, setFiles] = useState<File[]>([]); // Manage files state here
+  const [files, setFiles] = useState<File[]>([]);
 
   const initialValues =
     event && type === 'Update'
