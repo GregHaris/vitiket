@@ -21,11 +21,7 @@ export const eventFormSchema = z
     typeId: z.string().min(1, { message: 'Type is required' }),
     currency: z.string().min(1, { message: 'Currency is required' }),
     isFree: z.boolean().optional().default(false),
-    url: z
-      .string()
-      .min(1, { message: 'URL is required' })
-      .url({ message: 'Invalid URL' })
-      .optional(),
+    url: z.string().optional(),
     contactDetails: z.object({
       phoneNumber: z
         .string()
@@ -58,12 +54,15 @@ export const eventFormSchema = z
     (data) => {
       // Validate URL for Virtual or Hybrid events
       if (data.locationType === 'Virtual' || data.locationType === 'Hybrid') {
+        if (!data.url) {
+          return false;
+        }
         return z.string().url().safeParse(data.url).success;
       }
       return true;
     },
     {
-      message: 'Invalid URL',
+      message: 'URL is required and must be a valid URL',
       path: ['url'],
     }
   )
