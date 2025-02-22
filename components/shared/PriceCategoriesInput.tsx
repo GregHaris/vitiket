@@ -73,7 +73,6 @@ export default function PriceCategoriesInput() {
                       {...field}
                       placeholder="Category Name"
                       className="input-field p-regular-14"
-                      disabled={field.value !== 'Other'}
                     />
                   </FormControl>
                   <FormMessage />
