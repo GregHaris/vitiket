@@ -6,12 +6,12 @@ import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import Image from 'next/image';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@ui/button';
 import { createEvent, updateEvent } from '@/lib/actions/event.actions';
 import { eventDefaultValues } from '@/constants';
+import { EventFormProps } from '@/types';
 import { eventFormSchema } from '@/lib/validator/index';
-import { Form } from '@/components/ui/form';
-import { IEvent } from '@/lib/database/models/event.model';
+import { Form } from '@ui/form';
 
 import CategorySelector from './FormCategorySelector';
 import ContactDetails from './FormContactDetails';
@@ -28,13 +28,6 @@ import TitleInput from './FormTitleInput';
 import QuantityInput from './FormQuantityInput';
 import Url from './FormUrlInput';
 import UploadImage from './FormImageUploadSection';
-
-type EventFormProps = {
-  userId: string;
-  type: 'Create' | 'Update';
-  event?: IEvent;
-  eventId?: string;
-};
 
 export default function EventForm({
   userId,
