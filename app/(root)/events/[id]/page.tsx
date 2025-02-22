@@ -1,14 +1,13 @@
+import { SearchParamProps } from '@/types';
 import Image from 'next/image';
 
-import { formatDateTime } from '@/lib/utils';
-import { SearchParamProps } from '@/types';
-
-import CheckoutButton from '@shared/CheckoutButton';
-import Collection from '@shared/Collection';
 import {
   getEventById,
   getRelatedEventsByCategory,
 } from '@/lib/actions/event.actions';
+import CheckoutButton from '@shared/CheckoutButton';
+import Collection from '@shared/Collection';
+import SafeHTMLRenderer from '@shared/SafeHTMLRenderer';
 
 const EventDetails = async (props: SearchParamProps) => {
   const resolvedSearchParams = await props.searchParams;
@@ -48,12 +47,10 @@ const EventDetails = async (props: SearchParamProps) => {
                   />
                   <div className="p-medium-16 lg:p-regular-20 items-center">
                     <p>
-                      {formatDateTime(event.startDateTime).dateOnly} -{' '}
-                      {formatDateTime(event.startDateTime).timeOnly}
+                      {event.startDate} - {event.endDate}
                     </p>
                     <p>
-                      {formatDateTime(event.endDateTime).dateOnly} -{' '}
-                      {formatDateTime(event.endDateTime).timeOnly}
+                      {event.startTime} - {event.endTime}
                     </p>
                   </div>
                 </div>
@@ -71,9 +68,7 @@ const EventDetails = async (props: SearchParamProps) => {
               </div>
               <div className="flex flex-col gap-2">
                 <p className="p-bold-20 text-gray-600">About Event</p>
-                <p className="p-medium-16 lg:p-regular-18">
-                  {event.description}
-                </p>
+                <SafeHTMLRenderer html={event.description} />
                 <p className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline">
                   {event.url}
                 </p>
