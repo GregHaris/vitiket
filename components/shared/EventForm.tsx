@@ -41,6 +41,8 @@ export default function EventForm({
     event && type === 'Update'
       ? {
           ...event,
+          startDateTime: new Date(event.startDateTime),
+          endDateTime: new Date(event.endDateTime),
           category: event.category
             ? {
                 _id: event.category._id,
