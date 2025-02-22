@@ -8,8 +8,10 @@ export interface IEvent extends Document {
   location?: string;
   coordinates?: string;
   locationType: 'Virtual' | 'Physical' | 'Hybrid';
-  startDateTime: Date;
-  endDateTime: Date;
+  startDate: Date;
+  endDate: Date;
+  startTime: Date;
+  endTime: Date;
   createdAt: Date;
   updatedAt: Date;
   priceCategories?: { name: string; price: string }[];
@@ -42,8 +44,10 @@ const EventSchema = new Schema(
     location: { type: String },
     coordinates: { type: String },
     imageUrl: { type: String, required: true },
-    startDateTime: { type: Date, required: true, default: Date.now },
-    endDateTime: { type: Date, required: true, default: Date.now },
+    startDate: { type: Date, required: true, default: Date.now },
+    endDate: { type: Date, required: true, default: Date.now },
+    startTime: { type: Date, required: true, default: Date.now },
+    endTime: { type: Date, required: true, default: Date.now },
     isFree: { type: Boolean, default: false },
     priceCategories: [
       {
