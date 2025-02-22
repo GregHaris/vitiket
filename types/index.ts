@@ -1,5 +1,8 @@
 import { ReactNode } from 'react';
-import { UseFormReturn, Control,} from 'react-hook-form';
+import { UseFormReturn } from 'react-hook-form';
+
+import { eventFormValues } from '@/lib/validator';
+import { IEvent } from '@/lib/database/models/event.model';
 
 // ====== USER PARAMS
 export type CreateUserParams = {
@@ -203,6 +206,19 @@ export type SearchParamProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+export type EventFormProps = {
+  userId: string;
+  type: 'Create' | 'Update';
+  event?: IEvent;
+  eventId?: string;
+};
+
+export type PaginationProps = {
+  page: number | string;
+  totalPages: number;
+  urlParamName?: string;
+};
+
 export type DropdownProps = {
   value: string;
   onChange: (value: string) => void;
@@ -220,20 +236,20 @@ export type FormSectionProps = {
 };
 
 export type DateTimePickerProps = {
-  name: string;
+  name: 'startDateTime' | 'endDateTime';
   label: string;
   placeholder: string;
 };
 
 export type UrlProps = {
-  name: string;
+  name: 'url';
   label: string;
   placeholder?: string;
 };
 
 export type LocationProps = {
   locationType: string;
-  form: UseFormReturn<any>;
+  form: UseFormReturn<eventFormValues>;
 };
 
 export type MapInputProps = {
@@ -241,11 +257,11 @@ export type MapInputProps = {
   onChange: (value: { location: string; coordinates: string }) => void;
 };
 
-export type PriceCategoriesInputProps = {
-  control: Control<any>;
-};
-
 export type PriceCategory = {
   name: string;
   price: string;
+};
+
+export type IsFreeCheckboxProps = {
+  onCheckedChange: (checked: boolean) => void;
 };
