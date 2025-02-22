@@ -21,12 +21,14 @@ export default function QuantityInput() {
         render={({ field }) => (
           <FormItem>
             <FormLabel className="text-sm font-medium">
-              Ticket Quantity <span className="text-red-400">*</span>
+              Ticket Quantity{' '}
+              <span className="italic text-gray-500 text-sm">(optional)</span>
             </FormLabel>
             <FormControl>
               <Input
                 {...field}
                 type="number"
+                inputMode="numeric"
                 placeholder="Quantity"
                 className="input-field hide-number-spinners p-regular-14"
                 value={field.value || ''}
@@ -35,6 +37,25 @@ export default function QuantityInput() {
                     e.target.value === '' ? null : Number(e.target.value)
                   )
                 }
+                onKeyDown={(e) => {
+                  if (
+                    [
+                      'Backspace',
+                      'Delete',
+                      'Shift',
+                      'Tab',
+                      'Escape',
+                      'Enter',
+                    ].includes(e.key) ||
+                    (e.ctrlKey && ['a', 'c', 'v', 'x'].includes(e.key)) ||
+                    ['Home', 'End', 'ArrowLeft', 'ArrowRight'].includes(e.key)
+                  ) {
+                    return;
+                  }
+                  if (isNaN(Number(e.key))) {
+                    e.preventDefault();
+                  }
+                }}
               />
             </FormControl>
             <FormMessage />
