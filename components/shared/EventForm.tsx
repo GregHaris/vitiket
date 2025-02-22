@@ -12,6 +12,7 @@ import { eventDefaultValues } from '@/constants';
 import { EventFormProps } from '@/types';
 import { eventFormSchema } from '@/lib/validator/index';
 import { Form } from '@ui/form';
+import { useUploadThing } from '@/lib/uploadthing';
 
 import CategorySelector from './FormCategorySelector';
 import ContactDetails from './FormContactDetails';
@@ -27,7 +28,8 @@ import PriceCategoriesInput from './PriceCategoriesInput';
 import TitleInput from './FormTitleInput';
 import QuantityInput from './FormQuantityInput';
 import Url from './FormUrlInput';
-import UploadImage from './FormImageUploadSection';
+import AddImage from './FormAddImageSection';
+import { useState } from 'react';
 
 export default function EventForm({
   userId,
@@ -35,7 +37,9 @@ export default function EventForm({
   event,
   eventId,
 }: EventFormProps) {
+  const { startUpload } = useUploadThing('imageUploader');
   const router = useRouter();
+  const [files, setFiles] = useState<File[]>([]); // Manage files state here
 
   const initialValues =
     event && type === 'Update'
@@ -62,10 +66,18 @@ export default function EventForm({
   const locationType = form.watch('locationType');
   const isFree = form.watch('isFree');
 
-  const methods = useForm();
   async function onSubmit(values: z.infer<typeof eventFormSchema>) {
+    let uploadedImageUrl: string = values.imageUrl;
+
+    if (files.length > 0) {
+      const uploadedImages = await startUpload(files);
+      if (!uploadedImages) return;
+      uploadedImageUrl = uploadedImages[0].url;
+    }
+
     const eventData = {
       ...values,
+      imageUrl: uploadedImageUrl,
       location: values.locationType === 'Virtual' ? 'Virtual' : values.location,
       coordinates: values.coordinates,
     };
@@ -135,7 +147,7 @@ export default function EventForm({
                   : 'Update the details of your event'
               }
             >
-              <FormProvider {...methods}>
+              <FormProvider {...form}>
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -151,10 +163,9 @@ export default function EventForm({
                         * Please fill out all required fields (*)
                       </div>
                     )}
-
                     <TitleInput />
                     <DescriptionEditor />
-                    <UploadImage />
+                    <AddImage setFiles={setFiles} />
                     <LocationTypeSelector />
                     <LocationSection locationType={locationType} form={form} />
                     <IsFreeCheckbox
