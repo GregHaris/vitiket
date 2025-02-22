@@ -21,12 +21,20 @@ export const eventFormSchema = z
     typeId: z.string().min(1, { message: 'Type is required' }),
     currency: z.string().min(1, { message: 'Currency is required' }),
     isFree: z.boolean().optional().default(false),
-    url: z.string().optional(),
+    url: z
+      .string()
+      .min(1, { message: 'URL is required' })
+      .url({ message: 'Invalid URL' })
+      .optional(),
     contactDetails: z.object({
       phoneNumber: z
         .string()
+        .min(1, { message: 'Phone number is required' })
         .min(10, { message: 'Phone number must be at least 10 characters' }),
-      email: z.string().email({ message: 'Invalid email address' }),
+      email: z
+        .string()
+        .min(1, { message: 'Email is required' })
+        .email({ message: 'Invalid email address' }),
       website: z.string().optional(),
       instagram: z.string().optional(),
       facebook: z.string().optional(),
