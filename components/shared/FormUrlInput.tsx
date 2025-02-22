@@ -1,17 +1,18 @@
 import { useFormContext } from 'react-hook-form';
 
+import { eventFormValues } from '@/lib/validator';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@ui/form';
+import { Input } from '@ui/input';
 import { UrlProps } from '@/types';
 
 export default function Url({ name, label, placeholder }: UrlProps) {
-  const { control } = useFormContext();
+  const { control } = useFormContext<eventFormValues>();
   return (
     <FormField
       control={control}

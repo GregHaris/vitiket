@@ -1,16 +1,17 @@
 import { useFormContext } from 'react-hook-form';
 
+import { eventFormValues } from '@/lib/validator';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@ui/form';
 import TiptapEditor from './TiptapEditor';
 
 export default function DescriptionEditor() {
-  const { control } = useFormContext();
+  const { control } = useFormContext<eventFormValues>();
   return (
     <FormField
       control={control}

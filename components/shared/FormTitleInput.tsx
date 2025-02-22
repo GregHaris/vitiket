@@ -1,16 +1,17 @@
 import { useFormContext } from 'react-hook-form';
 
+import { eventFormValues } from '@/lib/validator';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@ui/form';
+import { Input } from '@ui/input';
 
 export default function TitleInput() {
-  const { control } = useFormContext();
+  const { control } = useFormContext<eventFormValues>();
   return (
     <FormField
       control={control}

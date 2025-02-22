@@ -1,15 +1,17 @@
+import { useFormContext } from 'react-hook-form';
+
+import { eventFormValues } from '@/lib/validator';
 import {
   FormField,
   FormItem,
   FormLabel,
   FormControl,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useFormContext } from 'react-hook-form';
+} from '@ui/form';
+import { Input } from '@ui/input';
 
 export default function QuantityInput() {
-  const { control } = useFormContext();
+  const { control } = useFormContext<eventFormValues>();
 
   return (
     <div className="mb-4">
