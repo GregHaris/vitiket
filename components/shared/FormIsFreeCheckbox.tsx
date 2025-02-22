@@ -1,15 +1,13 @@
 import { useFormContext } from 'react-hook-form';
 
 import { Checkbox } from '@ui/checkbox';
-
-type IsFreeCheckboxProps = {
-  onCheckedChange: (checked: boolean) => void;
-};
+import { eventFormValues } from '@/lib/validator';
+import { IsFreeCheckboxProps } from '@/types';
 
 export default function IsFreeCheckbox({
   onCheckedChange,
 }: IsFreeCheckboxProps) {
-  const { register, setValue } = useFormContext();
+  const { register, setValue } = useFormContext<eventFormValues>();
 
   return (
     <div className="flex items-center mb-4">

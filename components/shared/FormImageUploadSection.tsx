@@ -2,19 +2,20 @@
 
 import { useFormContext } from 'react-hook-form';
 
-import FileUploader from './FileUploader';
+import { eventFormValues } from '@/lib/validator';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@ui/form';
 import { useUploadThing } from '@/lib/uploadthing';
+import FileUploader from './FileUploader';
 
 export default function UploadImage() {
   const { startUpload } = useUploadThing('imageUploader');
-  const { control, setValue } = useFormContext();
+  const { control, setValue } = useFormContext<eventFormValues>();
 
   const handleFileChange = async (files: File[]) => {
     if (files.length > 0) {

@@ -3,16 +3,12 @@ import { FiMail, FiPhone } from 'react-icons/fi';
 import { RiLink } from 'react-icons/ri';
 import Image from 'next/image';
 
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { eventFormValues } from '@/lib/validator';
+import { FormControl, FormField, FormItem, FormMessage } from '@ui/form';
+import { Input } from '@ui/input';
 
 export default function ContactDetails() {
-  const { control } = useFormContext();
+  const { control } = useFormContext<eventFormValues>();
   return (
     <div className="space-y-6 py-10">
       <h3 className="text-lg font-semibold">Contact Details</h3>

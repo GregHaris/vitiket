@@ -7,7 +7,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@ui/form';
 import { LocationProps } from '@/types';
 import MapInput from './MapInput';
 

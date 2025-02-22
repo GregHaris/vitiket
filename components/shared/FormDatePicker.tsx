@@ -3,16 +3,17 @@ import DatePicker from 'react-datepicker';
 import Image from 'next/image';
 
 import { DateTimePickerProps } from '@/types';
+import { eventFormValues } from '@/lib/validator';
+import { FormControl, FormField, FormItem, FormLabel } from '@ui/form';
 
 import 'react-datepicker/dist/react-datepicker.css';
-import { FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 
 export default function DateTimePicker({
   name,
   label,
   placeholder,
 }: DateTimePickerProps) {
-  const { control } = useFormContext();
+  const { control } = useFormContext<eventFormValues>();
 
   return (
     <FormField
@@ -36,7 +37,7 @@ export default function DateTimePicker({
                 {placeholder}
               </p>
               <DatePicker
-                selected={field.value}
+                selected={field.value as Date}
                 onChange={(date: Date | null) => field.onChange(date)}
                 showTimeSelect
                 timeInputLabel="Time:"

@@ -9,8 +9,8 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@ui/form';
+import { Input } from '@ui/input';
 import { predefinedCategories } from '@/constants';
 
 export default function PriceCategoriesInput() {

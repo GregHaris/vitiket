@@ -1,23 +1,24 @@
 import { useFormContext } from 'react-hook-form';
 
 import { currencies } from '@/constants';
+import { eventFormValues } from '@/lib/validator';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@ui/select';
 
 export default function Currency() {
-  const { control } = useFormContext();
+  const { control } = useFormContext<eventFormValues>();
   return (
     <FormField
       control={control}
