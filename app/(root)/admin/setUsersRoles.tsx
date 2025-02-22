@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { checkRole } from '@/utils/roles';
 import { clerkClient } from '@clerk/nextjs/server';
 import { removeRole, setRole } from './_actions';
-import { Button } from '@/components/ui/button';
+import { Button } from '@ui/button';
 
 export default async function SetUsersRoles({
   searchParams,
