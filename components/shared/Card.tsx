@@ -1,17 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { CardProps, CurrencyKey } from '@/types';
+import { currencySymbols } from '@/constants';
 import { formatDateTime } from '@/lib/utils';
-import { IEvent } from '@/lib/database/models/event.model';
 import getUserId from '@/utils/userId';
 
 import { DeleteConfirmation } from './DeleteConfirmation';
-
-type CardProps = {
-  event: IEvent;
-  hasOrderLink?: boolean;
-  hidePrice?: boolean;
-};
 
 const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
   const userId = await getUserId();
@@ -23,6 +18,21 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
     const price = parseFloat(category.price);
     return price < min ? price : min;
   }, Infinity);
+
+  // Determine the price display text
+  let priceDisplay = '';
+  if (event.isFree) {
+    priceDisplay = 'Free';
+  } else if (event.priceCategories?.length === 1) {
+    const priceCategory = event.priceCategories[0];
+    const currency = event.currency as CurrencyKey;
+    priceDisplay = `${currencySymbols[currency] || ''}${priceCategory.price}`;
+  } else if (event.priceCategories && event.priceCategories.length > 1) {
+    const currency = event.currency as CurrencyKey;
+    priceDisplay = `From ${
+      currencySymbols[currency] || ''
+    }${lowestPrice?.toFixed(2)}`;
+  }
 
   return (
     <div className="group relative flex min-h-[380px] w-full max-w-[400px] flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-lg md:min-h-[438px]">
@@ -47,8 +57,12 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
       <div className="flex min-h-[230px] flex-col gap-3 p-5 md:gap-4">
         {!hidePrice && (
           <div className="flex gap-2">
-            <span className="p-semi-bold-14 w-min rounded-full bg-green-100 px-4 py-1 text-green-60">
-              {event.isFree ? 'Free' : `$${lowestPrice?.toFixed(2)}`}
+            <span
+              className={`p-semi-bold-14 w-min rounded-full ${
+                event.isFree ? 'bg-green-100 text-green-60' : 'text-gray-600'
+              } px-4 py-1`}
+            >
+              {priceDisplay}
             </span>
             <p className="p-semi-bold-14 w-min rounded-full bg-grey-500/10 px-4 py-1 text-grey-500 whitespace-nowrap line-clamp-1">
               {event.category.name}
@@ -56,7 +70,7 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
           </div>
         )}
         <p className="p-medium-16 md:p-medium-18 text-gray-500">
-          {formatDateTime(event.startDateTime).dateTime}
+          {formatDateTime(event.startDate).dateTime}
         </p>
         <Link href={`/events/${event._id}`}>
           <p className="p-medium-16 md:p-medium-20 line-clamp-2 flex-1 text-black">
