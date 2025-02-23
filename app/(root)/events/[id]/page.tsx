@@ -50,18 +50,19 @@ const EventDetails = async (props: SearchParamProps) => {
 
           <div className="flex w-full flex-col gap-8 p-5 md:p-10">
             <div className="flex flex-col gap-2 space-y-6">
+              <p className="p-medium-16 rounded-full bg-grey-500/10 px-4 py-2.5 text-grey-500 w-fit">
+                {event.category.name}
+              </p>
+
               <h2 className="text-4xl font-bold">{event.title}</h2>
               <div className="flex flex-col gap-5">
                 <div className="flex flex-col md:flex-row md:justify-between md:gap-5 gap-3 justify-center mb-3">
-                  <div className="flex items-center gap-5 mb-3 md:mb-0">
+                  <div className="mb-3 md:mb-0">
                     <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
                       <span className="font-bold">Host:</span>{' '}
                       <span>
                         {event.organizer.firstName} {event.organizer.lastName}
                       </span>
-                    </p>
-                    <p className="p-medium-16 rounded-full bg-grey-500/10 px-4 py-2.5 text-grey-500">
-                      {event.category.name}
                     </p>
                   </div>
                   {/* Use Link to navigate to the checkout page */}
