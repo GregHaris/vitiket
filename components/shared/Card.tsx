@@ -55,20 +55,10 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
         </div>
       )}
       <div className="flex min-h-[230px] flex-col gap-3 p-5 md:gap-4">
-        {!hidePrice && (
-          <div className="flex gap-2">
-            <span
-              className={`p-semi-bold-14 w-min rounded-full ${
-                event.isFree ? 'bg-green-100 text-green-60' : 'text-gray-600'
-              } px-4 py-1`}
-            >
-              {priceDisplay}
-            </span>
-            <p className="p-semi-bold-14 w-min rounded-full bg-grey-500/10 px-4 py-1 text-grey-500 whitespace-nowrap line-clamp-1">
-              {event.category.name}
-            </p>
-          </div>
-        )}
+        <p className="p-semi-bold-14 w-min rounded-full bg-grey-500/10 px-4 py-1 text-grey-500 whitespace-nowrap line-clamp-1">
+          {event.category.name}
+        </p>
+
         <p className="p-medium-16 md:p-medium-18 text-gray-500">
           {formatDateTime(event.startDate).dateTime}
         </p>
@@ -77,6 +67,15 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
             {event.title}
           </p>
         </Link>
+        {!hidePrice && (
+          <div
+            className={`p-semi-bold-14 w-min rounded-full ${
+              event.isFree ? 'bg-green-100 text-green-60' : 'text-gray-600'
+            } px-4 py-1`}
+          >
+            {priceDisplay}
+          </div>
+        )}
 
         <div className="flex-between w-full">
           <p className="p-medium-14 md:p-medium-16 text-grey-600">
