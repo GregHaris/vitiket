@@ -14,5 +14,5 @@ export default function SafeHTMLRenderer({ html }: SafeHTMLRendererProps) {
     setSanitizedHtml(DOMPurify.sanitize(html));
   }, [html]);
 
-  return <div dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />;
+  return <div className='leading-7' dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />;
 }
