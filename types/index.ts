@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
+import { currencySymbols } from '@/constants';
 import { eventFormValues } from '@/lib/validator';
 import { IEvent } from '@/lib/database/models/event.model';
 
@@ -290,4 +291,12 @@ export type TooltipProps = {
 export type EventMapProps = {
   coordinates: string;
   destinationName: string;
+};
+
+export type CurrencyKey = keyof typeof currencySymbols;
+
+export type CardProps = {
+  event: IEvent;
+  hasOrderLink?: boolean;
+  hidePrice?: boolean;
 };
