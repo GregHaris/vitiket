@@ -80,7 +80,7 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
 
         <div className="flex-between w-full">
           <p className="p-medium-14 md:p-medium-16 text-grey-600">
-            <span className="font-bold">Host:</span>{' '}
+            <span className="font-bold">Organizer:</span>{' '}
             <span>
               {event.organizer.firstName} {event.organizer.lastName}
             </span>
