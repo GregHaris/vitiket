@@ -55,7 +55,7 @@ const EventDetails = async (props: SearchParamProps) => {
                 <div className="flex flex-col md:flex-row md:justify-between md:gap-5 gap-3 justify-center mb-3">
                   <div className="flex items-center gap-5 mb-3 md:mb-0">
                     <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
-                      <span className="font-bold">Host:</span>{' '}
+                      <span className="font-bold">Organizer:</span>{' '}
                       <span>
                         {event.organizer.firstName} {event.organizer.lastName}
                       </span>
