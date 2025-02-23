@@ -2,13 +2,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { Button } from '@ui/button';
+import { currencySymbols } from '@/constants';
 import { formatDateTime } from '@/lib/utils';
 import {
   getEventById,
   getRelatedEventsByCategory,
 } from '@/lib/actions/event.actions';
-import { PriceCategory, SearchParamProps } from '@/types';
-import CheckoutButton from '@shared/CheckoutButton';
+import { PriceCategory, SearchParamProps, CurrencyKey } from '@/types';
 import Collection from '@shared/Collection';
 import EventMap from '@shared/EventMap';
 import SafeHTMLRenderer from '@shared/SafeHTMLRenderer';
@@ -30,6 +30,8 @@ const EventDetails = async (props: SearchParamProps) => {
   const isSameDate =
     formatDateTime(event.startDate).dateOnly ===
     formatDateTime(event.endDate).dateOnly;
+
+  const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
 
   return (
     <>
@@ -126,7 +128,7 @@ const EventDetails = async (props: SearchParamProps) => {
               </div>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <div className="flex gap-3">
-                  {/* Display Price or Price Categories */}
+                  {/* Display Event Price or Price Categories */}
                   {event.isFree ? (
                     <p className="p-bold-20 rounded-full bg-green-500/10 px-5 py-2 text-green-700">
                       FREE
@@ -135,8 +137,8 @@ const EventDetails = async (props: SearchParamProps) => {
                     event.priceCategories.length === 1 ? (
                     <div className="flex flex-col gap-2">
                       <p className="p-bold-20">Price: </p>
-                      <p p-medium-16 px-4 py-2>
-                        {event.priceCategories[0].name} - $
+                      <p className="p-medium-16 px-4 py-2">
+                        {event.priceCategories[0].name} - {currencySymbol}
                         {event.priceCategories[0].price}
                       </p>
                     </div>
@@ -145,8 +147,9 @@ const EventDetails = async (props: SearchParamProps) => {
                       <p className="p-bold-20">Price Categories</p>
                       {event.priceCategories?.map(
                         (category: PriceCategory, index: number) => (
-                          <p key={index} className="p-medium-16 px-4 py-2 ">
-                            {category.name}: ${category.price}
+                          <p key={index} className="p-medium-16 px-4 py-2">
+                            {category.name}: {currencySymbol}
+                            {category.price}
                           </p>
                         )
                       )}
