@@ -281,3 +281,13 @@ export type IsFreeCheckboxProps = {
 export type AddImageProps = {
   setFiles: (files: File[]) => void;
 };
+
+export type TooltipProps = {
+  content: string;
+  children: ReactNode;
+};
+
+export type EventMapProps = {
+  coordinates: string;
+  destinationName: string;
+};
