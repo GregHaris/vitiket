@@ -68,6 +68,12 @@ export const eventDefaultValues = {
 
 export const currencies = ['NGN', 'USD', 'EUR'];
 
+export const currencySymbols = {
+  NGN: '₦',
+  USD: '$',
+  EUR: '€',
+} as const;
+
 export const predefinedCategories = {
   Virtual: ['General Admission', 'Early Bird', 'Regular', 'VIP', 'Other'],
   Physical: ['General Admission', 'Early Bird', 'Regular', 'VIP', 'Other'],
