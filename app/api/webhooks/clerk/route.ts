@@ -64,6 +64,7 @@ export async function POST(req: Request) {
       firstName: first_name ?? '',
       lastName: last_name ?? '',
       image: image_url,
+      role: 'user',
     };
 
     const newUser = await createUser(user);
