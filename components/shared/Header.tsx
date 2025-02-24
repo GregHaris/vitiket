@@ -22,12 +22,14 @@ const Header = () => {
         </Link>
 
         <div className="flex justify-between gap-8">
-          <SignedIn>
-            <div className="hidden md:flex-between w-full max-w-sm gap-8">
-              <NavItems />
-              <DisplayAdmin />
-            </div>
-          </SignedIn>
+          <div className="mr-8">
+            <SignedIn>
+              <div className="hidden md:flex-between w-full max-w-sm gap-8">
+                <NavItems />
+                <DisplayAdmin />
+              </div>
+            </SignedIn>
+          </div>
           <div className="flex w-32 justify-end gap-3 mr-4">
             <SignedOut>
               <Button asChild className="cursor-pointer rounded-md" size={'lg'}>
