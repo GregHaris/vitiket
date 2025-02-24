@@ -22,9 +22,9 @@ const Header = () => {
         </Link>
 
         <div className="flex justify-between gap-8">
-          <div className="mr-8">
+          <div className="w-full">
             <SignedIn>
-              <div className="hidden md:flex-between w-full max-w-sm gap-8">
+              <div className="hidden md:flex-between w-full gap-8">
                 <NavItems />
                 <DisplayAdmin />
               </div>
