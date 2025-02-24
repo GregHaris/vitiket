@@ -13,6 +13,7 @@ export type CreateUserParams = {
   username: string;
   email: string;
   image: string;
+  role: string;
 };
 
 export type UpdateUserParams = {
