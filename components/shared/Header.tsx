@@ -21,7 +21,7 @@ const Header = () => {
           />
         </Link>
 
-        <div className="flex justify-between gap-8 whitespace-nowrap">
+        <div className="flex flex-nowrap justify-between gap-8 whitespace-nowrap">
           <div className="w-full">
             <SignedIn>
               <div className="hidden md:flex-between w-full gap-8">
@@ -30,7 +30,7 @@ const Header = () => {
               </div>
             </SignedIn>
           </div>
-          <div className="flex w-32 justify-end gap-3 mr-4">
+          <div className="flex w-32 justify-end gap-3 mr-4 flex-nowrap whitespace-nowrap">
             <SignedOut>
               <Button asChild className="cursor-pointer rounded-md" size={'lg'}>
                 <SignInButton />
