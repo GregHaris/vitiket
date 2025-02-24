@@ -61,12 +61,12 @@ const EventDetails = async (props: SearchParamProps) => {
                     <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
                       <span className="font-bold">Host:</span>{' '}
                       <span>
-                        {event.organizer.firstName} {event.organizer.lastName}
+                        {event.organizer?.firstName} {event.organizer?.lastName}
                       </span>
                     </p>
                   </div>
                   {/* Use Link to navigate to the checkout page */}
-                  <Link href={`/checkout/${event._id}`} passHref>
+                  <Link href={`/checkout/${event?._id}`} passHref>
                     <Button
                       type="button"
                       className="button px-10 py-5 p-bold-16 "
