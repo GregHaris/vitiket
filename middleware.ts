@@ -12,7 +12,7 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 // The route matcher defines routes that should be protected
-const isAdminRoute = createRouteMatcher(['/admin(.*)'])
+const isAdminRoute = createRouteMatcher(['/admin(.*)']);
 
 export default clerkMiddleware(async (auth, request) => {
   if (!isPublicRoute(request)) {
@@ -23,10 +23,7 @@ export default clerkMiddleware(async (auth, request) => {
   const userRole = (await auth()).sessionClaims?.metadata?.role;
 
   // Protect all routes starting with `/admin`
-  if (
-    isAdminRoute(request) &&
-    !(userRole === 'admin')
-  ) {
+  if (isAdminRoute(request) && !(userRole === 'admin')) {
     const url = new URL('/', request.url);
     return NextResponse.redirect(url);
   }
