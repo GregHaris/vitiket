@@ -75,7 +75,7 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
               {priceDisplay}
             </p>
             <p className="text-sm font-bold w-min rounded-full bg-grey-500/10 px-4 py-1 text-grey-500 whitespace-nowrap line-clamp-1">
-              {event.category.name}
+              {event.category?.name}
             </p>
           </div>
         )}
@@ -84,7 +84,7 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
           <p className="p-medium-14 md:p-medium-16 text-grey-600">
             <span className="font-bold">Host:</span>{' '}
             <span>
-              {event.organizer.firstName} {event.organizer.lastName}
+              {event.organizer?.firstName} {event.organizer?.lastName}
             </span>
           </p>
           {hasOrderLink && (
