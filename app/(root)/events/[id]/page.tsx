@@ -51,7 +51,8 @@ const EventDetails = async (props: SearchParamProps) => {
               <p className="p-medium-16 rounded-full bg-grey-500/10 px-4 py-2.5 text-grey-500 w-fit">
                 {event.category?.name}
               </p>
-              <div className="flex justify-between">
+              <div className="flex justify-between gap-3">
+                {/* {other event details} */}
                 <div className="flex flex-col gap-5">
                   <h2 className="text-4xl font-bold">{event.title}</h2>
                   <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
