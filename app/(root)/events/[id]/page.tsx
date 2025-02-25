@@ -1,15 +1,16 @@
 import Image from 'next/image';
 
+import { CurrencyKey, SearchParamProps } from '@/types';
 import { currencySymbols } from '@/constants';
 import { formatDateTime } from '@/lib/utils';
 import {
   getEventById,
   getRelatedEventsByCategory,
 } from '@/lib/actions/event.actions';
-import { PriceCategory, SearchParamProps, CurrencyKey } from '@/types';
-import CheckoutButton from '@/components/shared/CheckoutButton';
+import CheckoutButton from '@shared/CheckoutButton';
 import Collection from '@shared/Collection';
 import EventMap from '@shared/EventMap';
+import PriceCards from '@shared/PriceCards';
 import SafeHTMLRenderer from '@shared/SafeHTMLRenderer';
 
 const EventDetails = async (props: SearchParamProps) => {
@@ -52,7 +53,7 @@ const EventDetails = async (props: SearchParamProps) => {
                 {event.category?.name}
               </p>
               <div className="flex justify-between gap-3">
-                {/* {other event details} */}
+                {/* Event Details */}
                 <div className="flex flex-col gap-5">
                   <h2 className="text-4xl font-bold">{event.title}</h2>
                   <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
@@ -108,7 +109,7 @@ const EventDetails = async (props: SearchParamProps) => {
                     </p>
                   </div>
 
-                  <div className="flex flex-col gap-2 space-y-6">
+                  <div className="flex flex-col gap-3">
                     <h3 className="text-2xl font-bold">About this Event</h3>
                     <SafeHTMLRenderer html={event.description} />
                     <p className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline">
@@ -116,46 +117,19 @@ const EventDetails = async (props: SearchParamProps) => {
                     </p>
                   </div>
 
+                  {/* Price Section */}
                   <div
                     id="price-section"
                     className="flex flex-col gap-3 sm:flex-row sm:items-center"
                   >
-                    <div className="flex gap-3">
-                      {/* Display Event Price or Price Categories */}
-                      {event.isFree ? (
-                        <p className="p-bold-20 rounded-md bg-green-500/10 px-5 py-2 text-green-700">
-                          FREE
-                        </p>
-                      ) : event.priceCategories &&
-                        event.priceCategories.length === 1 ? (
-                        <div className="flex flex-col gap-2">
-                          <p className="p-bold-20">Price: </p>
-                          <p className="p-medium-16 px-4 py-2">
-                            {event.priceCategories[0].name} - {currencySymbol}
-                            {event.priceCategories[0].price}
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col gap-2">
-                          <p className="p-bold-20">Price Categories</p>
-                          {event.priceCategories?.map(
-                            (category: PriceCategory, index: number) => (
-                              <p key={index} className="p-medium-16 px-4 py-2">
-                                {category.name}: {currencySymbol}
-                                {category.price}
-                              </p>
-                            )
-                          )}
-                        </div>
-                      )}
-                    </div>
+                    <PriceCards event={event} currencySymbol={currencySymbol} />
                   </div>
 
                   {/* Map Section */}
                   {(event.locationType === 'Physical' ||
                     event.location === 'Hybrid') &&
                     event.coordinates && (
-                      <div>
+                      <div className="flex flex-col gap-3">
                         <h3 className="text-2xl font-bold">Direction</h3>
                         <div className="w-full h-[400px]">
                           <EventMap
@@ -167,18 +141,17 @@ const EventDetails = async (props: SearchParamProps) => {
                     )}
                 </div>
 
-                {/* {sticky button checkout button} */}
+                {/* Sticky Checkout Button */}
                 <div>
                   <CheckoutButton event={event} />
                 </div>
               </div>
-              ;
             </div>
           </div>
         </div>
       </section>
 
-      {/* {RELATED EVENTS - SAME CATEGORY} */}
+      {/* Related Events */}
       <section className="wrapper my-7 flex flex-col gap-8 md:gap-12">
         <h2 className="h2-bold">Related Events</h2>
         <Collection
