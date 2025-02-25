@@ -1,7 +1,7 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-
 import { Minus, Plus } from 'lucide-react';
 import { PriceCardsProps, PriceCategory } from '@/types';
 
@@ -17,12 +17,31 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
     })
   );
 
-  const handleQuantityChange = (categoryId: string, amount: number) => {
-    const currentQuantity = Number(searchParams.get(categoryId)) || 0;
-    const newQuantity = Math.max(0, currentQuantity + amount);
+  // Initialize state for quantities
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>(
+    () => {
+      const initialQuantities: { [key: string]: number } = {};
+      if (event.isFree) {
+        initialQuantities['free'] = Number(searchParams.get('free')) || 0;
+      } else {
+        priceCategoriesWithIds?.forEach((category) => {
+          initialQuantities[category.id] =
+            Number(searchParams.get(category.id)) || 0;
+        });
+      }
+      return initialQuantities;
+    }
+  );
 
-    // Update the URL with the new quantity
+  const handleQuantityChange = (categoryId: string, amount: number) => {
+    setQuantities((prev) => {
+      const newQuantity = Math.max(0, (prev[categoryId] || 0) + amount);
+      return { ...prev, [categoryId]: newQuantity };
+    });
+
+  
     const newSearchParams = new URLSearchParams(searchParams.toString());
+    const newQuantity = Math.max(0, (quantities[categoryId] || 0) + amount);
     newSearchParams.set(categoryId, newQuantity.toString());
     router.replace(`?${newSearchParams.toString()}`, { scroll: false });
   };
@@ -41,7 +60,7 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
               >
                 <Minus className="text-sm text-gray-400 font-bold" />
               </button>
-              <span>{Number(searchParams.get('free')) || 0}</span>
+              <span>{quantities['free'] || 0}</span>
               <button
                 className="bg-primary px-3 py-1 rounded cursor-pointer"
                 onClick={() => handleQuantityChange('free', 1)}
@@ -70,9 +89,7 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
               >
                 <Minus className="text-sm text-gray-400 font-bold" />
               </button>
-              <span>
-                {Number(searchParams.get(priceCategoriesWithIds[0].id)) || 0}
-              </span>
+              <span>{quantities[priceCategoriesWithIds[0].id] || 0}</span>
               <button
                 className="bg-primary px-3 py-1 rounded cursor-pointer"
                 onClick={() =>
@@ -106,7 +123,7 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
                   >
                     <Minus className="text-sm text-gray-400 font-bold" />
                   </button>
-                  <span>{Number(searchParams.get(category.id)) || 0}</span>
+                  <span>{quantities[category.id] || 0}</span>
                   <button
                     className="bg-primary px-3 py-1 rounded cursor-pointer"
                     onClick={() => handleQuantityChange(category.id, 1)}
