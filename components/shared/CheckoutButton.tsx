@@ -54,7 +54,7 @@ const CheckoutButton = ({ event }: { event: IEvent }) => {
     >
       {quantity === 0 ? (
         <Button
-          className="button w-full md:w-auto cursor-pointer font-bold"
+          className="button w-full md:w-auto cursor-pointer font-bold px-25"
           size={'lg'}
           onClick={handleScrollToPriceSection}
         >
