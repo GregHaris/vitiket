@@ -313,3 +313,8 @@ export type CardProps = {
   hasOrderLink?: boolean;
   hidePrice?: boolean;
 };
+
+export type PriceCardsProps = {
+  event: IEvent;
+  currencySymbol: string;
+}
