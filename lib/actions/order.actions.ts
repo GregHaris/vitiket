@@ -28,13 +28,13 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
       line_items: [
         {
           price_data: {
-            currency: 'usd',
+            currency: order.currency.toLowerCase(),
             unit_amount: price,
             product_data: {
               name: order.eventTitle,
             },
           },
-          quantity: 1,
+          quantity: order.quantity,
         },
       ],
       metadata: {
@@ -64,6 +64,9 @@ export const createOrder = async (order: CreateOrderParams) => {
       event: order.eventId,
       buyer: order.buyerId,
       buyerEmail: user.email,
+      currency: order.currency,
+      priceCategory: order.priceCategory,
+      quantity: order.quantity,
     });
 
     return JSON.parse(JSON.stringify(newOrder));
