@@ -1,7 +1,5 @@
 import Image from 'next/image';
-import Link from 'next/link';
 
-import { Button } from '@ui/button';
 import { currencySymbols } from '@/constants';
 import { formatDateTime } from '@/lib/utils';
 import {
@@ -9,6 +7,7 @@ import {
   getRelatedEventsByCategory,
 } from '@/lib/actions/event.actions';
 import { PriceCategory, SearchParamProps, CurrencyKey } from '@/types';
+import CheckoutButton from '@/components/shared/CheckoutButton';
 import Collection from '@shared/Collection';
 import EventMap from '@shared/EventMap';
 import SafeHTMLRenderer from '@shared/SafeHTMLRenderer';
@@ -22,7 +21,7 @@ const EventDetails = async (props: SearchParamProps) => {
   const event = await getEventById(id);
 
   const relatedEvents = await getRelatedEventsByCategory({
-    categoryId: event.category._id,
+    categoryId: event.category?._id,
     eventId: event._id,
     page: resolvedSearchParams?.page as string,
   });
@@ -51,29 +50,18 @@ const EventDetails = async (props: SearchParamProps) => {
           <div className="flex w-full flex-col gap-8 p-5 md:p-10">
             <div className="flex flex-col gap-2 space-y-6">
               <p className="p-medium-16 rounded-full bg-grey-500/10 px-4 py-2.5 text-grey-500 w-fit">
-                {event.category.name}
+                {event.category?.name}
               </p>
 
               <h2 className="text-4xl font-bold">{event.title}</h2>
               <div className="flex flex-col gap-5">
-                <div className="flex flex-col md:flex-row md:justify-between md:gap-5 gap-3 justify-center mb-3">
-                  <div className="mb-3 md:mb-0">
-                    <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
-                      <span className="font-bold">Host:</span>{' '}
-                      <span>
-                        {event.organizer?.firstName} {event.organizer?.lastName}
-                      </span>
-                    </p>
-                  </div>
-                  {/* Use Link to navigate to the checkout page */}
-                  <Link href={`/checkout/${event?._id}`} passHref>
-                    <Button
-                      type="button"
-                      className="button px-10 py-5 p-bold-16 "
-                    >
-                      Get Ticket
-                    </Button>
-                  </Link>
+                <div>
+                  <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
+                    <span className="font-bold">Host:</span>{' '}
+                    <span>
+                      {event.organizer?.firstName} {event.organizer?.lastName}
+                    </span>
+                  </p>
                 </div>
                 <div className="flex gap-2 md:gap-3 items-center">
                   <Image
@@ -127,7 +115,10 @@ const EventDetails = async (props: SearchParamProps) => {
                   {event.url}
                 </p>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div
+                id="price-section"
+                className="flex flex-col gap-3 sm:flex-row sm:items-center"
+              >
                 <div className="flex gap-3">
                   {/* Display Event Price or Price Categories */}
                   {event.isFree ? (
@@ -159,6 +150,7 @@ const EventDetails = async (props: SearchParamProps) => {
                 </div>
               </div>
             </div>
+            <CheckoutButton event={event} />
             {/* Map Section */}
             {(event.locationType === 'Physical' ||
               event.location === 'Hybrid') &&
@@ -173,11 +165,6 @@ const EventDetails = async (props: SearchParamProps) => {
                   </div>
                 </div>
               )}
-            <Link href={`/checkout/${event._id}`} passHref>
-              <Button type="button" className="button px-10 py-5 p-bold-16">
-                Get Ticket
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
