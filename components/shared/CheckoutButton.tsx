@@ -1,67 +1,74 @@
 'use client';
 
-import { SignedIn, SignedOut, SignInButton, useUser } from '@clerk/nextjs';
 import { useState, useEffect } from 'react';
-
+import { useUser } from '@clerk/nextjs';
 import { Button } from '../ui/button';
 import { IEvent } from '@/lib/database/models/event.model';
-import { hasUserPurchasedEvent } from '@/lib/actions/order.actions';
 import Checkout from './Checkout';
 
 const CheckoutButton = ({ event }: { event: IEvent }) => {
-  const { isLoaded, user } = useUser();
-  const [hasPurchased, setHasPurchased] = useState(false);
+  const { user } = useUser();
+  const [quantity, setQuantity] = useState(0);
+  const [selectedPriceCategory, setSelectedPriceCategory] = useState<{
+    name: string;
+    price: string;
+  } | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const handleQuantityChange = (amount: number) => {
+    setQuantity((prev) => Math.max(0, prev + amount));
+  };
+
+  const totalPrice = selectedPriceCategory
+    ? Number(selectedPriceCategory.price) * quantity
+    : event.priceCategories?.[0]
+    ? Number(event.priceCategories[0].price) * quantity
+    : 0;
+
+  const handleScrollToPriceSection = () => {
+    document
+      .getElementById('price-section')
+      ?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
-    const checkPurchase = async () => {
-      if (user) {
-        const userId = user.publicMetadata.userId as string;
-        const purchased = await hasUserPurchasedEvent(userId, event._id);
-        setHasPurchased(purchased ?? false);
+    const handleScroll = () => {
+      const priceSection = document.getElementById('price-section');
+      if (priceSection) {
+        const { top } = priceSection.getBoundingClientRect();
+        setIsVisible(top < window.innerHeight);
       }
     };
 
-    checkPurchase();
-  }, [user, event._id]);
-
-  if (!isLoaded) {
-    return <div>Loading...</div>;
-  }
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const userId = user?.publicMetadata.userId as string;
-  const isEventCreator = userId === event.organizer._id.toString();
-  const hasEventFinished = new Date(event.endDateTime) < new Date();
 
   return (
-    !isEventCreator && (
-      <div className="flex item-center gap-3">
-        {hasEventFinished ? (
-          <p className="p-2 text-red-400">
-            Sorry, tickets are no longer available.
-          </p>
-        ) : hasPurchased ? (
-          <p className="p-2 text-red-400">Ticket already purchased</p>
-        ) : (
-          <>
-            <SignedOut>
-              <SignInButton>
-                <Button
-                  className="button cursor-pointer rounded-full"
-                  size={'lg'}
-                  asChild
-                >
-                  Get Tickets
-                </Button>
-              </SignInButton>
-            </SignedOut>
-
-            <SignedIn>
-              <Checkout event={event} userId={userId} />
-            </SignedIn>
-          </>
-        )}
-      </div>
-    )
+    <div
+      className={`fixed bottom-0 left-0 right-0 md:sticky md:top-4 z-50 flex justify-end p-4 bg-white shadow-lg md:bg-transparent md:shadow-none${
+        isVisible ? 'translate-y-0' : 'translate-y-full'
+      }`}
+    >
+      {quantity === 0 ? (
+        <Button
+          className="button w-full md:w-auto cursor-pointer font-bold"
+          size={'lg'}
+          onClick={handleScrollToPriceSection}
+        >
+          Get Tickets
+        </Button>
+      ) : (
+        <Checkout
+          event={event}
+          userId={userId}
+          quantity={quantity}
+          totalPrice={totalPrice}
+        />
+      )}
+    </div>
   );
 };
 
