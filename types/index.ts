@@ -176,6 +176,12 @@ export type CheckoutOrderParams = {
   price: string;
   isFree: boolean;
   buyerId: string;
+  currency: string;
+  priceCategory?: {
+    name: string;
+    price: string;
+  };
+  quantity: number;
 };
 
 export type CreateOrderParams = {
@@ -183,6 +189,12 @@ export type CreateOrderParams = {
   eventId: string;
   buyerId: string;
   totalAmount: string;
+  currency: string;
+  priceCategory?: {
+    name: string;
+    price: string;
+  };
+  quantity: number;
   createdAt: Date;
 };
 
