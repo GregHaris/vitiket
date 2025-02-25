@@ -1,70 +1,53 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { Button } from '../ui/button';
 import { IEvent } from '@/lib/database/models/event.model';
 import Checkout from './Checkout';
 
-const CheckoutButton = ({ event }: { event: IEvent }) => {
+interface CheckoutButtonProps {
+  event: IEvent;
+}
+
+const CheckoutButton = ({ event }: CheckoutButtonProps) => {
   const { user } = useUser();
-  const [quantity, setQuantity] = useState(0);
-  const [selectedPriceCategory, setSelectedPriceCategory] = useState<{
-    name: string;
-    price: string;
-  } | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const searchParams = useSearchParams();
 
-  const handleQuantityChange = (amount: number) => {
-    setQuantity((prev) => Math.max(0, prev + amount));
-  };
+  // Calculate total quantity and total price
+  let totalQuantity = 0;
+  let totalPrice = 0;
 
-  const totalPrice = selectedPriceCategory
-    ? Number(selectedPriceCategory.price) * quantity
-    : event.priceCategories?.[0]
-    ? Number(event.priceCategories[0].price) * quantity
-    : 0;
-
-  const handleScrollToPriceSection = () => {
-    document
-      .getElementById('price-section')
-      ?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const priceSection = document.getElementById('price-section');
-      if (priceSection) {
-        const { top } = priceSection.getBoundingClientRect();
-        setIsVisible(top < window.innerHeight);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const userId = user?.publicMetadata.userId as string;
+  if (event.isFree) {
+    totalQuantity = Number(searchParams.get('free')) || 0;
+  } else {
+    event.priceCategories?.forEach((category, index) => {
+      const categoryId = `category-${index}`;
+      const quantity = Number(searchParams.get(categoryId)) || 0;
+      totalQuantity += quantity;
+      totalPrice += quantity * Number(category.price);
+    });
+  }
 
   return (
-    <div
-      className={`fixed bottom-0 left-0 right-0 md:sticky md:top-4 z-50 flex justify-end p-4 bg-white shadow-lg md:bg-transparent md:shadow-none${
-        isVisible ? 'translate-y-0' : 'translate-y-full'
-      }`}
-    >
-      {quantity === 0 ? (
+    <div className="fixed bottom-0 left-0 right-0 md:sticky md:top-4 z-50 flex justify-end p-4 bg-white shadow-lg md:bg-transparent md:shadow-none">
+      {totalQuantity === 0 ? (
         <Button
           className="button w-full md:w-auto cursor-pointer font-bold px-25"
           size={'lg'}
-          onClick={handleScrollToPriceSection}
+          onClick={() => {
+            document
+              .getElementById('price-section')
+              ?.scrollIntoView({ behavior: 'smooth' });
+          }}
         >
           Get Tickets
         </Button>
       ) : (
         <Checkout
           event={event}
-          userId={userId}
-          quantity={quantity}
+          userId={user?.publicMetadata.userId as string}
+          quantity={totalQuantity}
           totalPrice={totalPrice}
         />
       )}

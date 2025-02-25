@@ -7,7 +7,17 @@ import { IEvent } from '@/lib/database/models/event.model';
 
 loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-const Checkout = ({ event, userId }: { event: IEvent; userId: string }) => {
+const Checkout = ({
+  event,
+  userId,
+  quantity,
+  totalPrice,
+}: {
+  event: IEvent;
+  userId: string;
+  quantity: number;
+  totalPrice: number;
+}) => {
   useEffect(() => {
     // Check to see if this is a redirect back from Checkout
     const query = new URLSearchParams(window.location.search);
@@ -23,20 +33,42 @@ const Checkout = ({ event, userId }: { event: IEvent; userId: string }) => {
   }, []);
 
   const onCheckout = async () => {
+    let price = '0';
+    if (!event.isFree) {
+      if (event.priceCategories && event.priceCategories.length > 0) {
+        price = event.priceCategories?.[0]?.price || '0';
+      }
+    }
+
+    const isFree = event.isFree || false;
+
     const order = {
       eventTitle: event.title,
       buyerId: userId,
       eventId: event._id,
-      price: event.price,
-      isFree: event.isFree,
+      price: price,
+      isFree: isFree,
+      currency: event.currency,
+      quantity: quantity,
     };
 
     await checkoutOrder(order);
   };
+
   return (
-    <form action={onCheckout}>
-      <Button type="submit" role="link" size="lg" className="button sm:w-fit">
-        {event.isFree ? 'Get Ticket' : 'Buy Ticket'}
+    <form
+      action={onCheckout}
+      className="fixed bottom-0 left-0 right-0 md:sticky md:top-4 z-50 flex justify-end p-4 bg-white shadow-lg md:bg-transparent md:shadow-none"
+    >
+      <Button
+        type="submit"
+        role="link"
+        size="lg"
+        className="button w-full md:w-auto cursor-pointer font-bold px-25"
+      >
+        {event.isFree
+          ? 'Checkout - Free'
+          : `Checkout - ${event.currency} ${totalPrice}`}
       </Button>
     </form>
   );
