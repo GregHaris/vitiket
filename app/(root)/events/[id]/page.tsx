@@ -118,11 +118,16 @@ const EventDetails = async (props: SearchParamProps) => {
                   </div>
 
                   {/* Price Section */}
-                  <div
-                    id="price-section"
-                    className="flex flex-col gap-3 sm:flex-row sm:items-center"
-                  >
-                    <PriceCards event={event} currencySymbol={currencySymbol} />
+                  <div id="price-section" className="flex flex-col gap-3">
+                    <h3 className="text-2xl font-bold">Tickets</h3>
+                    <div
+                      className="flex flex-col gap-3 sm:flex-row sm:items-center"
+                    >
+                      <PriceCards
+                        event={event}
+                        currencySymbol={currencySymbol}
+                      />
+                    </div>
                   </div>
 
                   {/* Map Section */}
