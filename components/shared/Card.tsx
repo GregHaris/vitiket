@@ -56,21 +56,31 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
       )}
       <div className="flex min-h-[230px] flex-col gap-3 p-5 md:gap-4">
         <Link href={`/events/${event._id}`}>
-          <p className="p-medium-16 md:p-medium-20 line-clamp-2 flex-1 text-black">
+          <h4 className="text-xl font-bold line-clamp-2 flex-1 text-black">
             {event.title}
-          </p>
+          </h4>
         </Link>
-        <p className="p-medium-16 md:p-medium-18 text-gray-500">
-          {formatDateTime(event.startDate).dateTime}
-        </p>
+        <div className="flex items-center gap-3">
+          <Image
+            src={'/assets/icons/calendar.svg'}
+            alt="calendar"
+            width={20}
+            height={20}
+          />
+          <p className="p-medium-16 md:p-medium-18 text-gray-400">
+            {formatDateTime(event.startDate).dateTime}
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Image src={'/assets/icons/location.svg'} alt="location" width={20} height={20} />
+          <p className="p-medium-16 md:p-medium-18 text-gray-400">
+            {event.locationType === 'Virtual' ? 'Virtual Event' : event.location}
+          </p>
+        </div>
+        
         {!hidePrice && (
           <div className="flex justify-between items-center gap-3">
-            <p
-              className={`p-semi-bold-14 w-min rounded-full ${
-                event.isFree
-                  ? 'bg-green-100 text-green-60 px-4 py-1'
-                  : 'text-gray-600'
-              }  whitespace-nowrap text-sm font-bold`}
+            <p className={"w-min rounded-full whitespace-nowrap text-primary font-bold"}
             >
               {priceDisplay}
             </p>
@@ -81,12 +91,6 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
         )}
 
         <div className="flex-between w-full">
-          <p className="p-medium-14 md:p-medium-16 text-grey-600">
-            <span className="font-bold">Host:</span>{' '}
-            <span>
-              {event.organizer?.firstName} {event.organizer?.lastName}
-            </span>
-          </p>
           {hasOrderLink && (
             <Link href={`/orders?eventId=${event._id}`} className="flex gap-2">
               <p className="text-primary-500">Order Details</p>
