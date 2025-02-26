@@ -149,10 +149,12 @@ export type Event = {
   type: {
     _id: string;
     name: string;
+    color: string;
   };
   category: {
     _id: string;
     name: string;
+    color: string;
   };
   contactDetails: {
     email: string;
