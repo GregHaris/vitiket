@@ -37,7 +37,7 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
             className="flex items-center gap-2"
           >
             <Image
-              src="/assets/icons/link.svg"
+              src="/assets/icons/web.svg"
               width={24}
               height={24}
               alt="website"
