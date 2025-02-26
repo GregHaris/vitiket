@@ -177,13 +177,18 @@ export default function ManageCategories() {
         <Button
           className="button"
           onClick={() => setShowColorPicker(!showColorPicker)}
+          disabled={!categoryName.trim()}
         >
           {showColorPicker ? 'Hide Color Picker' : 'Pick Color'}
         </Button>
         {showColorPicker && (
           <SketchPicker color={color} onChange={handleColorChange} />
         )}
-        <Button className="button" onClick={handleSearchCategory}>
+        <Button
+          className="button"
+          onClick={handleSearchCategory}
+          disabled={!categoryName.trim()}
+        >
           Search Category
         </Button>
       </div>
@@ -259,7 +264,11 @@ export default function ManageCategories() {
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       {deleteMessage && <p className="text-red-500">{deleteMessage}</p>}
       <div className="flex gap-2 flex-col md:flex-row mb-10">
-        <Button onClick={handleAddCategory} className="button">
+        <Button
+          onClick={handleAddCategory}
+          className="button"
+          disabled={!categoryName.trim()}
+        >
           Add Category
         </Button>
         <Button
