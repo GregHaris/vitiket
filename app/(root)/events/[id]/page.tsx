@@ -9,6 +9,7 @@ import {
 } from '@/lib/actions/event.actions';
 import CheckoutButton from '@shared/CheckoutButton';
 import Collection from '@shared/Collection';
+import ContactHost from '@shared/ContactHost';
 import EventMap from '@shared/EventMap';
 import PriceCards from '@shared/PriceCards';
 import SafeHTMLRenderer from '@shared/SafeHTMLRenderer';
@@ -145,6 +146,12 @@ const EventDetails = async (props: SearchParamProps) => {
                         </div>
                       </div>
                     )}
+
+                  <div className='mt-5'>
+                    {event.contactDetails && (
+                      <ContactHost contactDetails={event.contactDetails} />
+                    )}
+                  </div>
                 </div>
 
                 {/* Sticky Checkout Button */}
