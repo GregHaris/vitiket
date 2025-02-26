@@ -30,7 +30,7 @@ const CheckoutButton = ({ event }: CheckoutButtonProps) => {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 md:sticky md:top-4 z-50 flex p-3 bg-white rounded-md shadow-gray-300 shadow-lg transition-all duration-300">
+    <div className="fixed bottom-0 left-0 right-0 w-full md:sticky md:top-4 z-50 p-3 bg-white rounded-md shadow-gray-300 shadow-lg transition-all duration-300">
       {totalQuantity === 0 ? (
         <Button
           className="button w-full md:w-[300px] cursor-pointer font-bold transition-all duration-100"
