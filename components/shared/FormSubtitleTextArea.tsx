@@ -26,7 +26,7 @@ export default function SubtitleInput() {
             <Textarea
               placeholder="Event subtitle"
               {...field}
-              className="textarea-input p-regular-14"
+              className="textarea-field p-regular-14"
             />
           </FormControl>
           <FormMessage />
