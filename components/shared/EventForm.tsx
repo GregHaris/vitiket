@@ -25,6 +25,7 @@ import IsFreeCheckbox from './FormIsFreeCheckbox';
 import LocationSection from './FormLocationSection';
 import LocationTypeSelector from './FormLocationTypeSelector';
 import PriceCategoriesInput from './PriceCategoriesInput';
+import SubtitleInput from './FormSubtitleTextArea';
 import TimePickerComponent from './FormTimePicker';
 import TitleInput from './FormTitleInput';
 import QuantityInput from './FormQuantityInput';
@@ -167,6 +168,7 @@ export default function EventForm({
                       </div>
                     )}
                     <TitleInput />
+                    <SubtitleInput />
                     <DescriptionEditor />
                     <AddImage setFiles={setFiles} />
                     <LocationTypeSelector />
