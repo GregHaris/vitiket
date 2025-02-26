@@ -5,12 +5,13 @@ export const eventFormSchema = z
     title: z
       .string()
       .min(3, { message: 'Title must be at least 3 characters' }),
+    subtitle: z.string().optional(),
     description: z
       .string()
       .min(10, { message: 'Description must be at least 10 characters' })
       .max(1500, { message: 'Description must be less than 1500 characters' }),
-    locationType: z.enum(['Virtual', 'Physical', 'Hybrid']),
     location: z.string().optional(),
+    locationType: z.enum(['Virtual', 'Physical', 'Hybrid']),
     coordinates: z.string().optional(),
     imageUrl: z.string().min(1, { message: 'Image URL is required' }),
     startDate: z.date(),
