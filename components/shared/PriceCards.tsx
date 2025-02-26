@@ -50,9 +50,9 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
     <div className="flex flex-col gap-4 w-full">
       {event.isFree ? (
         <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
-          <h3 className="text-xl font-bold mb-4">Free Ticket</h3>
+          <h3 className="text-xl font-bold mb-4 text-gray-500">Free Ticket</h3>
           <div className="flex items-center justify-between">
-            <p className="text-lg font-semibold">Free</p>
+            <p className="text-sm text-gray-500 font-semibold">Free</p>
             <div className="flex items-center gap-2">
               <button
                 className="bg-gray-200 px-3 py-1 rounded cursor-pointer"
@@ -72,11 +72,11 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
         </div>
       ) : priceCategoriesWithIds && priceCategoriesWithIds.length === 1 ? (
         <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
-          <h3 className="text-xl font-bold mb-4">
+          <h3 className="text-xl font-bold mb-4 text-gray-500">
             {priceCategoriesWithIds[0].name}
           </h3>
           <div className="flex items-center justify-between">
-            <p className="text-lg font-semibold">
+            <p className="text-sm text-gray-500 font-semibold">
               {currencySymbol}
               {priceCategoriesWithIds[0].price}
             </p>
