@@ -2,6 +2,7 @@
 
 import { Edit, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { SketchPicker } from 'react-color';
 
 import {
   AlertDialog,
@@ -28,6 +29,7 @@ import { Input } from '@ui/input';
 interface Category {
   _id: string;
   name: string;
+  color: string;
 }
 
 export default function ManageCategories() {
@@ -42,6 +44,8 @@ export default function ManageCategories() {
   const [deleteMessage, setDeleteMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [color, setColor] = useState('#000000');
+  const [showColorPicker, setShowColorPicker] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -52,17 +56,18 @@ export default function ManageCategories() {
   }, []);
 
   const handleAddCategory = async () => {
-    if (categoryName.trim()) {
+    if (categoryName.trim() && color) {
       const existingCategories = await getCategoryByName(categoryName);
       if (existingCategories.length > 0) {
         setErrorMessage(`Category "${categoryName}" already exists.`);
         setTimeout(() => setErrorMessage(''), 5000);
         return;
       }
-      const newCategory = await createCategory({ categoryName });
+      const newCategory = await createCategory({ categoryName, color });
       if (newCategory) {
         setSuccessMessage(`Category "${categoryName}" added successfully!`);
         setCategoryName('');
+        setColor('#000000');
         setCategories([...categories, newCategory]);
         setTimeout(() => setSuccessMessage(''), 5000);
       }
@@ -70,16 +75,18 @@ export default function ManageCategories() {
   };
 
   const handleUpdateCategory = async () => {
-    if (selectedCategoryId && categoryName.trim()) {
+    if (selectedCategoryId && categoryName.trim() && color) {
       const updatedCategory = await updateCategory({
         categoryId: selectedCategoryId,
         categoryName,
+        color,
       });
       if (updatedCategory) {
         setSuccessMessage(
           `Category updated to "${categoryName}" successfully!`
         );
         setCategoryName('');
+        setColor('#000000');
         setSelectedCategoryId(null);
         setCategories(
           categories.map((cat) =>
@@ -124,6 +131,7 @@ export default function ManageCategories() {
   const handleSelectCategory = (category: Category) => {
     setSelectedCategoryId(category._id);
     setCategoryName(category.name);
+    setColor(category.color);
     setSearchResults([]);
     setSearchMessage('');
   };
@@ -148,6 +156,10 @@ export default function ManageCategories() {
     setShowAllCategories(!showAllCategories);
   };
 
+  const handleColorChange = (color: any) => {
+    setColor(color.hex);
+  };
+
   return (
     <div className="space-y-4  wrapper">
       <h2 className="text-xl font-semibold md:text-left text-center">
@@ -162,6 +174,15 @@ export default function ManageCategories() {
           onKeyDown={handleKeyPress}
           className="input-field"
         />
+        <Button
+          className="button"
+          onClick={() => setShowColorPicker(!showColorPicker)}
+        >
+          {showColorPicker ? 'Hide Color Picker' : 'Pick Color'}
+        </Button>
+        {showColorPicker && (
+          <SketchPicker color={color} onChange={handleColorChange} />
+        )}
         <Button className="button" onClick={handleSearchCategory}>
           Search Category
         </Button>
@@ -170,7 +191,7 @@ export default function ManageCategories() {
         <div className="space-y-2">
           {searchResults.map((result) => (
             <div key={result._id} className="flex gap-2 items-center">
-              <span>
+              <span style={{ color: result.color }}>
                 {result.name
                   .split(new RegExp(`(${categoryName})`, 'gi'))
                   .map((part, index) =>
@@ -261,7 +282,7 @@ export default function ManageCategories() {
                 key={category._id}
                 className="flex gap-2 items-center justify-between"
               >
-                <span>{category.name}</span>
+                <span style={{ color: category.color }}>{category.name}</span>
                 <div className="flex">
                   <Button
                     type="button"
