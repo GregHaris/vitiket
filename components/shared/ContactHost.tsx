@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { ContactHostProps } from '@/types';
-
+import { Mail, Phone } from 'lucide-react';
 
 const ContactHost = ({ contactDetails }: ContactHostProps) => {
   return (
@@ -12,12 +12,7 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
         {/* Phone Number */}
         {contactDetails.phoneNumber && (
           <div className="flex items-center gap-2">
-            <Image
-              src="/assets/icons/phone.svg"
-              width={24}
-              height={24}
-              alt="phone"
-            />
+            <Phone />
             <span className="p-regular-16">{contactDetails.phoneNumber}</span>
           </div>
         )}
@@ -28,12 +23,7 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
             href={`mailto:${contactDetails.email}`}
             className="flex items-center gap-2"
           >
-            <Image
-              src="/assets/icons/email.svg"
-              width={24}
-              height={24}
-              alt="email"
-            />
+            <Mail />
             <span className="p-regular-16">{contactDetails.email}</span>
           </Link>
         )}
@@ -47,7 +37,7 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
             className="flex items-center gap-2"
           >
             <Image
-              src="/assets/icons/website.svg"
+              src="/assets/icons/link.svg"
               width={24}
               height={24}
               alt="website"
