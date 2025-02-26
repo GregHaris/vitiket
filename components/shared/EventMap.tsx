@@ -96,10 +96,10 @@ export default function EventMap({
   return (
     <div className="relative">
       {placeDetails && (
-        <div className="absolute flex flex-wrap top-4 right-4 bg-white p-4 rounded-lg shadow-lg z-10">
+        <div className="absolute flex gap-3 flex-wrap top-4 right-4 bg-white p-4 rounded-lg shadow-lg z-10 whitespace-pre-wrap">
           <div>
             <h3 className="font-bold mb-2">{placeDetails.name}</h3>
-            <p className="text-sm w-40">{placeDetails.formattedAddress}</p>
+            <p className="text-sm w-40 whitespace-pre-wrap">{placeDetails.formattedAddress}</p>
           </div>
           <div>
             <CustomTooltip content="Click for Google Map direction to the event center">
