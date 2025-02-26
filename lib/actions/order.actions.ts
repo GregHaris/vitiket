@@ -20,21 +20,21 @@ import User from '../database/models/user.model';
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-  const price = order.isFree ? 0 : Number(order.price) * 100;
+  // Convert the total price to cents (Stripe uses cents)
+  const priceInCents = order.isFree ? 0 : Math.round(Number(order.price) * 100);
 
   try {
-    // Create Checkout Sessions from body params.
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
           price_data: {
             currency: order.currency.toLowerCase(),
-            unit_amount: price,
+            unit_amount: priceInCents,
             product_data: {
               name: order.eventTitle,
             },
           },
-          quantity: order.quantity,
+          quantity: 1,
         },
       ],
       metadata: {
