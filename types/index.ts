@@ -318,3 +318,12 @@ export type PriceCardsProps = {
   event: IEvent;
   currencySymbol: string;
 }
+
+export type PriceCardUIProps = {
+  title: string;
+  price: string;
+  quantity: number;
+  onDecrease: () => void;
+  onIncrease: () => void;
+  currencySymbol?: string;
+}
