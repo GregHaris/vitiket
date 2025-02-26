@@ -333,3 +333,17 @@ export type PriceCardUIProps = {
   onIncrease: () => void;
   currencySymbol?: string;
 }
+
+export type ContactDetails = {
+  email?: string;
+  phoneNumber?: string;
+  website?: string;
+  linkedin?: string;
+  instagram?: string;
+  facebook?: string;
+  x?: string;
+}
+
+export type ContactHostProps = {
+  contactDetails: ContactDetails;
+}
