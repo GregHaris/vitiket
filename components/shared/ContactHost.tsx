@@ -56,8 +56,8 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
           >
             <Image
               src="/assets/icons/linkedIn.svg"
-              width={24}
-              height={24}
+              width={30}
+              height={30}
               alt="linkedin"
             />
           </Link>
