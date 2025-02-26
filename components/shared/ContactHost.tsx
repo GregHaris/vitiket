@@ -42,6 +42,7 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
               height={24}
               alt="website"
             />
+            <span className="p-regular-16">{contactDetails.website}</span>
           </Link>
         )}
 
