@@ -56,6 +56,9 @@ const EventDetails = async (props: SearchParamProps) => {
                 {/* Event Details */}
                 <div className="flex flex-col gap-5">
                   <h2 className="text-4xl font-bold">{event.title}</h2>
+                  <p className="p-regular-16 lg:p-regular-18 ">
+                    {event.subtitle}
+                  </p>
                   <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
                     <span className="font-bold">Host:</span>{' '}
                     <span>
@@ -120,9 +123,7 @@ const EventDetails = async (props: SearchParamProps) => {
                   {/* Price Section */}
                   <div id="price-section" className="flex flex-col gap-3">
                     <h3 className="text-2xl font-bold">Tickets</h3>
-                    <div
-                      className="flex flex-col gap-3 sm:flex-row sm:items-center"
-                    >
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                       <PriceCards
                         event={event}
                         currencySymbol={currencySymbol}
