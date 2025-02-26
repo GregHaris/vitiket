@@ -46,12 +46,13 @@ export type CreateEventParams = {
     url?: string;
   };
   contactDetails: {
-    phoneNumber: string;
     email: string;
+    phoneNumber?: string;
     website?: string;
     instagram?: string;
     facebook?: string;
     x?: string;
+    linkedin?: string;
   };
   path: string;
 };
@@ -79,12 +80,13 @@ export type UpdateEventParams = {
     url?: string;
   };
   contactDetails: {
-    phoneNumber: string;
     email: string;
+    phoneNumber?: string;
     website?: string;
     instagram?: string;
     facebook?: string;
     x?: string;
+    linkedin?: string;
   };
   path: string;
 };
@@ -153,12 +155,13 @@ export type Event = {
     name: string;
   };
   contactDetails: {
-    phoneNumber: string;
     email: string;
+    phoneNumber?: string;
     website?: string;
     instagram?: string;
     facebook?: string;
     x?: string;
+    linkedin?: string;
   };
 };
 

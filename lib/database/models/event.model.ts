@@ -24,12 +24,13 @@ export interface IEvent extends Document {
   category: { _id: string; name: string };
   organizer: { _id: string; firstName: string; lastName: string };
   contactDetails: {
-    phoneNumber: string;
     email: string;
     website?: string;
+    phoneNumber?: string;
     instagram?: string;
     facebook?: string;
     x?: string;
+    linkedin?: string;
   };
 }
 
@@ -64,12 +65,13 @@ const EventSchema = new Schema(
     category: { type: Schema.Types.ObjectId, ref: 'Category' },
     organizer: { type: Schema.Types.ObjectId, ref: 'User' },
     contactDetails: {
-      phoneNumber: { type: String, required: true },
       email: { type: String, required: true },
       website: { type: String },
+      phoneNumber: { type: String},
       instagram: { type: String },
       facebook: { type: String },
       x: { type: String },
+      linkedin: { type: String },
     },
   },
   { timestamps: true }

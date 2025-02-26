@@ -24,18 +24,29 @@ export const eventFormSchema = z
     isFree: z.boolean().optional().default(false),
     url: z.string().optional(),
     contactDetails: z.object({
-      phoneNumber: z
-        .string()
-        .min(1, { message: 'Phone number is required' })
-        .min(10, { message: 'Phone number must be at least 10 characters' }),
       email: z
         .string()
         .min(1, { message: 'Email is required' })
         .email({ message: 'Invalid email address' }),
+      phoneNumber: z
+        .string()
+        .optional()
+        .superRefine((val, ctx) => {
+          if (val && val.length > 0 && val.length < 10) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.too_small,
+              minimum: 10,
+              type: 'string',
+              inclusive: true,
+              message: 'Phone number must be at least 10 characters',
+            });
+          }
+        }),
       website: z.string().optional(),
       instagram: z.string().optional(),
       facebook: z.string().optional(),
       x: z.string().optional(),
+      linkedin: z.string().optional(),
     }),
     quantity: z
       .number()
