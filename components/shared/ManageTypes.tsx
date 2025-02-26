@@ -2,7 +2,7 @@
 
 import { Edit, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { SketchPicker } from 'react-color';
+import { SketchPicker, ColorResult } from 'react-color';
 
 import {
   AlertDialog,
@@ -142,7 +142,7 @@ export default function ManageTypes() {
     }
   };
 
-  const handleColorChange = (color: any) => {
+  const handleColorChange = (color: ColorResult) => {
     setColor(color.hex);
   };
 

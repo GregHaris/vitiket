@@ -2,7 +2,7 @@
 
 import { Edit, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { SketchPicker } from 'react-color';
+import { SketchPicker, ColorResult } from 'react-color';
 
 import {
   AlertDialog,
@@ -27,15 +27,18 @@ import {
 import { Input } from '@ui/input';
 import { ManageTypeAndCategoryProps } from '@/types';
 
-
 export default function ManageCategories() {
   const [categoryName, setCategoryName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null
   );
-  const [searchResults, setSearchResults] = useState<ManageTypeAndCategoryProps[]>([]);
+  const [searchResults, setSearchResults] = useState<
+    ManageTypeAndCategoryProps[]
+  >([]);
   const [searchMessage, setSearchMessage] = useState('');
-  const [categories, setCategories] = useState<ManageTypeAndCategoryProps[]>([]);
+  const [categories, setCategories] = useState<ManageTypeAndCategoryProps[]>(
+    []
+  );
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -154,7 +157,7 @@ export default function ManageCategories() {
     setShowAllCategories(!showAllCategories);
   };
 
-  const handleColorChange = (color: any) => {
+  const handleColorChange = (color: ColorResult) => {
     setColor(color.hex);
   };
 
