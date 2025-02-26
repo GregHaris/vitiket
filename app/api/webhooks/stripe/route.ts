@@ -21,13 +21,15 @@ export async function POST(request: Request) {
 
   // CREATE
   if (eventType === 'checkout.session.completed') {
-    const { id, amount_total, metadata } = event.data.object;
+    const { id, amount_total, metadata, currency } = event.data.object;
 
     const order = {
       stripeId: id,
       eventId: metadata?.eventId || '',
       buyerId: metadata?.buyerId || '',
       totalAmount: amount_total ? (amount_total / 100).toString() : '0',
+      currency: currency || 'usd',
+      quantity: 1,
       createdAt: new Date(),
     };
 
