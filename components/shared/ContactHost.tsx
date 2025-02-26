@@ -24,7 +24,7 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
             className="flex items-center gap-2"
           >
             <Mail />
-            <span className="p-regular-16">{contactDetails.email}</span>
+            <span className="p-regular-16 truncate">{contactDetails.email}</span>
           </Link>
         )}
 
@@ -42,7 +42,7 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
               height={24}
               alt="website"
             />
-            <span className="p-regular-16">{contactDetails.website}</span>
+            <span className="p-regular-16 truncate">{contactDetails.website}</span>
           </Link>
         )}
 
