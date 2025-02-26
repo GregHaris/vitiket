@@ -68,6 +68,7 @@ export default function ManageCategories() {
         setSuccessMessage(`Category "${categoryName}" added successfully!`);
         setCategoryName('');
         setColor('#000000');
+        setShowColorPicker(false);
         setCategories([...categories, newCategory]);
         setTimeout(() => setSuccessMessage(''), 5000);
       }
@@ -87,6 +88,7 @@ export default function ManageCategories() {
         );
         setCategoryName('');
         setColor('#000000');
+        setShowColorPicker(false);
         setSelectedCategoryId(null);
         setCategories(
           categories.map((cat) =>
@@ -195,7 +197,10 @@ export default function ManageCategories() {
       {searchResults.length > 0 && (
         <div className="space-y-2">
           {searchResults.map((result) => (
-            <div key={result._id} className="flex gap-2 items-center">
+            <div
+              key={result._id}
+              className="hover:bg-gray-100  flex gap-2 items-center"
+            >
               <span style={{ color: result.color }}>
                 {result.name
                   .split(new RegExp(`(${categoryName})`, 'gi'))
@@ -289,7 +294,7 @@ export default function ManageCategories() {
             {categories.map((category) => (
               <li
                 key={category._id}
-                className="flex gap-2 items-center justify-between"
+                className="hover:bg-gray-100  flex gap-2 items-center justify-between"
               >
                 <span style={{ color: category.color }}>{category.name}</span>
                 <div className="flex">

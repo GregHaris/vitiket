@@ -66,6 +66,7 @@ export default function ManageTypes() {
         setSuccessMessage(`Type "${typeName}" added successfully!`);
         setTypeName('');
         setColor('#000000');
+        setShowColorPicker(false);
         setTypes([...types, newType]);
         setTimeout(() => setSuccessMessage(''), 5000);
       }
@@ -83,6 +84,7 @@ export default function ManageTypes() {
         setSuccessMessage(`Type updated to "${typeName}" successfully!`);
         setTypeName('');
         setColor('#000000');
+        setShowColorPicker(false);
         setSelectedTypeId(null);
         setTypes(
           types.map((cat) => (cat._id === updatedType._id ? updatedType : cat))
@@ -186,7 +188,10 @@ export default function ManageTypes() {
       {searchResults.length > 0 && (
         <div className="space-y-2">
           {searchResults.map((result) => (
-            <div key={result._id} className="flex gap-2 items-center">
+            <div
+              key={result._id}
+              className="hover:bg-gray-100 flex gap-2 items-center"
+            >
               <span style={{ color: result.color }}>
                 {result.name
                   .split(new RegExp(`(${typeName})`, 'gi'))
@@ -280,7 +285,7 @@ export default function ManageTypes() {
             {types.map((type) => (
               <li
                 key={type._id}
-                className="flex gap-2 items-center justify-between"
+                className="hover:bg-gray-100 flex gap-2 items-center justify-between"
               >
                 <span style={{ color: type.color }}>{type.name}</span>
                 <div className="flex">
