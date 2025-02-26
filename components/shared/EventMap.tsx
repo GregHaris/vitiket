@@ -5,6 +5,7 @@ import {
   Marker,
   useJsApiLoader,
   OverlayView,
+  Libraries,
 } from '@react-google-maps/api';
 import { Plus, Minus } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -18,6 +19,9 @@ const containerStyle = {
   height: '400px',
 };
 
+
+const libraries: Libraries = ['places'];
+
 export default function EventMap({
   coordinates,
   destinationName,
@@ -25,7 +29,7 @@ export default function EventMap({
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-    libraries: ['places'],
+    libraries, 
   });
 
   const [placeDetails, setPlaceDetails] = useState<{
