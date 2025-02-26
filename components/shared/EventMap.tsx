@@ -8,7 +8,7 @@ import {
   Libraries,
 } from '@react-google-maps/api';
 import { Plus, Minus } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 
 import { EventMapProps } from '@/types';
@@ -19,7 +19,6 @@ const containerStyle = {
   height: '400px',
 };
 
-
 const libraries: Libraries = ['places'];
 
 export default function EventMap({
@@ -29,7 +28,7 @@ export default function EventMap({
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-    libraries, 
+    libraries,
   });
 
   const [placeDetails, setPlaceDetails] = useState<{
@@ -40,7 +39,7 @@ export default function EventMap({
   const [isMarkerHovered, setIsMarkerHovered] = useState(false);
 
   const [lat, lng] = coordinates.split(',').map(Number);
-  const center = { lat, lng };
+  const center = useMemo(() => ({ lat, lng }), [lat, lng]);
 
   useEffect(() => {
     if (!isLoaded) return;

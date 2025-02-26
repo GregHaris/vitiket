@@ -3,7 +3,7 @@ import {
   Marker,
   useJsApiLoader,
   Autocomplete,
-  Libraries
+  Libraries,
 } from '@react-google-maps/api';
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 
