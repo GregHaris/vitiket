@@ -55,7 +55,7 @@ const EventDetails = async (props: SearchParamProps) => {
                 <div className="flex flex-col gap-5">
                   <h2 className="text-4xl font-bold">{event.title}</h2>
 
-                  <div className="flex flex-col md:flex-row gap-5">
+                  <div className="flex flex-col md:flex-row gap-5 flex-wrap">
                     <p
                       className=" text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
                       style={{ color: event.type?.color }}
