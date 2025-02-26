@@ -20,8 +20,8 @@ export interface IEvent extends Document {
   currency: string;
   isFree?: boolean;
   url?: string;
-  type: { _id: string; name: string };
-  category: { _id: string; name: string };
+  type: { _id: string; name: string; color: string };
+  category: { _id: string; name: string; color: string };
   organizer: { _id: string; firstName: string; lastName: string };
   contactDetails: {
     email: string;
@@ -37,7 +37,7 @@ export interface IEvent extends Document {
 const EventSchema = new Schema(
   {
     title: { type: String, required: true },
-    subtitle: { type: String},
+    subtitle: { type: String },
     description: { type: String, required: true },
     locationType: {
       type: String,
@@ -67,7 +67,7 @@ const EventSchema = new Schema(
     contactDetails: {
       email: { type: String, required: true },
       website: { type: String },
-      phoneNumber: { type: String},
+      phoneNumber: { type: String },
       instagram: { type: String },
       facebook: { type: String },
       x: { type: String },
