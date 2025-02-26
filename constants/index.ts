@@ -40,6 +40,7 @@ export const heroContent = [
 
 export const eventDefaultValues = {
   title: '',
+  subtitle: '',
   description: '',
   locationType: 'Virtual' as 'Virtual',
   location: '',
@@ -63,6 +64,7 @@ export const eventDefaultValues = {
     instagram: '',
     facebook: '',
     x: '',
+    linkedIn: '',
   },
 };
 

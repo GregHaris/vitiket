@@ -3,6 +3,7 @@ import { Document, Schema, model, models } from 'mongoose';
 export interface IEvent extends Document {
   _id: string;
   title: string;
+  subtitle?: string;
   description: string;
   imageUrl: string;
   location?: string;
@@ -19,22 +20,24 @@ export interface IEvent extends Document {
   currency: string;
   isFree?: boolean;
   url?: string;
-  type: { _id: string; name: string };
-  category: { _id: string; name: string };
+  type: { _id: string; name: string; color: string };
+  category: { _id: string; name: string; color: string };
   organizer: { _id: string; firstName: string; lastName: string };
   contactDetails: {
-    phoneNumber: string;
     email: string;
     website?: string;
+    phoneNumber?: string;
     instagram?: string;
     facebook?: string;
     x?: string;
+    linkedin?: string;
   };
 }
 
 const EventSchema = new Schema(
   {
     title: { type: String, required: true },
+    subtitle: { type: String },
     description: { type: String, required: true },
     locationType: {
       type: String,
@@ -62,12 +65,13 @@ const EventSchema = new Schema(
     category: { type: Schema.Types.ObjectId, ref: 'Category' },
     organizer: { type: Schema.Types.ObjectId, ref: 'User' },
     contactDetails: {
-      phoneNumber: { type: String, required: true },
       email: { type: String, required: true },
       website: { type: String },
+      phoneNumber: { type: String },
       instagram: { type: String },
       facebook: { type: String },
       x: { type: String },
+      linkedin: { type: String },
     },
   },
   { timestamps: true }

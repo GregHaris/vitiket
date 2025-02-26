@@ -72,19 +72,32 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Image src={'/assets/icons/location.svg'} alt="location" width={20} height={20} />
+          <Image
+            src={'/assets/icons/location.svg'}
+            alt="location"
+            width={20}
+            height={20}
+          />
           <p className="p-medium-16 md:p-medium-18 text-gray-400">
-            {event.locationType === 'Virtual' ? 'Virtual Event' : event.location}
+            {event.locationType === 'Virtual'
+              ? 'Virtual Event'
+              : event.location}
           </p>
         </div>
-        
+
         {!hidePrice && (
           <div className="flex justify-between items-center gap-3">
-            <p className={"w-min rounded-full whitespace-nowrap text-primary font-bold"}
+            <p
+              className={
+                'w-min rounded-full whitespace-nowrap text-primary font-bold'
+              }
             >
               {priceDisplay}
             </p>
-            <p className="text-sm font-bold w-min rounded-full bg-grey-500/10 px-4 py-1 text-grey-500 whitespace-nowrap line-clamp-1">
+            <p
+              className="text-sm font-bold w-min rounded-full bg-gray-100 px-4 py-1 whitespace-nowrap line-clamp-1"
+              style={{ color: event.category?.color }}
+            >
               {event.category?.name}
             </p>
           </div>

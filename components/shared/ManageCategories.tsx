@@ -2,6 +2,7 @@
 
 import { Edit, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { SketchPicker } from 'react-color';
 
 import {
   AlertDialog,
@@ -24,24 +25,23 @@ import {
   getAllCategories,
 } from '@/lib/actions/category.actions';
 import { Input } from '@ui/input';
+import { ManageTypeAndCategoryProps } from '@/types';
 
-interface Category {
-  _id: string;
-  name: string;
-}
 
 export default function ManageCategories() {
   const [categoryName, setCategoryName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null
   );
-  const [searchResults, setSearchResults] = useState<Category[]>([]);
+  const [searchResults, setSearchResults] = useState<ManageTypeAndCategoryProps[]>([]);
   const [searchMessage, setSearchMessage] = useState('');
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<ManageTypeAndCategoryProps[]>([]);
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [color, setColor] = useState('#000000');
+  const [showColorPicker, setShowColorPicker] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -52,17 +52,19 @@ export default function ManageCategories() {
   }, []);
 
   const handleAddCategory = async () => {
-    if (categoryName.trim()) {
+    if (categoryName.trim() && color) {
       const existingCategories = await getCategoryByName(categoryName);
       if (existingCategories.length > 0) {
         setErrorMessage(`Category "${categoryName}" already exists.`);
         setTimeout(() => setErrorMessage(''), 5000);
         return;
       }
-      const newCategory = await createCategory({ categoryName });
+      const newCategory = await createCategory({ categoryName, color });
       if (newCategory) {
         setSuccessMessage(`Category "${categoryName}" added successfully!`);
         setCategoryName('');
+        setColor('#000000');
+        setShowColorPicker(false);
         setCategories([...categories, newCategory]);
         setTimeout(() => setSuccessMessage(''), 5000);
       }
@@ -70,16 +72,19 @@ export default function ManageCategories() {
   };
 
   const handleUpdateCategory = async () => {
-    if (selectedCategoryId && categoryName.trim()) {
+    if (selectedCategoryId && categoryName.trim() && color) {
       const updatedCategory = await updateCategory({
         categoryId: selectedCategoryId,
         categoryName,
+        color,
       });
       if (updatedCategory) {
         setSuccessMessage(
           `Category updated to "${categoryName}" successfully!`
         );
         setCategoryName('');
+        setColor('#000000');
+        setShowColorPicker(false);
         setSelectedCategoryId(null);
         setCategories(
           categories.map((cat) =>
@@ -121,9 +126,10 @@ export default function ManageCategories() {
     }
   };
 
-  const handleSelectCategory = (category: Category) => {
+  const handleSelectCategory = (category: ManageTypeAndCategoryProps) => {
     setSelectedCategoryId(category._id);
     setCategoryName(category.name);
+    setColor(category.color);
     setSearchResults([]);
     setSearchMessage('');
   };
@@ -148,6 +154,10 @@ export default function ManageCategories() {
     setShowAllCategories(!showAllCategories);
   };
 
+  const handleColorChange = (color: any) => {
+    setColor(color.hex);
+  };
+
   return (
     <div className="space-y-4  wrapper">
       <h2 className="text-xl font-semibold md:text-left text-center">
@@ -162,15 +172,32 @@ export default function ManageCategories() {
           onKeyDown={handleKeyPress}
           className="input-field"
         />
-        <Button className="button" onClick={handleSearchCategory}>
+        <Button
+          className="button"
+          onClick={() => setShowColorPicker(!showColorPicker)}
+          disabled={!categoryName.trim()}
+        >
+          {showColorPicker ? 'Hide Color Picker' : 'Pick Color'}
+        </Button>
+        {showColorPicker && (
+          <SketchPicker color={color} onChange={handleColorChange} />
+        )}
+        <Button
+          className="button"
+          onClick={handleSearchCategory}
+          disabled={!categoryName.trim()}
+        >
           Search Category
         </Button>
       </div>
       {searchResults.length > 0 && (
         <div className="space-y-2">
           {searchResults.map((result) => (
-            <div key={result._id} className="flex gap-2 items-center">
-              <span>
+            <div
+              key={result._id}
+              className="hover:bg-gray-100  flex gap-2 items-center"
+            >
+              <span style={{ color: result.color }}>
                 {result.name
                   .split(new RegExp(`(${categoryName})`, 'gi'))
                   .map((part, index) =>
@@ -238,7 +265,11 @@ export default function ManageCategories() {
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       {deleteMessage && <p className="text-red-500">{deleteMessage}</p>}
       <div className="flex gap-2 flex-col md:flex-row mb-10">
-        <Button onClick={handleAddCategory} className="button">
+        <Button
+          onClick={handleAddCategory}
+          className="button"
+          disabled={!categoryName.trim()}
+        >
           Add Category
         </Button>
         <Button
@@ -259,9 +290,9 @@ export default function ManageCategories() {
             {categories.map((category) => (
               <li
                 key={category._id}
-                className="flex gap-2 items-center justify-between"
+                className="hover:bg-gray-100  flex gap-2 items-center justify-between"
               >
-                <span>{category.name}</span>
+                <span style={{ color: category.color }}>{category.name}</span>
                 <div className="flex">
                   <Button
                     type="button"

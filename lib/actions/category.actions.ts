@@ -6,12 +6,14 @@ import Category from '../database/models/category.model';
 
 export const createCategory = async ({
   categoryName,
+  color,
 }: {
   categoryName: string;
+  color: string;
 }) => {
   try {
     await connectToDatabase();
-    const newCategory = await Category.create({ name: categoryName });
+    const newCategory = await Category.create({ name: categoryName, color });
     return JSON.parse(JSON.stringify(newCategory));
   } catch (error) {
     handleError(error);
@@ -21,15 +23,17 @@ export const createCategory = async ({
 export const updateCategory = async ({
   categoryId,
   categoryName,
+  color,
 }: {
   categoryId: string;
   categoryName: string;
+  color: string;
 }) => {
   try {
     await connectToDatabase();
     const updatedCategory = await Category.findByIdAndUpdate(
       categoryId,
-      { name: categoryName },
+      { name: categoryName, color },
       { new: true }
     );
     return JSON.parse(JSON.stringify(updatedCategory));

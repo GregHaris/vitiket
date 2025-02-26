@@ -9,6 +9,7 @@ import {
 } from '@/lib/actions/event.actions';
 import CheckoutButton from '@shared/CheckoutButton';
 import Collection from '@shared/Collection';
+import ContactHost from '@shared/ContactHost';
 import EventMap from '@shared/EventMap';
 import PriceCards from '@shared/PriceCards';
 import SafeHTMLRenderer from '@shared/SafeHTMLRenderer';
@@ -49,13 +50,30 @@ const EventDetails = async (props: SearchParamProps) => {
           </div>
           <div className="flex w-full flex-col gap-8 p-5 md:p-10">
             <div className="flex flex-col gap-2 space-y-6">
-              <p className="p-medium-16 rounded-full bg-grey-500/10 px-4 py-2.5 text-grey-500 w-fit">
-                {event.category?.name}
-              </p>
               <div className="flex justify-between gap-3">
                 {/* Event Details */}
                 <div className="flex flex-col gap-5">
                   <h2 className="text-4xl font-bold">{event.title}</h2>
+
+                  <div className="flex gap-5">
+                    <p
+                      className=" text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
+                      style={{ color: event.type?.color }}
+                    >
+                      {event.type?.name}
+                    </p>
+                    <p
+                      className=" text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
+                      style={{ color: event.category?.color }}
+                    >
+                      {event.category?.name}
+                    </p>
+                  </div>
+
+                  <p className="p-regular-16 lg:p-regular-18 ">
+                    {event.subtitle}
+                  </p>
+
                   <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
                     <span className="font-bold">Host:</span>{' '}
                     <span>
@@ -112,17 +130,12 @@ const EventDetails = async (props: SearchParamProps) => {
                   <div className="flex flex-col gap-3">
                     <h3 className="text-2xl font-bold">About this Event</h3>
                     <SafeHTMLRenderer html={event.description} />
-                    <p className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline">
-                      {event.url}
-                    </p>
                   </div>
 
                   {/* Price Section */}
                   <div id="price-section" className="flex flex-col gap-3">
                     <h3 className="text-2xl font-bold">Tickets</h3>
-                    <div
-                      className="flex flex-col gap-3 sm:flex-row sm:items-center"
-                    >
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                       <PriceCards
                         event={event}
                         currencySymbol={currencySymbol}
@@ -144,6 +157,12 @@ const EventDetails = async (props: SearchParamProps) => {
                         </div>
                       </div>
                     )}
+
+                  <div className="mt-5">
+                    {event.contactDetails && (
+                      <ContactHost contactDetails={event.contactDetails} />
+                    )}
+                  </div>
                 </div>
 
                 {/* Sticky Checkout Button */}

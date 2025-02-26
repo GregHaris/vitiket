@@ -5,12 +5,13 @@ export const eventFormSchema = z
     title: z
       .string()
       .min(3, { message: 'Title must be at least 3 characters' }),
+    subtitle: z.string().optional(),
     description: z
       .string()
       .min(10, { message: 'Description must be at least 10 characters' })
-      .max(1500, { message: 'Description must be less than 1500 characters' }),
-    locationType: z.enum(['Virtual', 'Physical', 'Hybrid']),
+      .max(2000, { message: 'Description must be less than 1500 characters' }),
     location: z.string().optional(),
+    locationType: z.enum(['Virtual', 'Physical', 'Hybrid']),
     coordinates: z.string().optional(),
     imageUrl: z.string().min(1, { message: 'Image URL is required' }),
     startDate: z.date(),
@@ -23,18 +24,29 @@ export const eventFormSchema = z
     isFree: z.boolean().optional().default(false),
     url: z.string().optional(),
     contactDetails: z.object({
-      phoneNumber: z
-        .string()
-        .min(1, { message: 'Phone number is required' })
-        .min(10, { message: 'Phone number must be at least 10 characters' }),
       email: z
         .string()
         .min(1, { message: 'Email is required' })
         .email({ message: 'Invalid email address' }),
+      phoneNumber: z
+        .string()
+        .optional()
+        .superRefine((val, ctx) => {
+          if (val && val.length > 0 && val.length < 10) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.too_small,
+              minimum: 10,
+              type: 'string',
+              inclusive: true,
+              message: 'Phone number must be at least 10 characters',
+            });
+          }
+        }),
       website: z.string().optional(),
       instagram: z.string().optional(),
       facebook: z.string().optional(),
       x: z.string().optional(),
+      linkedin: z.string().optional(),
     }),
     quantity: z
       .number()

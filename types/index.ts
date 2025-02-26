@@ -28,6 +28,7 @@ export type CreateEventParams = {
   userId: string;
   event: {
     title: string;
+    subtitle?: string;
     description: string;
     locationType: 'Virtual' | 'Physical' | 'Hybrid';
     location?: string;
@@ -45,12 +46,13 @@ export type CreateEventParams = {
     url?: string;
   };
   contactDetails: {
-    phoneNumber: string;
     email: string;
+    phoneNumber?: string;
     website?: string;
     instagram?: string;
     facebook?: string;
     x?: string;
+    linkedin?: string;
   };
   path: string;
 };
@@ -60,6 +62,7 @@ export type UpdateEventParams = {
   event: {
     _id: string;
     title: string;
+    subtitle?: string;
     imageUrl: string;
     description: string;
     locationType: 'Virtual' | 'Physical' | 'Hybrid';
@@ -77,12 +80,13 @@ export type UpdateEventParams = {
     url?: string;
   };
   contactDetails: {
-    phoneNumber: string;
     email: string;
+    phoneNumber?: string;
     website?: string;
     instagram?: string;
     facebook?: string;
     x?: string;
+    linkedin?: string;
   };
   path: string;
 };
@@ -123,6 +127,7 @@ export type GetRelatedEventsByTypeParams = {
 export type Event = {
   _id: string;
   title: string;
+  subtitle?: string;
   description: string;
   priceCategories?: PriceCategory[];
   quantity?: number | null;
@@ -144,18 +149,21 @@ export type Event = {
   type: {
     _id: string;
     name: string;
+    color: string;
   };
   category: {
     _id: string;
     name: string;
+    color: string;
   };
   contactDetails: {
-    phoneNumber: string;
     email: string;
+    phoneNumber?: string;
     website?: string;
     instagram?: string;
     facebook?: string;
     x?: string;
+    linkedin?: string;
   };
 };
 
@@ -326,4 +334,24 @@ export type PriceCardUIProps = {
   onDecrease: () => void;
   onIncrease: () => void;
   currencySymbol?: string;
+}
+
+export type ContactDetails = {
+  email?: string;
+  phoneNumber?: string;
+  website?: string;
+  linkedin?: string;
+  instagram?: string;
+  facebook?: string;
+  x?: string;
+}
+
+export type ContactHostProps = {
+  contactDetails: ContactDetails;
+}
+
+export type ManageTypeAndCategoryProps = {
+  _id: string;
+  name: string;
+  color: string;
 }

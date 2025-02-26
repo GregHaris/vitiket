@@ -47,15 +47,12 @@ const Checkout = ({
   };
 
   return (
-    <form
-      action={onCheckout}
-      className="fixed bottom-0 left-0 right-0 md:sticky md:top-4 z-50 flex justify-end p-4 bg-white shadow-lg md:bg-transparent md:shadow-none"
-    >
+    <form action={onCheckout}>
       <Button
         type="submit"
         role="link"
         size="lg"
-        className="button w-full md:w-auto cursor-pointer font-bold px-25"
+        className="button w-full md:w-[300px] cursor-pointer font-bold transition-all duration-300"
       >
         {event.isFree
           ? 'Checkout - Free'

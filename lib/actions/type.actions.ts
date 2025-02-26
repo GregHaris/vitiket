@@ -4,10 +4,16 @@ import { connectToDatabase } from '../database';
 import { handleError } from '../utils';
 import Type from '../database/models/type.model';
 
-export const createType = async ({ typeName }: { typeName: string }) => {
+export const createType = async ({
+  typeName,
+  color,
+}: {
+  typeName: string;
+  color: string;
+}) => {
   try {
     await connectToDatabase();
-    const newType = await Type.create({ name: typeName });
+    const newType = await Type.create({ name: typeName, color });
     return JSON.parse(JSON.stringify(newType));
   } catch (error) {
     handleError(error);
@@ -17,15 +23,17 @@ export const createType = async ({ typeName }: { typeName: string }) => {
 export const updateType = async ({
   typeId,
   typeName,
+  color,
 }: {
   typeId: string;
   typeName: string;
+  color: string;
 }) => {
   try {
     await connectToDatabase();
     const updatedType = await Type.findByIdAndUpdate(
       typeId,
-      { name: typeName },
+      { name: typeName, color },
       { new: true }
     );
     return JSON.parse(JSON.stringify(updatedType));

@@ -25,6 +25,7 @@ import IsFreeCheckbox from './FormIsFreeCheckbox';
 import LocationSection from './FormLocationSection';
 import LocationTypeSelector from './FormLocationTypeSelector';
 import PriceCategoriesInput from './PriceCategoriesInput';
+import SubtitleInput from './FormSubtitleTextArea';
 import TimePickerComponent from './FormTimePicker';
 import TitleInput from './FormTitleInput';
 import QuantityInput from './FormQuantityInput';
@@ -83,6 +84,7 @@ export default function EventForm({
       imageUrl: uploadedImageUrl,
       location: values.locationType === 'Virtual' ? 'Virtual' : values.location,
       coordinates: values.coordinates,
+      typeId: values.typeId,
     };
 
     const contactDetails = {
@@ -167,6 +169,7 @@ export default function EventForm({
                       </div>
                     )}
                     <TitleInput />
+                    <SubtitleInput />
                     <DescriptionEditor />
                     <AddImage setFiles={setFiles} />
                     <LocationTypeSelector />

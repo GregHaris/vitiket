@@ -3,6 +3,7 @@ import {
   Marker,
   useJsApiLoader,
   Autocomplete,
+  Libraries
 } from '@react-google-maps/api';
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 
@@ -20,11 +21,13 @@ const defaultCenter = {
   lng: 0,
 };
 
+const libraries: Libraries = ['places'];
+
 const MapInput: React.FC<MapInputProps> = ({ value, onChange }) => {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-    libraries: ['places'],
+    libraries,
   });
 
   const [map, setMap] = useState<google.maps.Map | null>(null);

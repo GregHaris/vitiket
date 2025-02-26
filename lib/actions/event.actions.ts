@@ -7,6 +7,7 @@ import { connectToDatabase } from '@/lib/database';
 import { handleError } from '@/lib/utils';
 import Event, { IEvent } from '@/lib/database/models/event.model';
 import Category from '@/lib/database/models/category.model';
+import Type from '../database/models/type.model';
 import User from '@/lib/database/models/user.model';
 
 import {
@@ -31,7 +32,8 @@ const populateEvent = async <T extends IEvent | IEvent[] | null>(
       model: User,
       select: '_id firstName lastName',
     })
-    .populate({ path: 'category', model: Category, select: '_id name' });
+    .populate({ path: 'category', model: Category, select: '_id name color' })
+    .populate({ path: 'type', model: Type, select: '_id name color' });
 };
 
 // CREATE
@@ -45,6 +47,7 @@ export async function createEvent({ userId, event, path }: CreateEventParams) {
     const newEvent = await Event.create({
       ...event,
       category: event.categoryId,
+      type: event.typeId,
       organizer: userId,
     });
     revalidatePath(path);
@@ -82,7 +85,7 @@ export async function updateEvent({ userId, event, path }: UpdateEventParams) {
 
     const updatedEvent = await Event.findByIdAndUpdate(
       event._id,
-      { ...event, category: event.categoryId },
+      { ...event, category: event.categoryId, type: event.typeId },
       { new: true }
     );
     revalidatePath(path);
