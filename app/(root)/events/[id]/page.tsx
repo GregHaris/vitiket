@@ -28,6 +28,8 @@ const EventDetails = async (props: SearchParamProps) => {
     page: resolvedSearchParams?.page as string,
   });
 
+  console.log(event);
+
   const isSameDate =
     formatDateTime(event.startDate).dateOnly ===
     formatDateTime(event.endDate).dateOnly;
