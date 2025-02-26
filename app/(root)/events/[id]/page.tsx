@@ -52,27 +52,30 @@ const EventDetails = async (props: SearchParamProps) => {
           </div>
           <div className="flex w-full flex-col gap-8 p-5 md:p-10">
             <div className="flex flex-col gap-2 space-y-6">
-              <div className="flex gap-5">
-                <p
-                  className=" text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
-                  style={{ color: event.type?.color }}
-                >
-                  {event.type?.name}
-                </p>
-                <p
-                  className=" text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
-                  style={{ color: event.category?.color }}
-                >
-                  {event.category?.name}
-                </p>
-              </div>
               <div className="flex justify-between gap-3">
                 {/* Event Details */}
                 <div className="flex flex-col gap-5">
                   <h2 className="text-4xl font-bold">{event.title}</h2>
+
+                  <div className="flex gap-5">
+                    <p
+                      className=" text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
+                      style={{ color: event.type?.color }}
+                    >
+                      {event.type?.name}
+                    </p>
+                    <p
+                      className=" text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
+                      style={{ color: event.category?.color }}
+                    >
+                      {event.category?.name}
+                    </p>
+                  </div>
+
                   <p className="p-regular-16 lg:p-regular-18 ">
                     {event.subtitle}
                   </p>
+                  
                   <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
                     <span className="font-bold">Host:</span>{' '}
                     <span>
