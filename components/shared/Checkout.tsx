@@ -33,21 +33,12 @@ const Checkout = ({
   }, []);
 
   const onCheckout = async () => {
-    let price = '0';
-    if (!event.isFree) {
-      if (event.priceCategories && event.priceCategories.length > 0) {
-        price = event.priceCategories?.[0]?.price || '0';
-      }
-    }
-
-    const isFree = event.isFree || false;
-
     const order = {
       eventTitle: event.title,
       buyerId: userId,
       eventId: event._id,
-      price: price,
-      isFree: isFree,
+      price: totalPrice.toString(),
+      isFree: event.isFree || false,
       currency: event.currency,
       quantity: quantity,
     };
