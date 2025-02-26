@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import PriceCard from './PriceCardUI';
@@ -34,16 +34,24 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
     }
   );
 
+  // Debounce URL updates
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      Object.entries(quantities).forEach(([categoryId, quantity]) => {
+        newSearchParams.set(categoryId, quantity.toString());
+      });
+      router.replace(`?${newSearchParams.toString()}`, { scroll: false });
+    }, 500); 
+
+    return () => clearTimeout(timeoutId);
+  }, [quantities, searchParams, router]);
+
   const handleQuantityChange = (categoryId: string, amount: number) => {
     setQuantities((prev) => {
       const newQuantity = Math.max(0, (prev[categoryId] || 0) + amount);
       return { ...prev, [categoryId]: newQuantity };
     });
-
-    const newSearchParams = new URLSearchParams(searchParams.toString());
-    const newQuantity = Math.max(0, (quantities[categoryId] || 0) + amount);
-    newSearchParams.set(categoryId, newQuantity.toString());
-    router.replace(`?${newSearchParams.toString()}`, { scroll: false });
   };
 
   return (
