@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
   '/',
-  '/productListings/:id',
+  '/events/:id',
+  '/events',
   '/api/webhooks',
   '/api/webhooks/(.*)',
   '/api/uploadthing',
