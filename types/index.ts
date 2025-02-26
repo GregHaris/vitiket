@@ -347,3 +347,9 @@ export type ContactDetails = {
 export type ContactHostProps = {
   contactDetails: ContactDetails;
 }
+
+export type ManageTypeAndCategoryProps = {
+  _id: string;
+  name: string;
+  color: string;
+}
