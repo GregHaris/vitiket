@@ -28,6 +28,7 @@
     "@tiptap/extension-underline": "^2.11.5",
     "@tiptap/react": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
+    "@types/react-color": "^3.0.13",
     "@uploadthing/react": "^7.1.5",
     "add": "^2.0.6",
     "class-variance-authority": "^0.7.1",
