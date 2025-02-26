@@ -17,27 +17,6 @@ export default function ContactDetails() {
       </p>
       <FormField
         control={control}
-        name="contactDetails.phoneNumber"
-        render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
-                <FiPhone />
-                <span className="text-red-400">*</span>
-                <Input
-                  placeholder="Your phone number"
-                  {...field}
-                  className="nested-input-field p-regular-14"
-                />
-              </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={control}
         name="contactDetails.email"
         render={({ field }) => (
           <FormItem>
@@ -57,6 +36,25 @@ export default function ContactDetails() {
         )}
       />
       <p className="italic text-gray-500 text-sm">Optional</p>
+      <FormField
+        control={control}
+        name="contactDetails.phoneNumber"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
+                <FiPhone />
+                <Input
+                  placeholder="Your phone number"
+                  {...field}
+                  className="nested-input-field p-regular-14"
+                />
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
       <FormField
         control={control}
         name="contactDetails.website"
@@ -91,7 +89,7 @@ export default function ContactDetails() {
                   alt="calendar"
                 />
                 <Input
-                  placeholder="Your Instagram handle"
+                  placeholder="https://www.instagram.com/your-username"
                   {...field}
                   className="nested-input-field p-regular-14"
                 />
@@ -116,7 +114,7 @@ export default function ContactDetails() {
                   alt="calendar"
                 />
                 <Input
-                  placeholder="Your Facebook handle"
+                  placeholder="https://www.facebook.com/your-username"
                   {...field}
                   className="nested-input-field p-regular-14"
                 />
@@ -141,7 +139,32 @@ export default function ContactDetails() {
                   alt="calendar"
                 />
                 <Input
-                  placeholder="Your X (Twitter) handle"
+                  placeholder="https://x.com/your-username"
+                  {...field}
+                  className="nested-input-field p-regular-14"
+                />
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="contactDetails.linkedin"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
+                <Image
+                  src="/assets/icons/linkedIn.svg"
+                  width={20}
+                  height={20}
+                  alt="calendar"
+                />
+                <Input
+                  placeholder="https://www.linkedin.com/in/your-profile-name"
                   {...field}
                   className="nested-input-field p-regular-14"
                 />
