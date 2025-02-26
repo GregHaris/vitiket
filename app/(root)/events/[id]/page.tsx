@@ -28,8 +28,6 @@ const EventDetails = async (props: SearchParamProps) => {
     page: resolvedSearchParams?.page as string,
   });
 
-  console.log(event);
-
   const isSameDate =
     formatDateTime(event.startDate).dateOnly ===
     formatDateTime(event.endDate).dateOnly;
@@ -75,7 +73,7 @@ const EventDetails = async (props: SearchParamProps) => {
                   <p className="p-regular-16 lg:p-regular-18 ">
                     {event.subtitle}
                   </p>
-                  
+
                   <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
                     <span className="font-bold">Host:</span>{' '}
                     <span>
