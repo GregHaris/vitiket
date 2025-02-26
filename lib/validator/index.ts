@@ -9,7 +9,7 @@ export const eventFormSchema = z
     description: z
       .string()
       .min(10, { message: 'Description must be at least 10 characters' })
-      .max(1500, { message: 'Description must be less than 1500 characters' }),
+      .max(2000, { message: 'Description must be less than 1500 characters' }),
     location: z.string().optional(),
     locationType: z.enum(['Virtual', 'Physical', 'Hybrid']),
     coordinates: z.string().optional(),
