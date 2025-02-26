@@ -50,9 +50,20 @@ const EventDetails = async (props: SearchParamProps) => {
           </div>
           <div className="flex w-full flex-col gap-8 p-5 md:p-10">
             <div className="flex flex-col gap-2 space-y-6">
-              <p className="p-medium-16 rounded-full bg-grey-500/10 px-4 py-2.5 text-grey-500 w-fit">
-                {event.category?.name}
-              </p>
+              <div className="flex gap-5">
+                <p
+                  className=" text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
+                  style={{ color: event.type?.color }}
+                >
+                  {event.type?.name}
+                </p>
+                <p
+                  className=" text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
+                  style={{ color: event.category?.color }}
+                >
+                  {event.category?.name}
+                </p>
+              </div>
               <div className="flex justify-between gap-3">
                 {/* Event Details */}
                 <div className="flex flex-col gap-5">
@@ -116,9 +127,6 @@ const EventDetails = async (props: SearchParamProps) => {
                   <div className="flex flex-col gap-3">
                     <h3 className="text-2xl font-bold">About this Event</h3>
                     <SafeHTMLRenderer html={event.description} />
-                    <p className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline">
-                      {event.url}
-                    </p>
                   </div>
 
                   {/* Price Section */}
@@ -147,7 +155,7 @@ const EventDetails = async (props: SearchParamProps) => {
                       </div>
                     )}
 
-                  <div className='mt-5'>
+                  <div className="mt-5">
                     {event.contactDetails && (
                       <ContactHost contactDetails={event.contactDetails} />
                     )}
