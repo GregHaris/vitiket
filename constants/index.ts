@@ -64,6 +64,7 @@ export const eventDefaultValues = {
     instagram: '',
     facebook: '',
     x: '',
+    linkedIn: '',
   },
 };
 
