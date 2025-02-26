@@ -87,7 +87,7 @@ export default function EventMap({
   };
 
   if (!isLoaded) {
-    return <div>{''}</div>;
+    return <div>Loading Map...</div>;
   }
 
   return (
