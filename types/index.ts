@@ -28,6 +28,7 @@ export type CreateEventParams = {
   userId: string;
   event: {
     title: string;
+    subtitle?: string;
     description: string;
     locationType: 'Virtual' | 'Physical' | 'Hybrid';
     location?: string;
@@ -60,6 +61,7 @@ export type UpdateEventParams = {
   event: {
     _id: string;
     title: string;
+    subtitle?: string;
     imageUrl: string;
     description: string;
     locationType: 'Virtual' | 'Physical' | 'Hybrid';
@@ -123,6 +125,7 @@ export type GetRelatedEventsByTypeParams = {
 export type Event = {
   _id: string;
   title: string;
+  subtitle?: string;
   description: string;
   priceCategories?: PriceCategory[];
   quantity?: number | null;
