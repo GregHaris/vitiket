@@ -24,7 +24,9 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
             className="flex items-center gap-2"
           >
             <Mail />
-            <span className="p-regular-16 truncate">{contactDetails.email}</span>
+            <span className="p-regular-16 truncate">
+              {contactDetails.email}
+            </span>
           </Link>
         )}
 
@@ -42,72 +44,73 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
               height={24}
               alt="website"
             />
-            <span className="p-regular-16 truncate">{contactDetails.website}</span>
+            <span className="p-regular-16 truncate">
+              {contactDetails.website}
+            </span>
           </Link>
         )}
 
-        {/* LinkedIn */}
-        {contactDetails.linkedin && (
-          <Link
-            href={contactDetails.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2"
-          >
-            <Image
-              src="/assets/icons/linkedIn.svg"
-              width={30}
-              height={30}
-              alt="linkedin"
-            />
-          </Link>
-        )}
-
-        {/* Instagram */}
-        {contactDetails.instagram && (
-          <Link
-            href={contactDetails.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2"
-          >
-            <Image
-              src="/assets/icons/instagram.svg"
-              width={24}
-              height={24}
-              alt="instagram"
-            />
-          </Link>
-        )}
-
-        {/* Facebook */}
-        {contactDetails.facebook && (
-          <Link
-            href={contactDetails.facebook}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2"
-          >
-            <Image
-              src="/assets/icons/facebook.svg"
-              width={24}
-              height={24}
-              alt="facebook"
-            />
-          </Link>
-        )}
-
-        {/* X (Twitter) */}
-        {contactDetails.x && (
-          <Link
-            href={contactDetails.x}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2"
-          >
-            <Image src="/assets/icons/x.svg" width={24} height={24} alt="x" />
-          </Link>
-        )}
+        <div className="flex flex-wrap gap-4">
+          {/* LinkedIn */}
+          {contactDetails.linkedin && (
+            <Link
+              href={contactDetails.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <Image
+                src="/assets/icons/linkedIn.svg"
+                width={30}
+                height={30}
+                alt="linkedin"
+              />
+            </Link>
+          )}
+          {/* Instagram */}
+          {contactDetails.instagram && (
+            <Link
+              href={contactDetails.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <Image
+                src="/assets/icons/instagram.svg"
+                width={24}
+                height={24}
+                alt="instagram"
+              />
+            </Link>
+          )}
+          {/* Facebook */}
+          {contactDetails.facebook && (
+            <Link
+              href={contactDetails.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <Image
+                src="/assets/icons/facebook.svg"
+                width={24}
+                height={24}
+                alt="facebook"
+              />
+            </Link>
+          )}
+          {/* X (Twitter) */}
+          {contactDetails.x && (
+            <Link
+              href={contactDetails.x}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <Image src="/assets/icons/x.svg" width={24} height={24} alt="x" />
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );
