@@ -25,21 +25,17 @@ import {
   getAllCategories,
 } from '@/lib/actions/category.actions';
 import { Input } from '@ui/input';
+import { ManageTypeAndCategoryProps } from '@/types';
 
-interface Category {
-  _id: string;
-  name: string;
-  color: string;
-}
 
 export default function ManageCategories() {
   const [categoryName, setCategoryName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null
   );
-  const [searchResults, setSearchResults] = useState<Category[]>([]);
+  const [searchResults, setSearchResults] = useState<ManageTypeAndCategoryProps[]>([]);
   const [searchMessage, setSearchMessage] = useState('');
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<ManageTypeAndCategoryProps[]>([]);
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -130,7 +126,7 @@ export default function ManageCategories() {
     }
   };
 
-  const handleSelectCategory = (category: Category) => {
+  const handleSelectCategory = (category: ManageTypeAndCategoryProps) => {
     setSelectedCategoryId(category._id);
     setCategoryName(category.name);
     setColor(category.color);

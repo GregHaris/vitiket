@@ -25,19 +25,16 @@ import {
   getAllTypes,
 } from '@/lib/actions/type.actions';
 import { Input } from '@ui/input';
-
-interface Type {
-  _id: string;
-  name: string;
-  color: string;
-}
+import { ManageTypeAndCategoryProps } from '@/types';
 
 export default function ManageTypes() {
   const [typeName, setTypeName] = useState('');
   const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null);
-  const [searchResults, setSearchResults] = useState<Type[]>([]);
+  const [searchResults, setSearchResults] = useState<
+    ManageTypeAndCategoryProps[]
+  >([]);
   const [searchMessage, setSearchMessage] = useState('');
-  const [types, setTypes] = useState<Type[]>([]);
+  const [types, setTypes] = useState<ManageTypeAndCategoryProps[]>([]);
   const [showAllTypes, setShowAllTypes] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -122,7 +119,7 @@ export default function ManageTypes() {
     }
   };
 
-  const handleSelectType = (type: Type) => {
+  const handleSelectType = (type: ManageTypeAndCategoryProps) => {
     setSelectedTypeId(type._id);
     setTypeName(type.name);
     setSearchResults([]);
