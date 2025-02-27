@@ -18,7 +18,9 @@ export default function FormLastNameInput() {
       name="lastName"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-sm font-medium">Last Name</FormLabel>
+          <FormLabel className="text-sm font-medium">
+            Last Name<span className="text-red-400">*</span>
+          </FormLabel>
           <FormControl>
             <Input
               placeholder="Enter your last name"
