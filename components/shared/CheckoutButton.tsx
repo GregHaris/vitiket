@@ -3,12 +3,8 @@
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 
-import { IEvent } from '@/lib/database/models/event.model';
-import { Button } from '@/components/ui/button';
-
-interface CheckoutButtonProps {
-  event: IEvent;
-}
+import { Button } from '@ui/button';
+import { CheckoutButtonProps } from '@/types';
 
 export default function CheckoutButton({ event }: CheckoutButtonProps) {
   const searchParams = useSearchParams();
