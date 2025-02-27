@@ -2,7 +2,8 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import { Button } from '../ui/button';
+
+import { Button } from '@ui/button';
 import { IEvent } from '@/lib/database/models/event.model';
 import Checkout from './Checkout';
 
