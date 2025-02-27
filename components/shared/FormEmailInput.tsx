@@ -18,7 +18,7 @@ export default function FormEmailInput() {
       name="email"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Email</FormLabel>
+          <FormLabel className="text-sm font-medium">Email</FormLabel>
           <FormControl>
             <Input
               type="email"

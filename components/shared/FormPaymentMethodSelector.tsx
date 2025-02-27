@@ -18,7 +18,7 @@ export default function FormPaymentMethodSelector() {
       name="paymentMethod"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Payment Method</FormLabel>
+          <FormLabel className="text-sm font-bold">Payment Methods</FormLabel>
           <FormControl>
             <RadioGroup
               onValueChange={field.onChange}

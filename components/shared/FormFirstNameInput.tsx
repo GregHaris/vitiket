@@ -18,7 +18,7 @@ export default function FormFirstNameInput() {
       name="firstName"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>First Name</FormLabel>
+          <FormLabel className="text-sm font-medium">First Name</FormLabel>
           <FormControl>
             <Input
               placeholder="Enter your first name"
