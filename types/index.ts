@@ -325,7 +325,7 @@ export type CardProps = {
 export type PriceCardsProps = {
   event: IEvent;
   currencySymbol: string;
-}
+};
 
 export type PriceCardUIProps = {
   title: string;
@@ -334,7 +334,7 @@ export type PriceCardUIProps = {
   onDecrease: () => void;
   onIncrease: () => void;
   currencySymbol?: string;
-}
+};
 
 export type ContactDetails = {
   email?: string;
@@ -344,14 +344,24 @@ export type ContactDetails = {
   instagram?: string;
   facebook?: string;
   x?: string;
-}
+};
 
 export type ContactHostProps = {
   contactDetails: ContactDetails;
-}
+};
 
 export type ManageTypeAndCategoryProps = {
   _id: string;
   name: string;
   color: string;
-}
+};
+
+export type CheckoutButtonProps = {
+  event: IEvent;
+};
+
+export type CheckoutDetailsProps = {
+  event: IEvent;
+  quantity: number;
+  totalPrice: number;
+};
