@@ -20,7 +20,11 @@ export default function FormLastNameInput() {
         <FormItem>
           <FormLabel>Last Name</FormLabel>
           <FormControl>
-            <Input placeholder="Enter your last name" {...field} />
+            <Input
+              placeholder="Enter your last name"
+              {...field}
+              className="input-field p-regular-14"
+            />
           </FormControl>
           <FormMessage />
         </FormItem>

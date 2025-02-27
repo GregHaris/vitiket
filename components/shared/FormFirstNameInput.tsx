@@ -20,7 +20,11 @@ export default function FormFirstNameInput() {
         <FormItem>
           <FormLabel>First Name</FormLabel>
           <FormControl>
-            <Input placeholder="Enter your first name" {...field} />
+            <Input
+              placeholder="Enter your first name"
+              {...field}
+              className="input-field p-regular-14"
+            />
           </FormControl>
           <FormMessage />
         </FormItem>

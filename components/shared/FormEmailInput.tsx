@@ -20,7 +20,12 @@ export default function FormEmailInput() {
         <FormItem>
           <FormLabel>Email</FormLabel>
           <FormControl>
-            <Input type="email" placeholder="Enter your email" {...field} />
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              {...field}
+              className="input-field p-regular-14"
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
