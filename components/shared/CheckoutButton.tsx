@@ -1,9 +1,9 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
-import { Button } from '@ui/button';
+import { Button } from '@/components/ui/button';
 import { CheckoutButtonProps } from '@/types';
 
 export default function CheckoutButton({ event }: CheckoutButtonProps) {
@@ -13,22 +13,32 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
   // Calculate total quantity and total price
   let totalQuantity = 0;
   let totalPrice = 0;
+  const selectedTickets: { [key: string]: number } = {};
 
   if (event.isFree) {
     totalQuantity = Number(searchParams.get('free')) || 0;
+    selectedTickets['free'] = totalQuantity;
   } else {
     event.priceCategories?.forEach((category, index) => {
       const categoryId = `category-${index}`;
       const quantity = Number(searchParams.get(categoryId)) || 0;
-      totalQuantity += quantity;
-      totalPrice += quantity * Number(category.price);
+      if (quantity > 0) {
+        selectedTickets[category.name] = quantity;
+        totalQuantity += quantity;
+        totalPrice += quantity * Number(category.price);
+      }
     });
   }
 
   const handleCheckout = () => {
-    router.push(
-      `/events/${event._id}/checkout?quantity=${totalQuantity}&totalPrice=${totalPrice}`
-    );
+    const queryParams = new URLSearchParams();
+    queryParams.set('quantity', totalQuantity.toString());
+    queryParams.set('totalPrice', totalPrice.toString());
+    Object.entries(selectedTickets).forEach(([name, quantity]) => {
+      queryParams.set(name, quantity.toString());
+    });
+
+    router.push(`/events/${event._id}/checkout?${queryParams.toString()}`);
   };
 
   return (
