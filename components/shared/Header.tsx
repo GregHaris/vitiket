@@ -23,12 +23,12 @@ const Header = () => {
 
         <div className="flex flex-nowrap justify-between gap-8 whitespace-nowrap">
           <div className="w-full">
-            <SignedIn>
-              <div className="hidden md:flex-between w-full gap-8">
-                <NavItems />
+            <div className="hidden md:flex-between w-full gap-8">
+              <NavItems />
+              <SignedIn>
                 <DisplayAdmin />
-              </div>
-            </SignedIn>
+              </SignedIn>
+            </div>
           </div>
           <div className="flex w-32 justify-end gap-3 mr-4 flex-nowrap whitespace-nowrap">
             <SignedOut>
