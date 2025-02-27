@@ -1,19 +1,18 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 
-import { Button } from '@ui/button';
 import { IEvent } from '@/lib/database/models/event.model';
-import Checkout from './Checkout';
+import { Button } from '@/components/ui/button';
 
 interface CheckoutButtonProps {
   event: IEvent;
 }
 
-const CheckoutButton = ({ event }: CheckoutButtonProps) => {
-  const { user } = useUser();
+export default function CheckoutButton({ event }: CheckoutButtonProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   // Calculate total quantity and total price
   let totalQuantity = 0;
@@ -30,6 +29,12 @@ const CheckoutButton = ({ event }: CheckoutButtonProps) => {
     });
   }
 
+  const handleCheckout = () => {
+    router.push(
+      `/events/${event._id}/checkout?quantity=${totalQuantity}&totalPrice=${totalPrice}`
+    );
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 w-full md:sticky md:top-4 z-50 p-3 bg-white rounded-md shadow-gray-300 shadow-lg transition-all duration-300">
       {totalQuantity === 0 ? (
@@ -45,15 +50,14 @@ const CheckoutButton = ({ event }: CheckoutButtonProps) => {
           Get Tickets
         </Button>
       ) : (
-        <Checkout
-          event={event}
-          userId={user?.publicMetadata.userId as string}
-          quantity={totalQuantity}
-          totalPrice={totalPrice}
-        />
+        <Button
+          className="button w-full md:w-[300px] cursor-pointer font-bold transition-all duration-300"
+          size={'lg'}
+          onClick={handleCheckout}
+        >
+          Checkout - ${totalPrice}
+        </Button>
       )}
     </div>
   );
-};
-
-export default CheckoutButton;
+}
