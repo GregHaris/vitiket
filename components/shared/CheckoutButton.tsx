@@ -1,9 +1,9 @@
 'use client';
 
+import { ArrowLeft, X } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-import { ArrowLeft, X } from 'lucide-react';
 import { Button } from '@ui/button';
 import { CheckoutButtonProps } from '@/types';
 import { Dialog, DialogContent, DialogHeader } from '@ui/dialog';
@@ -15,6 +15,7 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
+  // Calculate total quantity and total price
   let totalQuantity = 0;
   let totalPrice = 0;
   const selectedTickets: { [key: string]: number } = {};
@@ -93,10 +94,10 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
 
             <button
               onClick={handleCloseCheckout}
-              className=" cursor-pointer text-gray-600 hover:bg-gray-100 p-2 rounded-full"
-              title='Cancel checkout'
+              className="cursor-pointer text-gray-600 hover:bg-gray-100 p-2 rounded-full"
+              title="Cancel checkout"
             >
-              <X className="w-5 h-5 " />
+              <X className="w-5 h-5" />
             </button>
           </DialogHeader>
 
@@ -104,6 +105,7 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
             event={event}
             quantity={totalQuantity}
             totalPrice={totalPrice}
+            selectedTickets={selectedTickets}
           />
         </DialogContent>
       </Dialog>
