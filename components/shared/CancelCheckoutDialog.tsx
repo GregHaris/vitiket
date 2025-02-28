@@ -24,17 +24,22 @@ export default function CancelCheckoutDialog({
 }: CancelCheckoutDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="bg-white">
         <AlertDialogHeader>
           <AlertDialogTitle>Cancel Checkout?</AlertDialogTitle>
-          <AlertDialogDescription className='bg-white'>
+          <AlertDialogDescription>
             Are you sure you want to cancel your checkout? You will lose your
             selected tickets.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className='button bg-primary text-white'>Continue Checkout</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} className='button bg-red-500 text-white'>
+          <AlertDialogCancel className="rounded-md h-[40px] cursor-pointer bg-primary-600 text-white hover:bg-primary-500 hover:text-white">
+            Continue Checkout
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={onConfirm}
+            className="button bg-red-600 text-white hover:bg-red-500"
+          >
             Cancel Checkout
           </AlertDialogAction>
         </AlertDialogFooter>
