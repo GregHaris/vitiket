@@ -1,12 +1,11 @@
 'use client';
 
-import { ArrowLeft, X } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { Button } from '@ui/button';
 import { CheckoutButtonProps } from '@/types';
-import { Dialog, DialogContent, DialogHeader } from '@ui/dialog';
+import { Dialog, DialogContent } from '@ui/dialog';
 import CheckoutDetails from '@shared/CheckoutDetails';
 import CancelCheckoutDialog from '@shared/CancelCheckoutDialog';
 
@@ -39,17 +38,9 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
     setIsDialogOpen(true);
   };
 
-  const handleCloseCheckout = () => {
-    setIsCancelDialogOpen(true);
-  };
-
   const handleConfirmCancel = () => {
     setIsDialogOpen(false);
     setIsCancelDialogOpen(false);
-  };
-
-  const handleBackToEvent = () => {
-    setIsDialogOpen(false);
   };
 
   return (
@@ -83,29 +74,12 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
           className="sm:max-w-[90%] md:max-w-[800px] lg:max-w-[1000px] w-full max-h-[90vh] overflow-y-auto border-none bg-white rounded-lg shadow-lg p-0"
           onInteractOutside={(e) => e.preventDefault()}
         >
-          <DialogHeader className="p-6 border-b flex flex-row items-center justify-between">
-            <button
-              onClick={handleBackToEvent}
-              className="cursor-pointer flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Back to Event
-            </button>
-
-            <button
-              onClick={handleCloseCheckout}
-              className="cursor-pointer text-gray-600 hover:bg-gray-100 p-2 rounded-full"
-              title="Cancel checkout"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </DialogHeader>
-
           <CheckoutDetails
             event={event}
             quantity={totalQuantity}
             totalPrice={totalPrice}
             selectedTickets={selectedTickets}
+            onClose={() => setIsDialogOpen(false)}
           />
         </DialogContent>
       </Dialog>
