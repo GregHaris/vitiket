@@ -4,15 +4,14 @@ import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { Button } from '@ui/button';
-import { CheckoutButtonProps } from '@/types';
+import { CheckoutButtonProps, CurrencyKey } from '@/types';
+import { currencySymbols } from '@/constants';
 import { Dialog, DialogContent } from '@ui/dialog';
 import CheckoutDetails from '@shared/CheckoutDetails';
-import CancelCheckoutDialog from '@shared/CancelCheckoutDialog';
 
 export default function CheckoutButton({ event }: CheckoutButtonProps) {
   const searchParams = useSearchParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
   // Calculate total quantity and total price
   let totalQuantity = 0;
@@ -34,13 +33,14 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
     });
   }
 
+  const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
+
   const handleCheckout = () => {
     setIsDialogOpen(true);
   };
 
-  const handleConfirmCancel = () => {
+  const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    setIsCancelDialogOpen(false);
   };
 
   return (
@@ -64,7 +64,8 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
             size={'lg'}
             onClick={handleCheckout}
           >
-            Checkout - ${totalPrice}
+            Checkout - {currencySymbol}
+            {totalPrice}
           </Button>
         )}
       </div>
@@ -79,16 +80,10 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
             quantity={totalQuantity}
             totalPrice={totalPrice}
             selectedTickets={selectedTickets}
-            onClose={() => setIsDialogOpen(false)}
+            onCloseDialog={handleCloseDialog}
           />
         </DialogContent>
       </Dialog>
-
-      <CancelCheckoutDialog
-        isOpen={isCancelDialogOpen}
-        onOpenChange={setIsCancelDialogOpen}
-        onConfirm={handleConfirmCancel}
-      />
     </>
   );
 }
