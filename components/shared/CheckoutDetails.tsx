@@ -104,7 +104,6 @@ export default function CheckoutDetails({
               <FormEmailInput />
               <FormPaymentMethodSelector />
 
-  
               <Button type="submit" className="w-full button">
                 {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
               </Button>
@@ -140,7 +139,7 @@ export default function CheckoutDetails({
             <h4 className="font-bold">Total</h4>
             <p className="text-lg font-bold">
               {currencySymbol}
-              {parseFloat(totalPrice.toString()).toFixed(2)}
+              {parseFloat(totalPrice.toString()).toLocaleString()}
             </p>
           </div>
         </div>
