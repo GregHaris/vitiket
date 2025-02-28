@@ -1,35 +1,41 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useUser } from '@clerk/nextjs';
 import { ArrowLeft, X } from 'lucide-react';
-
-import { CheckoutDetailsProps } from '@/types';
-import { checkoutOrder } from '@/lib/actions/order.actions';
-import { checkoutFormSchema, checkoutFormValues } from '@/lib/validator';
-import { Button } from '@ui/button';
-import { Form } from '@ui/form';
-import { DialogHeader, DialogTitle } from '@ui/dialog';
+import { useForm } from 'react-hook-form';
+import { useUser } from '@clerk/nextjs';
+import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
+
+import { Button } from '@ui/button';
+import { CheckoutDetailsProps, CurrencyKey } from '@/types';
+import { checkoutFormSchema, checkoutFormValues } from '@/lib/validator';
+import { checkoutOrder } from '@/lib/actions/order.actions';
+import { currencySymbols } from '@/constants';
+import { DialogHeader, DialogTitle } from '@ui/dialog';
+import { Form } from '@ui/form';
+import { Separator } from '@ui/separator';
 
 import FormFirstNameInput from './FormFirstNameInput';
 import FormLastNameInput from './FormLastNameInput';
 import FormEmailInput from './FormEmailInput';
 import FormPaymentMethodSelector from './FormPaymentMethodSelector';
-import { Separator } from '../ui/separator';
+import CancelCheckoutDialog from './CancelCheckoutDialog';
+import { useState } from 'react';
 
 export default function CheckoutDetails({
   event,
   quantity,
   totalPrice,
-  selectedTickets, // Add selectedTickets prop
-  onClose, // Add onClose prop
+  selectedTickets,
+  onCloseDialog,
 }: CheckoutDetailsProps & {
   selectedTickets: { [key: string]: number };
-  onClose: () => void;
 }) {
   const { user } = useUser();
+
+  const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
+
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
   const form = useForm<checkoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -43,7 +49,6 @@ export default function CheckoutDetails({
 
   const onSubmit = async () => {
     try {
-      // Prepare the order data
       const order = {
         eventTitle: event.title,
         buyerId: user?.id || '',
@@ -56,34 +61,41 @@ export default function CheckoutDetails({
 
       // Redirect to Stripe checkout
       await checkoutOrder(order);
+      onCloseDialog();
     } catch (error) {
       console.error('Checkout failed:', error);
     }
+  };
+
+  const handleConfirmCancel = () => {
+    setIsCancelDialogOpen(false);
   };
 
   return (
     <div className="flex flex-col md:flex-row">
       <div className="w-full md:w-1/2">
         <DialogHeader className="p-6 border-b flex flex-row items-center justify-between">
+          {/* Back to Event Button */}
           <button
-            onClick={onClose}
             className="cursor-pointer flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+            onClick={() => onCloseDialog()}
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Event
           </button>
 
+          {/* Cancel Checkout Button */}
           <button
-            onClick={onClose}
             className="cursor-pointer text-gray-600 hover:bg-gray-100 p-2 rounded-full"
             title="Cancel checkout"
+            onClick={() => setIsCancelDialogOpen(true)}
           >
             <X className="w-5 h-5" />
           </button>
         </DialogHeader>
         <DialogTitle className="sr-only">Checkout Details</DialogTitle>
 
-        <div className='p-6'>
+        <div className="p-6">
           <h1 className="text-2xl font-bold mb-6">Checkout</h1>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -91,7 +103,8 @@ export default function CheckoutDetails({
               <FormLastNameInput />
               <FormEmailInput />
               <FormPaymentMethodSelector />
-              {/* Submit Button */}
+
+  
               <Button type="submit" className="w-full button">
                 {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
               </Button>
@@ -113,21 +126,32 @@ export default function CheckoutDetails({
           <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
           <h3 className="text-lg font-bold">{event.title}</h3>
           <p className="text-sm text-gray-600">{event.subtitle}</p>
+          <Separator className="bg-gray-300" />
           <div>
-            <Separator className="bg-gray-300" />
             <h4 className="font-bold">Tickets</h4>
             {Object.entries(selectedTickets).map(([name, quantity]) => (
-              <p key={name}>
+              <p key={name} className="text-sm text-gray-500">
                 {quantity} x {name}
               </p>
             ))}
           </div>
+          <Separator className="bg-gray-300" />
           <div>
             <h4 className="font-bold">Total</h4>
-            <p className="text-lg font-bold">${totalPrice}</p>
+            <p className="text-lg font-bold">
+              {currencySymbol}
+              {parseFloat(totalPrice.toString()).toFixed(2)}
+            </p>
           </div>
         </div>
       </div>
+
+      {/* Cancel Checkout Dialog */}
+      <CancelCheckoutDialog
+        isOpen={isCancelDialogOpen}
+        onOpenChange={setIsCancelDialogOpen}
+        onConfirm={handleConfirmCancel}
+      />
     </div>
   );
 }
