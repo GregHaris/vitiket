@@ -21,18 +21,10 @@ export default function CheckoutDetails({
   event,
   quantity,
   totalPrice,
-}: CheckoutDetailsProps) {
+  selectedTickets, // Add selectedTickets prop
+}: CheckoutDetailsProps & { selectedTickets: { [key: string]: number } }) {
   const { user } = useUser();
   const searchParams = useSearchParams();
-
-  // Get selected ticket categories and quantities from URL query parameters
-  const selectedTickets: { [key: string]: number } = {};
-  event.priceCategories?.forEach((category) => {
-    const quantity = Number(searchParams.get(category.name)) || 0;
-    if (quantity > 0) {
-      selectedTickets[category.name] = quantity;
-    }
-  });
 
   const form = useForm<checkoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
