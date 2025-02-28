@@ -2,9 +2,10 @@
 
 import { ArrowLeft, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { useUser } from '@clerk/nextjs';
+import { useUser, useClerk } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { Button } from '@ui/button';
 import { CheckoutDetailsProps, CurrencyKey } from '@/types';
@@ -32,9 +33,9 @@ export default function CheckoutDetails({
   selectedTickets: { [key: string]: number };
 }) {
   const { user } = useUser();
+  const { signOut } = useClerk();
 
   const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
-
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
   const form = useForm<checkoutFormValues>({
@@ -71,6 +72,11 @@ export default function CheckoutDetails({
     setIsCancelDialogOpen(false);
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    form.reset();
+  };
+
   return (
     <div className="flex flex-col md:flex-row">
       <div className="w-full md:w-1/2">
@@ -97,6 +103,36 @@ export default function CheckoutDetails({
 
         <div className="p-6">
           <h1 className="text-2xl font-bold mb-6">Checkout</h1>
+
+          {/* User Authentication Message */}
+          {user ? (
+            <div className="mb-6 text-sm text-gray-600">
+              <p>
+                Logged in as{' '}
+                <strong>{user.emailAddresses[0]?.emailAddress}</strong>.{' '}
+                <button
+                  onClick={handleSignOut}
+                  className="cursor-pointer text-blue-600 hover:underline"
+                >
+                  Not you?
+                </button>
+              </p>
+              <p>If you, please confirm details.</p>
+            </div>
+          ) : (
+            <div className="mb-6 text-sm text-gray-600">
+              <p>
+                <Link
+                  href="/sign-in"
+                  className="cursor-pointer text-blue-600 hover:underline"
+                >
+                  Sign in
+                </Link>{' '}
+                for faster checkout.
+              </p>
+            </div>
+          )}
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormFirstNameInput />
