@@ -15,7 +15,6 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
-  // Calculate total quantity and total price
   let totalQuantity = 0;
   let totalPrice = 0;
   const selectedTickets: { [key: string]: number } = {};
@@ -54,7 +53,6 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
 
   return (
     <>
-      {/* Checkout Button */}
       <div className="fixed bottom-0 left-0 right-0 w-full md:sticky md:top-4 z-50 p-3 bg-white rounded-md shadow-gray-300 shadow-lg transition-all duration-300">
         {totalQuantity === 0 ? (
           <Button
@@ -79,7 +77,6 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
         )}
       </div>
 
-      {/* Checkout Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent
           className="sm:max-w-[90%] md:max-w-[800px] lg:max-w-[1000px] w-full max-h-[90vh] overflow-y-auto border-none bg-white rounded-lg shadow-lg p-0"
@@ -88,7 +85,7 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
           <DialogHeader className="p-6 border-b flex flex-row items-center justify-between">
             <button
               onClick={handleBackToEvent}
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+              className="cursor-pointer flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
             >
               <ArrowLeft className="w-5 h-5" />
               Back to Event
@@ -96,13 +93,13 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
 
             <button
               onClick={handleCloseCheckout}
-              className="text-gray-600 hover:text-gray-900"
+              className=" cursor-pointer text-gray-600 hover:bg-gray-100 p-2 rounded-full"
+              title='Cancel checkout'
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 " />
             </button>
           </DialogHeader>
 
-          {/* Checkout Details */}
           <CheckoutDetails
             event={event}
             quantity={totalQuantity}
@@ -111,7 +108,6 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Cancel Confirmation Dialog */}
       <CancelCheckoutDialog
         isOpen={isCancelDialogOpen}
         onOpenChange={setIsCancelDialogOpen}
