@@ -1,9 +1,10 @@
 @import 'tailwindcss';
-
 @import '@uploadthing/react/styles.css';
 
 @config '../tailwind.config.ts';
 @source "../node_modules/@uploadthing/react/dist";
+
+@plugin 'tailwindcss-animate';
 
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
@@ -140,7 +141,7 @@
     @apply min-h-[150px] cursor-text rounded-md border-none p-5 focus-within:outline-none focus-within:ring-0 bg-grey-50;
   }
   .textarea-field {
-    @apply min-h-[150px] w-full cursor-text rounded-md border border-gray-300 px-5  py-3 focus-within:outline-none focus-within:ring-0 bg-grey-50 resize-none placeholder:text-gray-400 ;
+    @apply min-h-[150px] w-full cursor-text rounded-md border border-gray-300 px-5  py-3 focus-within:outline-none focus-within:ring-0 bg-grey-50 resize-none placeholder:text-gray-400;
   }
   .button {
     @apply rounded-md h-[40px] cursor-pointer text-primary-50;
