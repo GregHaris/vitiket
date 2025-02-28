@@ -360,8 +360,10 @@ export type CheckoutButtonProps = {
   event: IEvent;
 };
 
-export type CheckoutDetailsProps = {
+export interface CheckoutDetailsProps {
   event: IEvent;
   quantity: number;
   totalPrice: number;
-};
+  selectedTickets: { [key: string]: number };
+  onCloseDialog: () => void; 
+}
