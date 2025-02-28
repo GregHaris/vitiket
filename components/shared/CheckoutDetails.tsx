@@ -65,56 +65,49 @@ export default function CheckoutDetails({
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
-      <div className="wrapper">
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Checkout Form */}
+    <div className="flex flex-col md:flex-row gap-8 p-6">
+      {/* Checkout Form */}
+      <div className="w-full md:w-1/2">
+        <h1 className="text-2xl font-bold mb-6">Checkout</h1>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormFirstNameInput />
+            <FormLastNameInput />
+            <FormEmailInput />
+            <FormPaymentMethodSelector />
+
+            {/* Submit Button */}
+            <Button type="submit" className="w-full button">
+              {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
+            </Button>
+          </form>
+        </Form>
+      </div>
+
+      {/* Order Summary */}
+      <div className="w-full md:w-1/2 bg-gray-50 rounded-lg">
+        <Image
+          src={event.imageUrl}
+          alt={event.title}
+          width={500}
+          height={500}
+          className="w-full h-48 object-cover rounded-lg"
+        />
+        <div className="space-y-6 p-5">
+          <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
+          <h3 className="text-lg font-bold">{event.title}</h3>
+          <p className="text-sm text-gray-600">{event.subtitle}</p>
           <div>
-            <h1 className="text-2xl font-bold mb-4 text-center">Checkout</h1>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
-              >
-                <FormFirstNameInput />
-                <FormLastNameInput />
-                <FormEmailInput />
-                <FormPaymentMethodSelector />
-
-                {/* Submit Button */}
-                <Button type="submit" className="w-full button">
-                  {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
-                </Button>
-              </form>
-            </Form>
+            <h4 className="font-bold">Tickets</h4>
+            {Object.entries(selectedTickets).map(([name, quantity]) => (
+              <p key={name}>
+                {quantity} x {name}
+              </p>
+            ))}
           </div>
-
-          {/* Order Summary */}
-          <div className="bg-gray-100 p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
-            <div className="space-y-4">
-              <Image
-                src={event.imageUrl}
-                alt={event.title}
-                width={500}
-                height={500}
-                className="w-full h-48 object-cover rounded-lg"
-              />
-              <h3 className="text-lg font-bold">{event.title}</h3>
-              <p className="text-sm text-gray-600">{event.subtitle}</p>
-              <div>
-                <h4 className="font-bold">Tickets</h4>
-                {Object.entries(selectedTickets).map(([name, quantity]) => (
-                  <p key={name}>
-                    {quantity} x {name}
-                  </p>
-                ))}
-              </div>
-              <div>
-                <h4 className="font-bold">Total</h4>
-                <p className="text-lg font-bold">${totalPrice}</p>
-              </div>
-            </div>
+          <div>
+            <h4 className="font-bold">Total</h4>
+            <p className="text-lg font-bold">${totalPrice}</p>
           </div>
         </div>
       </div>
