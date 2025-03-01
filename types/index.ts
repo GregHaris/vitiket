@@ -369,7 +369,7 @@ export interface CheckoutDetailsProps {
 }
 
 export type FormInputProps = {
-  name: 'email' | 'confirmEmail';
+  name: 'email' | 'confirmEmail' | 'firstName' | 'lastName';
   placeholder: string;
   label: string;
 };
