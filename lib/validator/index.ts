@@ -155,12 +155,17 @@ export const eventFormSchema = z
 
 export type eventFormValues = z.infer<typeof eventFormSchema>;
 
-
-export const checkoutFormSchema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  email: z.string().email('Invalid email address'),
-  paymentMethod: z.enum(['card', 'paypal', 'applepay']),
-});
+export const checkoutFormSchema = z
+  .object({
+    firstName: z.string().min(1, 'First name is required'),
+    lastName: z.string().min(1, 'Last name is required'),
+    email: z.string().email('Invalid email address'),
+    confirmEmail: z.string().email('Invalid email address'),
+    paymentMethod: z.enum(['card', 'paypal', 'applepay']),
+  })
+  .refine((data) => data.email === data.confirmEmail, {
+    message: 'Emails do not match',
+    path: ['confirmEmail'],
+  });
 
 export type checkoutFormValues = z.infer<typeof checkoutFormSchema>;
