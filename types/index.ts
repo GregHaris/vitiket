@@ -365,5 +365,11 @@ export interface CheckoutDetailsProps {
   quantity: number;
   totalPrice: number;
   selectedTickets: { [key: string]: number };
-  onCloseDialog: () => void; 
+  onCloseDialog: () => void;
 }
+
+export type FormEmailInputProps = {
+  name: 'email' | 'confirmEmail';
+  placeholder: string;
+  label: string;
+};
