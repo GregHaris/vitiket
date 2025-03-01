@@ -372,4 +372,5 @@ export type UserInfoInputProps = {
   name: 'email' | 'confirmEmail' | 'firstName' | 'lastName';
   placeholder: string;
   label: string;
+  required?: boolean;
 };
