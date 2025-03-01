@@ -16,9 +16,7 @@ import { DialogHeader, DialogTitle } from '@ui/dialog';
 import { Form } from '@ui/form';
 import { Separator } from '@ui/separator';
 
-import FormFirstNameInput from './FormFirstNameInput';
-import FormLastNameInput from './FormLastNameInput';
-import FormEmailInput from './FormEmailInput';
+import UserInfoInput from './FormUserInfoInput';
 import FormPaymentMethodSelector from './FormPaymentMethodSelector';
 import CancelCheckoutDialog from './CancelCheckoutDialog';
 import { useState } from 'react';
@@ -44,7 +42,7 @@ export default function CheckoutDetails({
       firstName: user?.firstName || '',
       lastName: user?.lastName || '',
       email: user?.emailAddresses[0]?.emailAddress || '',
-      paymentMethod: 'card',
+      confirmEmail: user?.emailAddresses[0]?.emailAddress || '',
     },
   });
 
@@ -80,10 +78,19 @@ export default function CheckoutDetails({
         firstName: '',
         lastName: '',
         email: '',
-        paymentMethod: 'card',
+        confirmEmail: '',
       },
       { keepValues: false }
     );
+    form.trigger();
+  };
+
+  const handleSignIn = async () => {
+    await signOut({ redirectUrl: window.location.href });
+    form.setValue('firstName', user?.firstName || '');
+    form.setValue('lastName', user?.lastName || '');
+    form.setValue('email', user?.emailAddresses[0]?.emailAddress || '');
+    form.setValue('confirmEmail', user?.emailAddresses[0]?.emailAddress || '');
   };
 
   return (
@@ -115,7 +122,7 @@ export default function CheckoutDetails({
 
           {/* User Authentication Message */}
           {user ? (
-            <div className="mb-6 text-sm text-gray-600">
+            <div className="mb-6 text-sm text-gray-600 space-y-6">
               <p>
                 Logged in as{' '}
                 <strong>{user.emailAddresses[0]?.emailAddress}</strong>.{' '}
@@ -132,7 +139,9 @@ export default function CheckoutDetails({
             <div className="mb-6 text-sm text-gray-600">
               <p>
                 <Link
-                  href="/sign-in"
+                  href={`/sign-in?redirect_url=${encodeURIComponent(
+                    window.location.href
+                  )}`}
                   className="cursor-pointer text-blue-600 hover:underline"
                 >
                   Sign in
@@ -144,9 +153,30 @@ export default function CheckoutDetails({
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormFirstNameInput />
-              <FormLastNameInput />
-              <FormEmailInput />
+              <UserInfoInput
+                name="firstName"
+                label="First name"
+                placeholder="Enter your first name"
+                required
+              />
+              <UserInfoInput
+                name="lastName"
+                label="Last name"
+                placeholder="Enter your last name"
+                required
+              />
+              <UserInfoInput
+                name="email"
+                label="email"
+                placeholder="Enter your email"
+                required
+              />
+              <UserInfoInput
+                name="confirmEmail"
+                label="Confirm email"
+                placeholder="Confirm your email"
+                required
+              />
               <FormPaymentMethodSelector />
 
               <Button type="submit" className="w-full button">
