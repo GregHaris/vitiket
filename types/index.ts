@@ -368,7 +368,7 @@ export interface CheckoutDetailsProps {
   onCloseDialog: () => void;
 }
 
-export type FormEmailInputProps = {
+export type FormInputProps = {
   name: 'email' | 'confirmEmail';
   placeholder: string;
   label: string;
