@@ -159,8 +159,14 @@ export const checkoutFormSchema = z
   .object({
     firstName: z.string().min(1, 'First name is required'),
     lastName: z.string().min(1, 'Last name is required'),
-    email: z.string().email('Invalid email address'),
-    confirmEmail: z.string().email('Invalid email address'),
+    email: z
+      .string()
+      .nonempty({ message: 'Email is required' })
+      .email('Invalid email address'),
+    confirmEmail: z
+      .string()
+      .nonempty({ message: 'Confirm email is required' })
+      .email('Invalid email address'),
     paymentMethod: z.enum(['card', 'paypal', 'applepay']),
   })
   .refine((data) => data.email === data.confirmEmail, {
