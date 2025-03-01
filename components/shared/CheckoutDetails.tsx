@@ -70,11 +70,20 @@ export default function CheckoutDetails({
 
   const handleConfirmCancel = () => {
     setIsCancelDialogOpen(false);
+    onCloseDialog();
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    form.reset();
+    await signOut({ redirectUrl: window.location.href });
+    form.reset(
+      {
+        firstName: '',
+        lastName: '',
+        email: '',
+        paymentMethod: 'card',
+      },
+      { keepValues: false }
+    );
   };
 
   return (
