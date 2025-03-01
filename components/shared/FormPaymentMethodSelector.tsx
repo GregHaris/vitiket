@@ -9,7 +9,7 @@ import {
 } from '@ui/form';
 import { RadioGroup, RadioGroupItem } from '@ui/radio-group';
 
-export default function FormPaymentMethodSelector() {
+export default function PaymentMethodSelector() {
   const { control } = useFormContext<checkoutFormValues>();
 
   return (
