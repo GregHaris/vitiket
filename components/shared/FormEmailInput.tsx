@@ -1,5 +1,7 @@
 import { useFormContext } from 'react-hook-form';
+
 import { checkoutFormValues } from '@/lib/validator';
+import { FormEmailInputProps } from '@/types';
 import {
   FormField,
   FormItem,
@@ -9,22 +11,27 @@ import {
 } from '@ui/form';
 import { Input } from '@ui/input';
 
-export default function FormEmailInput() {
+export default function FormEmailInput({
+  name,
+  placeholder,
+  label,
+}: FormEmailInputProps) {
   const { control } = useFormContext<checkoutFormValues>();
 
   return (
     <FormField
       control={control}
-      name="email"
+      name={name}
       render={({ field }) => (
         <FormItem>
           <FormLabel className="text-sm font-medium">
-            Email<span className="text-red-400">*</span>
+            {label}
+            <span className="text-red-400">*</span>
           </FormLabel>
           <FormControl>
             <Input
               type="email"
-              placeholder="Enter your email"
+              placeholder={placeholder}
               {...field}
               className="input-field p-regular-14"
             />
