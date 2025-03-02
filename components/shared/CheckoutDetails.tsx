@@ -2,11 +2,12 @@
 
 import { ArrowLeft, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useUser, useClerk } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
-import { useSearchParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 import { Button } from '@ui/button';
 import { CheckoutDetailsProps, CurrencyKey } from '@/types';
@@ -85,6 +86,7 @@ export default function CheckoutDetails({
     event.priceCategories?.forEach((_, index) => {
       params.delete(`category-${index}`);
     });
+    params.delete('free');
     router.replace(`?${params.toString()}`);
 
     // Reset the selected tickets and total price
@@ -110,10 +112,6 @@ export default function CheckoutDetails({
       { keepValues: false }
     );
     form.trigger();
-  };
-
-  const handleSignInOpen = () => {
-    clerk.openSignIn({ redirectUrl: window.location.href });
   };
 
   return (
@@ -161,12 +159,14 @@ export default function CheckoutDetails({
           ) : (
             <div className="mb-6 text-sm text-gray-600">
               <p>
-                <button
-                  onClick={handleSignInOpen}
+                <Link
+                  href={`/sign-in?redirect_url=${encodeURIComponent(
+                    window.location.href + '&checkout=true'
+                  )}`}
                   className="cursor-pointer text-blue-600 hover:underline"
                 >
                   Sign in
-                </button>{' '}
+                </Link>{' '}
                 for faster checkout.
               </p>
             </div>
@@ -192,12 +192,14 @@ export default function CheckoutDetails({
                 placeholder="Enter your email"
                 required
               />
-              <UserInfoInput
-                name="confirmEmail"
-                label="Confirm email"
-                placeholder="Confirm your email"
-                required
-              />
+              {!user && (
+                <UserInfoInput
+                  name="confirmEmail"
+                  label="Confirm email"
+                  placeholder="Confirm your email"
+                  required
+                />
+              )}
               <PaymentMethodSelector />
 
               <Button type="submit" className="w-full button">
