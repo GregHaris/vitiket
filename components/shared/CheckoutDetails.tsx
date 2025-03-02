@@ -2,7 +2,7 @@
 
 import { ArrowLeft, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser, useClerk } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
@@ -45,6 +45,17 @@ export default function CheckoutDetails({
       confirmEmail: user?.emailAddresses[0]?.emailAddress || '',
     },
   });
+
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.emailAddresses[0]?.emailAddress || '',
+        confirmEmail: user.emailAddresses[0]?.emailAddress || '',
+      });
+    }
+  }, [user]);
 
   const onSubmit = async () => {
     try {
