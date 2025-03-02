@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { Button } from '@ui/button';
 import { CheckoutButtonProps, CurrencyKey } from '@/types';
 import { currencySymbols } from '@/constants';
-import { Dialog, DialogContent } from '@ui/dialog';
+import { Dialog, DialogContent, DialogDescription } from '@ui/dialog';
 import CheckoutDetails from '@shared/CheckoutDetails';
 
 export default function CheckoutButton({ event }: CheckoutButtonProps) {
@@ -80,7 +80,14 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
         <DialogContent
           className="sm:max-w-[90%] md:max-w-[800px] lg:max-w-[1000px] w-full max-h-[90vh] overflow-y-auto border-none bg-white rounded-lg shadow-lg p-0"
           onInteractOutside={(e) => e.preventDefault()}
+          aria-describedby="checkout-dialog-description"
         >
+          <DialogDescription
+            id="checkout-dialog-description"
+            className="sr-only"
+          >
+            Checkout details and order summary{' '}
+          </DialogDescription>
           <CheckoutDetails
             event={event}
             quantity={totalQuantity}
