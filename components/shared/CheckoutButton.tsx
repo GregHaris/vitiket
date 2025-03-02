@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { Button } from '@ui/button';
@@ -12,6 +12,12 @@ import CheckoutDetails from '@shared/CheckoutDetails';
 export default function CheckoutButton({ event }: CheckoutButtonProps) {
   const searchParams = useSearchParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchParams?.get('checkout') === 'true') {
+      setIsDialogOpen(true);
+    }
+  }, [searchParams]);
 
   // Calculate total quantity and total price
   let totalQuantity = 0;

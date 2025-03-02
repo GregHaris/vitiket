@@ -2,6 +2,7 @@
 
 import { ArrowLeft, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { useUser, useClerk } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
@@ -16,10 +17,9 @@ import { DialogHeader, DialogTitle } from '@ui/dialog';
 import { Form } from '@ui/form';
 import { Separator } from '@ui/separator';
 
-import UserInfoInput from './FormUserInfoInput';
-import FormPaymentMethodSelector from './FormPaymentMethodSelector';
 import CancelCheckoutDialog from './CancelCheckoutDialog';
-import { useState } from 'react';
+import PaymentMethodSelector from './FormPaymentMethodSelector';
+import UserInfoInput from './FormUserInfoInput';
 
 export default function CheckoutDetails({
   event,
@@ -85,14 +85,6 @@ export default function CheckoutDetails({
     form.trigger();
   };
 
-  const handleSignIn = async () => {
-    await signOut({ redirectUrl: window.location.href });
-    form.setValue('firstName', user?.firstName || '');
-    form.setValue('lastName', user?.lastName || '');
-    form.setValue('email', user?.emailAddresses[0]?.emailAddress || '');
-    form.setValue('confirmEmail', user?.emailAddresses[0]?.emailAddress || '');
-  };
-
   return (
     <div className="flex flex-col md:flex-row">
       <div className="w-full md:w-1/2">
@@ -140,7 +132,7 @@ export default function CheckoutDetails({
               <p>
                 <Link
                   href={`/sign-in?redirect_url=${encodeURIComponent(
-                    window.location.href
+                    window.location.href + '&checkout=true'
                   )}`}
                   className="cursor-pointer text-blue-600 hover:underline"
                 >
@@ -177,7 +169,7 @@ export default function CheckoutDetails({
                 placeholder="Confirm your email"
                 required
               />
-              <FormPaymentMethodSelector />
+              <PaymentMethodSelector />
 
               <Button type="submit" className="w-full button">
                 {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
