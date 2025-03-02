@@ -38,7 +38,7 @@ export default function CancelCheckoutDialog({
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="button bg-red-600 text-white hover:bg-red-500"
+            className="button bg-red-700 text-white hover:bg-red-600"
           >
             Cancel Checkout
           </AlertDialogAction>
