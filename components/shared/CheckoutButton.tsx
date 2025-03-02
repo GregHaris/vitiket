@@ -19,12 +19,12 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
   const selectedTickets: { [key: string]: number } = {};
 
   if (event.isFree) {
-    totalQuantity = Number(searchParams.get('free')) || 0;
+    totalQuantity = Number(searchParams?.get('free')) || 0;
     selectedTickets['free'] = totalQuantity;
   } else {
     event.priceCategories?.forEach((category, index) => {
       const categoryId = `category-${index}`;
-      const quantity = Number(searchParams.get(categoryId)) || 0;
+      const quantity = Number(searchParams?.get(categoryId)) || 0;
       if (quantity > 0) {
         selectedTickets[category.name] = quantity;
         totalQuantity += quantity;
