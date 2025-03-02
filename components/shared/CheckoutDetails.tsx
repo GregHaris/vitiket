@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { useUser, useClerk } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
-import Link from 'next/link';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 import { Button } from '@ui/button';
 import { CheckoutDetailsProps, CurrencyKey } from '@/types';
@@ -31,7 +31,9 @@ export default function CheckoutDetails({
   selectedTickets: { [key: string]: number };
 }) {
   const { user } = useUser();
-  const { signOut } = useClerk();
+  const clerk = useClerk();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
@@ -77,13 +79,27 @@ export default function CheckoutDetails({
     }
   };
 
+  const resetSearchParams = () => {
+    const params = new URLSearchParams(searchParams?.toString());
+    params.delete('checkout');
+    event.priceCategories?.forEach((_, index) => {
+      params.delete(`category-${index}`);
+    });
+    router.replace(`?${params.toString()}`);
+
+    // Reset the selected tickets and total price
+    selectedTickets = {};
+    totalPrice = 0;
+  };
+
   const handleConfirmCancel = () => {
+    resetSearchParams();
     setIsCancelDialogOpen(false);
     onCloseDialog();
   };
 
   const handleSignOut = async () => {
-    await signOut({ redirectUrl: window.location.href });
+    await clerk.signOut({ redirectUrl: window.location.href });
     form.reset(
       {
         firstName: '',
@@ -94,6 +110,10 @@ export default function CheckoutDetails({
       { keepValues: false }
     );
     form.trigger();
+  };
+
+  const handleSignInOpen = () => {
+    clerk.openSignIn({ redirectUrl: window.location.href });
   };
 
   return (
@@ -141,14 +161,12 @@ export default function CheckoutDetails({
           ) : (
             <div className="mb-6 text-sm text-gray-600">
               <p>
-                <Link
-                  href={`/sign-in?redirect_url=${encodeURIComponent(
-                    window.location.href + '&checkout=true'
-                  )}`}
+                <button
+                  onClick={handleSignInOpen}
                   className="cursor-pointer text-blue-600 hover:underline"
                 >
                   Sign in
-                </Link>{' '}
+                </button>{' '}
                 for faster checkout.
               </p>
             </div>
