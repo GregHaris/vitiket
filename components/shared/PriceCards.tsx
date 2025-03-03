@@ -23,11 +23,11 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
     () => {
       const initialQuantities: { [key: string]: number } = {};
       if (event.isFree) {
-        initialQuantities['free'] = Number(searchParams.get('free')) || 0;
+        initialQuantities['free'] = Number(searchParams?.get('free')) || 0;
       } else {
         priceCategoriesWithIds?.forEach((category) => {
           initialQuantities[category.id] =
-            Number(searchParams.get(category.id)) || 0;
+            Number(searchParams?.get(category.id)) || 0;
         });
       }
       return initialQuantities;
@@ -37,7 +37,7 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
   // Debounce URL updates
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      const newSearchParams = new URLSearchParams(searchParams.toString());
+      const newSearchParams = new URLSearchParams(searchParams?.toString());
       Object.entries(quantities).forEach(([categoryId, quantity]) => {
         newSearchParams.set(categoryId, quantity.toString());
       });
