@@ -39,6 +39,18 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
     });
   }
 
+  useEffect(() => {
+    if (searchParams?.get('checkout') === 'true' && totalQuantity === 0) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('checkout');
+      window.history.replaceState(
+        {},
+        '',
+        `${window.location.pathname}?${params.toString()}`
+      );
+    }
+  }, [searchParams, totalQuantity]);
+
   const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
 
   const handleCheckout = () => {
