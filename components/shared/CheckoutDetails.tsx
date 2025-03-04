@@ -98,9 +98,6 @@ export default function CheckoutDetails({
     resetSearchParams();
     setIsCancelDialogOpen(false);
     onCloseDialog();
-    // Reset the selected tickets and total price
-    selectedTickets = {};
-    totalPrice = 0;
   };
 
   const handleSignOut = async () => {
