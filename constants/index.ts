@@ -44,6 +44,7 @@ export const eventDefaultValues = {
   description: '',
   locationType: 'Virtual' as 'Virtual',
   location: '',
+  locationMapId: '',
   coordinates: '',
   imageUrl: '',
   startDate: new Date(),
