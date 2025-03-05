@@ -29,7 +29,7 @@ export default function EventMap({
       <div className="relative">
         {/* Google Map */}
         <Map
-          mapId="VITIKET_MAP_ID"
+          mapId="a16cb905c97a2f28"
           style={containerStyle}
           defaultCenter={center}
           defaultZoom={14}
