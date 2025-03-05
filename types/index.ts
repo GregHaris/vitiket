@@ -319,6 +319,7 @@ export type TooltipProps = {
 export type EventMapProps = {
   coordinates: string;
   destinationName: string;
+  locationMapId: string;
 };
 
 export type CurrencyKey = keyof typeof currencySymbols;
