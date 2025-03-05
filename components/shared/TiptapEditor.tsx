@@ -14,19 +14,46 @@ export default function RichTextEditor({
   initialContent,
 }: TextEditorProps) {
   const editor = useEditor({
-    extensions: [StarterKit, Underline, Link],
+    extensions: [
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+        bulletList: {
+          HTMLAttributes: {
+            class: 'list-disc',
+          },
+        },
+        orderedList: {
+          HTMLAttributes: {
+            class: 'list-decimal',
+          },
+        },
+        blockquote: {
+          HTMLAttributes: {
+            class: 'border-l-4 border-gray-300 pl-4',
+          },
+        },
+      }),
+      Underline,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-blue-500 underline',
+        },
+      }),
+    ],
     content: initialContent,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
     editorProps: {
       attributes: {
-        class:
-          'textarea p-regular-16'
+        class: 'textarea p-regular-16',
       },
     },
-    immediatelyRender: false,
   });
+
   return (
     <div className="bg-gray-100 border border-gray-300 rounded-md">
       <TextEditorMenuBar editor={editor} />
