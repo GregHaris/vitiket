@@ -18,15 +18,20 @@ export default function RichTextEditor({
       StarterKit.configure({
         heading: {
           levels: [1, 2, 3],
+          HTMLAttributes: {
+            1: { class: 'text-4xl font-bold' },
+            2: { class: 'text-2xl font-bold' },
+            3: { class: 'text-xl font-bold' },
+          },
         },
         bulletList: {
           HTMLAttributes: {
-            class: 'list-disc',
+            class: 'list-disc ml-4',
           },
         },
         orderedList: {
           HTMLAttributes: {
-            class: 'list-decimal',
+            class: 'list-decimal ml-4',
           },
         },
         blockquote: {
@@ -57,7 +62,10 @@ export default function RichTextEditor({
   return (
     <div className="bg-gray-100 border border-gray-300 rounded-md">
       <TextEditorMenuBar editor={editor} />
-      <EditorContent editor={editor} />
+      <EditorContent
+        editor={editor}
+        className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl mx-auto focus:outline-none p-4"
+      />
     </div>
   );
 }
