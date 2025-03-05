@@ -32,6 +32,7 @@ export type CreateEventParams = {
     description: string;
     locationType: 'Virtual' | 'Physical' | 'Hybrid';
     location?: string;
+    locationMapId?: string;
     coordinates?: string;
     imageUrl: string;
     startDate: Date;
@@ -67,6 +68,7 @@ export type UpdateEventParams = {
     description: string;
     locationType: 'Virtual' | 'Physical' | 'Hybrid';
     location?: string;
+    locationMapId?: string;
     coordinates?: string;
     startDate: Date;
     endDate: Date;
@@ -135,6 +137,7 @@ export type Event = {
   imageUrl: string;
   locationType: 'Virtual' | 'Physical' | 'Hybrid';
   location?: string;
+  locationMapId?: string;
   coordinates?: string;
   startDate: Date;
   endDate: Date;
