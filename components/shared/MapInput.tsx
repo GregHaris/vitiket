@@ -8,7 +8,6 @@ import {
   useMap,
 } from '@vis.gl/react-google-maps';
 import { useState, useEffect, useRef, FC, memo } from 'react';
-
 import { MapInputProps } from '@/types';
 
 const containerStyle = {
@@ -39,8 +38,21 @@ interface MapContentProps {
 const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
   const [selectedPlace, setSelectedPlace] =
     useState<google.maps.places.PlaceResult | null>(null);
+  const [placeDetails, setPlaceDetails] =
+    useState<google.maps.places.PlaceResult | null>(null);
   const [markerRef, marker] = useAdvancedMarkerRef();
   const map = useMap();
+  const places = useMapsLibrary('places');
+  const [placesService, setPlacesService] =
+    useState<google.maps.places.PlacesService | null>(null);
+
+  // Initialize PlacesService
+  useEffect(() => {
+    if (!places || !map) return;
+
+    const service = new places.PlacesService(map);
+    setPlacesService(service);
+  }, [places, map]);
 
   // Parse the initial value (if provided) to set the marker position
   useEffect(() => {
@@ -58,6 +70,26 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
     }
   }, [value]);
 
+  // Fetch full place details when a place is selected
+  useEffect(() => {
+    if (!placesService || !selectedPlace?.place_id) return;
+
+    const request = {
+      placeId: selectedPlace.place_id, 
+      fields: [
+        'name',
+        'formatted_address',
+        'geometry',
+      ], 
+    };
+
+    placesService.getDetails(request, (place, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK && place) {
+        setPlaceDetails(place); 
+      }
+    });
+  }, [placesService, selectedPlace]);
+
   // Handle place selection and update marker position
   useEffect(() => {
     if (!map || !selectedPlace || !marker) return;
@@ -66,7 +98,7 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
     if (location) {
       const lat = location.lat();
       const lng = location.lng();
-      const address = selectedPlace?.formatted_address || '';
+      const address = selectedPlace.formatted_address || '';
 
       marker.position = { lat, lng };
       map.panTo({ lat, lng });
@@ -96,7 +128,7 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
             ref={markerRef}
             position={null}
             clickable={true}
-            title={selectedPlace?.name || ''}
+            title={placeDetails?.name || selectedPlace?.name || ''}
           >
             <Pin
               background={'#EA4335'}
