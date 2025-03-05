@@ -290,8 +290,12 @@ export type LocationProps = {
 };
 
 export type MapInputProps = {
-  value: { location: string; coordinates: string };
-  onChange: (value: { location: string; coordinates: string }) => void;
+  value: { location: string; coordinates: string; locationMapId: string };
+  onChange: (value: {
+    location: string;
+    coordinates: string;
+    locationMapId: string;
+  }) => void;
 };
 
 export type PriceCategory = {
