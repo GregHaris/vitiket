@@ -75,17 +75,13 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
     if (!placesService || !selectedPlace?.place_id) return;
 
     const request = {
-      placeId: selectedPlace.place_id, 
-      fields: [
-        'name',
-        'formatted_address',
-        'geometry',
-      ], 
+      placeId: selectedPlace.place_id,
+      fields: ['name', 'formatted_address', 'geometry'],
     };
 
     placesService.getDetails(request, (place, status) => {
       if (status === google.maps.places.PlacesServiceStatus.OK && place) {
-        setPlaceDetails(place); 
+        setPlaceDetails(place);
       }
     });
   }, [placesService, selectedPlace]);
@@ -102,11 +98,15 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
 
       marker.position = { lat, lng };
       map.panTo({ lat, lng });
-      map.setZoom(15);
-
-      onChange({ location: address, coordinates: `${lat},${lng}` });
+      
+      const locationMapId = placeDetails?.place_id || '';
+      onChange({
+        location: address,
+        coordinates: `${lat},${lng}`,
+        locationMapId,
+      });
     }
-  }, [map, selectedPlace, marker, onChange]);
+  }, [map, selectedPlace, marker, onChange, placeDetails]);
 
   return (
     <div>
