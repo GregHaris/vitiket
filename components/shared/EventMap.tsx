@@ -5,16 +5,8 @@ import {
   Map,
   AdvancedMarker,
   Pin,
-  useMapsLibrary,
 } from '@vis.gl/react-google-maps';
-import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
-import {
-  PlaceDataProvider,
-  PlaceOverview,
-  PlaceDirectionsButton,
-  IconButton,
-} from '@googlemaps/extended-component-library/react';
-import { OverlayLayout as TOverlayLayout } from '@googlemaps/extended-component-library/overlay_layout.js';
+import { useMemo } from 'react';
 
 import { EventMapProps } from '@/types';
 
