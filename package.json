@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.12.0",
+    "@googlemaps/extended-component-library": "^0.6.13",
     "@googlemaps/markerclusterer": "^2.5.3",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-alert-dialog": "^1.1.5",
@@ -43,6 +44,7 @@
     "mongodb": "^6.12.0",
     "mongoose": "^8.9.5",
     "next": "15.1.6",
+    "overlay_layout.js": "link:@googlemaps/extended-component-library/overlay_layout.js",
     "pnpm": "^10.4.1",
     "postcss": "^8.5.1",
     "qrcode": "^1.5.4",
