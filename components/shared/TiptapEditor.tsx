@@ -17,7 +17,7 @@ export default function RichTextEditor({
     extensions: [
       StarterKit.configure({
         heading: {
-          levels: [1, 2, 3],
+          levels: [1, 2, 3, 4, 5, 6],
           HTMLAttributes: {
             1: { class: 'text-4xl font-bold' },
             2: { class: 'text-2xl font-bold' },
@@ -27,11 +27,15 @@ export default function RichTextEditor({
         bulletList: {
           HTMLAttributes: {
             class: 'list-disc ml-4',
+            keepMarks: true,
+            keepAttributes: false,
           },
         },
         orderedList: {
           HTMLAttributes: {
             class: 'list-decimal ml-4',
+            keepMarks: true,
+            keepAttributes: false,
           },
         },
         blockquote: {
