@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import animate from 'tailwindcss-animate';
+import typography from '@tailwindcss/typography';
 
 const config = {
   important: true,
@@ -100,7 +101,7 @@ const config = {
       },
     },
   },
-  plugins: [animate],
+  plugins: [animate, typography],
 };
 
 export default config;
