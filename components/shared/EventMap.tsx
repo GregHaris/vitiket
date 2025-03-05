@@ -5,8 +5,16 @@ import {
   Map,
   AdvancedMarker,
   Pin,
+  useMapsLibrary,
 } from '@vis.gl/react-google-maps';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import {
+  PlaceDataProvider,
+  PlaceOverview,
+  PlaceDirectionsButton,
+  IconButton,
+} from '@googlemaps/extended-component-library/react';
+import { OverlayLayout as TOverlayLayout } from '@googlemaps/extended-component-library/overlay_layout.js';
 
 import { EventMapProps } from '@/types';
 
@@ -32,10 +40,14 @@ export default function EventMap({
           mapId="VITIKET_MAP_ID"
           style={containerStyle}
           defaultCenter={center}
-          defaultZoom={15}
+          defaultZoom={14}
         >
           {/* Advanced Marker */}
-          <AdvancedMarker position={center}>
+          <AdvancedMarker
+            position={center}
+            clickable={true}
+            title={destinationName}
+          >
             <Pin
               background={'#EA4335'}
               glyphColor={'#FFF'}
