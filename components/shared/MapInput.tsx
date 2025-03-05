@@ -52,6 +52,7 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
             location: new google.maps.LatLng(lat, lng),
           },
           formatted_address: value.location,
+          name: value.location,
         } as google.maps.places.PlaceResult);
       }
     }
@@ -65,7 +66,7 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
     if (location) {
       const lat = location.lat();
       const lng = location.lng();
-      const address = selectedPlace.formatted_address || '';
+      const address = selectedPlace?.formatted_address || '';
 
       marker.position = { lat, lng };
       map.panTo({ lat, lng });
@@ -95,6 +96,7 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
             ref={markerRef}
             position={null}
             clickable={true}
+            title={selectedPlace?.name || ''}
           >
             <Pin
               background={'#EA4335'}
@@ -115,7 +117,7 @@ interface PlaceAutocompleteProps {
 const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
   const [placeAutocomplete, setPlaceAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
-  const [inputValue, setInputValue] = useState(''); 
+  const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const places = useMapsLibrary('places');
 
@@ -134,7 +136,7 @@ const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
     const listener = placeAutocomplete.addListener('place_changed', () => {
       const place = placeAutocomplete.getPlace();
       if (place.formatted_address) {
-        setInputValue(place.formatted_address); 
+        setInputValue(place.formatted_address);
       }
       onPlaceSelect(place);
     });
