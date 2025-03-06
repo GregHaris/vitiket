@@ -1,4 +1,7 @@
+'use client';
+
 import { useFormContext } from 'react-hook-form';
+import dynamic from 'next/dynamic';
 
 import { eventFormValues } from '@/lib/validator';
 import {
@@ -8,7 +11,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@ui/form';
-import TiptapEditor from './TiptapEditor';
+
+const RichTextEditor = dynamic(() => import('./TiptapEditor'));
 
 export default function DescriptionEditor() {
   const { control } = useFormContext<eventFormValues>();
@@ -22,7 +26,7 @@ export default function DescriptionEditor() {
             Description <span className="text-red-400">*</span>
           </FormLabel>
           <FormControl>
-            <TiptapEditor
+            <RichTextEditor
               initialContent={field.value}
               onChange={field.onChange}
             />
