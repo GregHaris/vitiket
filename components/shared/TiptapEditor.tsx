@@ -1,12 +1,16 @@
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, Extension } from '@tiptap/react';
 import BulletList from '@tiptap/extension-bullet-list';
+import Blockquote from '@tiptap/extension-blockquote';
+import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
 import Heading from '@tiptap/extension-heading';
+import History from '@tiptap/extension-history';
+import Italic from '@tiptap/extension-italic';
+import Strike from '@tiptap/extension-strike';
 import Link from '@tiptap/extension-link';
 import ListItem from '@tiptap/extension-list-item';
 import OrderedList from '@tiptap/extension-ordered-list';
 import Paragraph from '@tiptap/extension-paragraph';
-import StarterKit from '@tiptap/starter-kit';
 import Text from '@tiptap/extension-text';
 import TextEditorMenuBar from './TextEditorMenuBar';
 import Underline from '@tiptap/extension-underline';
@@ -31,13 +35,17 @@ export default function RichTextEditor({
       Heading.configure({
         levels: [1, 2, 3],
       }),
-      StarterKit,
+      Blockquote,
+      Bold,
+      Italic,
+      Strike,
       Underline,
+      History,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
           class: 'text-blue-500 underline',
-        },
+        }, 
       }),
     ],
     content: initialContent,
