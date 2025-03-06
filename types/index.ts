@@ -32,7 +32,6 @@ export type CreateEventParams = {
     description: string;
     locationType: 'Virtual' | 'Physical' | 'Hybrid';
     location?: string;
-    locationMapId?: string;
     coordinates?: string;
     imageUrl: string;
     startDate: Date;
@@ -68,7 +67,6 @@ export type UpdateEventParams = {
     description: string;
     locationType: 'Virtual' | 'Physical' | 'Hybrid';
     location?: string;
-    locationMapId?: string;
     coordinates?: string;
     startDate: Date;
     endDate: Date;
@@ -137,7 +135,6 @@ export type Event = {
   imageUrl: string;
   locationType: 'Virtual' | 'Physical' | 'Hybrid';
   location?: string;
-  locationMapId?: string;
   coordinates?: string;
   startDate: Date;
   endDate: Date;
@@ -290,11 +287,10 @@ export type LocationProps = {
 };
 
 export type MapInputProps = {
-  value: { location: string; coordinates: string; locationMapId: string };
+  value: { location: string; coordinates: string;};
   onChange: (value: {
     location: string;
     coordinates: string;
-    locationMapId: string;
   }) => void;
 };
 
@@ -319,7 +315,6 @@ export type TooltipProps = {
 export type EventMapProps = {
   coordinates: string;
   destinationName: string;
-  locationMapId: string;
 };
 
 export type CurrencyKey = keyof typeof currencySymbols;

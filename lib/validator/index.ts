@@ -11,7 +11,6 @@ export const eventFormSchema = z
       .min(10, { message: 'Description must be at least 10 characters' })
       .max(2000, { message: 'Description must be less than 1500 characters' }),
     location: z.string().optional(),
-    locationMapId: z.string().optional(),
     locationType: z.enum(['Virtual', 'Physical', 'Hybrid']),
     coordinates: z.string().optional(),
     imageUrl: z.string().min(1, { message: 'Image URL is required' }),
