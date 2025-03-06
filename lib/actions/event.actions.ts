@@ -44,11 +44,13 @@ export async function createEvent({ userId, event, path }: CreateEventParams) {
     const organizer = await User.findById(userId);
     if (!organizer) throw new Error('Organizer not found');
 
+
     const newEvent = await Event.create({
       ...event,
       category: event.categoryId,
       type: event.typeId,
       organizer: userId,
+      locationMapId: event.locationMapId,
     });
     revalidatePath(path);
 
@@ -85,11 +87,15 @@ export async function updateEvent({ userId, event, path }: UpdateEventParams) {
 
     const updatedEvent = await Event.findByIdAndUpdate(
       event._id,
-      { ...event, category: event.categoryId, type: event.typeId },
+      {
+        ...event,
+        category: event.categoryId,
+        type: event.typeId,
+        locationMapId: event.locationMapId,
+      },
       { new: true }
     );
     revalidatePath(path);
-
     return JSON.parse(JSON.stringify(updatedEvent));
   } catch (error) {
     handleError(error);
