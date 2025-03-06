@@ -1,8 +1,15 @@
 import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
+import BulletList from '@tiptap/extension-bullet-list';
+import Document from '@tiptap/extension-document';
+import Heading from '@tiptap/extension-heading';
 import Link from '@tiptap/extension-link';
+import ListItem from '@tiptap/extension-list-item';
+import OrderedList from '@tiptap/extension-ordered-list';
+import Paragraph from '@tiptap/extension-paragraph';
+import StarterKit from '@tiptap/starter-kit';
+import Text from '@tiptap/extension-text';
 import TextEditorMenuBar from './TextEditorMenuBar';
+import Underline from '@tiptap/extension-underline';
 
 type TextEditorProps = {
   onChange: (content: string) => void;
@@ -15,35 +22,16 @@ export default function RichTextEditor({
 }: TextEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-          HTMLAttributes: {
-            1: { class: 'text-4xl font-bold' },
-            2: { class: 'text-2xl font-bold' },
-            3: { class: 'text-xl font-bold' },
-          },
-        },
-        bulletList: {
-          HTMLAttributes: {
-            class: 'list-disc ml-4',
-            keepMarks: true,
-            keepAttributes: false,
-          },
-        },
-        orderedList: {
-          HTMLAttributes: {
-            class: 'list-decimal ml-4',
-            keepMarks: true,
-            keepAttributes: false,
-          },
-        },
-        blockquote: {
-          HTMLAttributes: {
-            class: 'border-l-4 border-gray-300 pl-4',
-          },
-        },
+      Document,
+      Paragraph,
+      Text,
+      BulletList,
+      ListItem,
+      OrderedList,
+      Heading.configure({
+        levels: [1, 2, 3],
       }),
+      StarterKit,
       Underline,
       Link.configure({
         openOnClick: false,
