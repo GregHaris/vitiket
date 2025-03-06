@@ -84,7 +84,6 @@ export default function EventForm({
       imageUrl: uploadedImageUrl,
       location: values.locationType === 'Virtual' ? 'Virtual' : values.location,
       coordinates: values.coordinates,
-      locationMapId: values.locationMapId,
       typeId: values.typeId,
     };
 
