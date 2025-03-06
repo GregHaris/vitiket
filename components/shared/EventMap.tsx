@@ -45,6 +45,7 @@ const EventMapContent: FC<MapContentProps> = ({
   const [markerRef, marker] = useAdvancedMarkerRef();
 
   const map = useMap();
+  
   const places = useMapsLibrary('places');
 
   const [placesService, setPlacesService] =
