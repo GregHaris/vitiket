@@ -50,7 +50,6 @@ export async function createEvent({ userId, event, path }: CreateEventParams) {
       category: event.categoryId,
       type: event.typeId,
       organizer: userId,
-      locationMapId: event.locationMapId,
     });
     revalidatePath(path);
 
@@ -91,7 +90,6 @@ export async function updateEvent({ userId, event, path }: UpdateEventParams) {
         ...event,
         category: event.categoryId,
         type: event.typeId,
-        locationMapId: event.locationMapId,
       },
       { new: true }
     );
