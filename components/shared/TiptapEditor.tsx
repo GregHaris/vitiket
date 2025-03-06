@@ -61,6 +61,8 @@ export default function RichTextEditor({
         class: 'textarea p-regular-16',
       },
     },
+    // Set immediatelyRender to false to avoid SSR hydration mismatch
+    immediatelyRender: false,
   });
 
   return (
