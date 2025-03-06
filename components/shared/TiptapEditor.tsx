@@ -68,7 +68,7 @@ export default function RichTextEditor({
       <TextEditorMenuBar editor={editor} />
       <EditorContent
         editor={editor}
-        className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl mx-auto focus:outline-none p-4"
+        className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none p-1"
       />
     </div>
   );

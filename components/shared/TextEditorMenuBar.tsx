@@ -9,7 +9,7 @@ import {
   RiH3,
   RiLink,
 } from 'react-icons/ri';
-import { Editor } from '@tiptap/react';
+import { Editor, isActive } from '@tiptap/react';
 import { BiUndo, BiRedo } from 'react-icons/bi';
 import { BsTypeUnderline } from 'react-icons/bs';
 import { IoListOutline } from 'react-icons/io5';
@@ -145,7 +145,7 @@ export default function TextEditorMenuBar({
   ];
 
   return (
-    <div className="mb-2 flex justify-between bg-gray-300!">
+    <div className="mb-2 flex justify-between bg-gray-300! flex-nowrap">
       <div>
         {buttons.map(({ icon, onClick, isActive, disabled, title }, index) => (
           <Button
