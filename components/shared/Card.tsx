@@ -13,6 +13,8 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
 
   const isEventCreator = userId === event.organizer?._id.toString();
 
+  const eventLocation = event.location?.split(', ||')[0];
+
   // Calculate the lowest price from priceCategories
   const lowestPrice = event.priceCategories?.reduce((min, category) => {
     const price = parseFloat(category.price);
@@ -79,9 +81,7 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
             height={20}
           />
           <p className="p-medium-16 md:p-medium-18 text-gray-400">
-            {event.locationType === 'Virtual'
-              ? 'Virtual Event'
-              : event.location}
+            {event.locationType === 'Virtual' ? 'Virtual Event' : eventLocation}
           </p>
         </div>
 
