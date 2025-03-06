@@ -34,6 +34,8 @@ const EventDetails = async (props: SearchParamProps) => {
 
   const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
 
+  const eventLocation = event.location.split(', ||')[0];
+
   return (
     <>
       <section className="wrapper pb-20 md:pb-0">
@@ -123,7 +125,7 @@ const EventDetails = async (props: SearchParamProps) => {
                       height={32}
                     />
                     <p className="p-medium-16 lg:p-regular-20">
-                      {event.location}
+                      {eventLocation}
                     </p>
                   </div>
 
