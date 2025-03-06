@@ -94,6 +94,7 @@ export default function EventForm({
       instagram: values.contactDetails.instagram,
       facebook: values.contactDetails.facebook,
       x: values.contactDetails.x,
+      linkedin: values.contactDetails.linkedin,
     };
 
     if (type === 'Create') {
