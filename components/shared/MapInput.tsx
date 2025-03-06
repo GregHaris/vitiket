@@ -76,37 +76,35 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
 
     const request = {
       placeId: selectedPlace.place_id,
-      fields: ['name', 'formatted_address', 'geometry'],
+      fields: ['name', 'formatted_address', 'geometry', 'place_id'],
     };
 
     placesService.getDetails(request, (place, status) => {
       if (status === google.maps.places.PlacesServiceStatus.OK && place) {
         setPlaceDetails(place);
+
+        const location = place.geometry?.location;
+        if (location) {
+          const lat = location.lat();
+          const lng = location.lng();
+          const address = place.formatted_address || '';
+          const placeId = place.place_id || '';
+
+          if (marker) {
+            marker.position = { lat, lng };
+          }
+          if (map) {
+            map.panTo({ lat, lng });
+          }
+
+          onChange({
+            location: `${address}, || ${placeId}`,
+            coordinates: `${lat},${lng}`,
+          });
+        }
       }
     });
-  }, [placesService, selectedPlace]);
-
-  // Handle place selection and update marker position
-  useEffect(() => {
-    if (!map || !selectedPlace || !marker) return;
-
-    const location = selectedPlace.geometry?.location;
-    if (location) {
-      const lat = location.lat();
-      const lng = location.lng();
-      const address = selectedPlace.formatted_address || '';
-
-      marker.position = { lat, lng };
-      map.panTo({ lat, lng });
-      
-      const locationMapId = placeDetails?.place_id || '';
-      onChange({
-        location: address,
-        coordinates: `${lat},${lng}`,
-        locationMapId,
-      });
-    }
-  }, [map, selectedPlace, marker, onChange, placeDetails]);
+  }, [placesService, selectedPlace, map, marker, onChange]);
 
   return (
     <div>
