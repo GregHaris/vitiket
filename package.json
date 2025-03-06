@@ -40,7 +40,6 @@
     "@tiptap/extension-text": "^2.11.5",
     "@tiptap/extension-underline": "^2.11.5",
     "@tiptap/react": "^2.11.5",
-    "@tiptap/starter-kit": "^2.11.5",
     "@types/react-color": "^3.0.13",
     "@uploadthing/react": "^7.1.5",
     "@vis.gl/react-google-maps": "^1.5.1",
