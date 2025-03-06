@@ -12,6 +12,8 @@ import {
 } from '@vis.gl/react-google-maps';
 
 import { EventMapProps } from '@/types';
+import Image from 'next/image';
+import CustomTooltip from './ToolTip';
 
 const containerStyle = {
   width: '100%',
@@ -45,7 +47,7 @@ const EventMapContent: FC<MapContentProps> = ({
   const [markerRef, marker] = useAdvancedMarkerRef();
 
   const map = useMap();
-  
+
   const places = useMapsLibrary('places');
 
   const [placesService, setPlacesService] =
@@ -85,8 +87,41 @@ const EventMapContent: FC<MapContentProps> = ({
     });
   }, [placesService, map, marker, locationMapId]);
 
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+
   return (
     <div className="relative">
+
+      {/* Custom Event Location Info Window */}
+      {placeDetails && (
+        <div className="absolute flex gap-3 flex-wrap top-2.5 right-18 bg-white p-4 rounded-sm shadow-lg z-10 whitespace-pre-wrap">
+          <div>
+            <h3 className="font-bold mb-2">{placeDetails?.name}</h3>
+            <p className="text-sm w-40 whitespace-pre-wrap">
+              {address}
+            </p>
+          </div>
+          <div>
+            <CustomTooltip content="Click for Google Map direction to the event center">
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col justify-start items-center text-sm text-blue-400 hover:underline"
+              >
+                <Image
+                  src={'/assets/icons/directions.svg'}
+                  alt="directions-icon"
+                  width={24}
+                  height={24}
+                />
+                Directions
+              </a>
+            </CustomTooltip>
+          </div>
+        </div>
+      )}
+
       {/* Google Map */}
       <Map
         mapId="a16cb905c97a2f28"
