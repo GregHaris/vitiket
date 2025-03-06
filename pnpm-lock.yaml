@@ -59,6 +59,9 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@4.0.0)
+      '@tiptap/extension-blockquote':
+        specifier: ^2.11.5
+        version: 2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))
       '@tiptap/extension-bullet-list':
         specifier: ^2.11.5
         version: 2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))
