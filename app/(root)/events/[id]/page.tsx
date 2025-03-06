@@ -152,7 +152,7 @@ const EventDetails = async (props: SearchParamProps) => {
                         <div className="w-full h-[400px]">
                           <EventMap
                             coordinates={event.coordinates}
-                            destinationName={event.location}
+                            destinationInfo={event.location}
                           />
                         </div>
                       </div>
