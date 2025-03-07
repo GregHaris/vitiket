@@ -1,4 +1,4 @@
-import { useEditor, EditorContent, Extension } from '@tiptap/react';
+import { useEditor, EditorContent } from '@tiptap/react';
 import BulletList from '@tiptap/extension-bullet-list';
 import Blockquote from '@tiptap/extension-blockquote';
 import Bold from '@tiptap/extension-bold';
@@ -45,7 +45,7 @@ export default function RichTextEditor({
         openOnClick: false,
         HTMLAttributes: {
           class: 'text-blue-500 underline',
-        }, 
+        },
       }),
     ],
     content: initialContent,
