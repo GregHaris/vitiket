@@ -62,7 +62,7 @@ export default function ContactDetails() {
           <FormItem>
             <FormControl>
               <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
-                <RiLink className="text-primary" />
+                <RiLink className="text-primary h-5 w-5" />
                 <Input
                   placeholder="Your website (www.example.com)"
                   {...field}
