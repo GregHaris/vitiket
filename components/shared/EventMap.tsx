@@ -98,8 +98,8 @@ const EventMapContent: FC<MapContentProps> = ({
       {placeDetails && (
         <div className="absolute flex gap-3 flex-wrap top-2.5 right-18 bg-white p-4 rounded-sm shadow-lg z-10 whitespace-pre-wrap">
           <div>
-            <h3 className="font-bold mb-2">{placeDetails?.name}</h3>
-            <p className="text-sm w-40 whitespace-pre-wrap">{address}</p>
+            <h3 className="font-bold text-sm mb-2">{placeDetails?.name}</h3>
+            <p className="text-[12px] w-40 whitespace-pre-wrap">{address}</p>
           </div>
           <div>
             <CustomTooltip content="Click for Google Map direction to the event center">
@@ -107,7 +107,7 @@ const EventMapContent: FC<MapContentProps> = ({
                 href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col justify-start items-center text-sm text-blue-400 hover:underline"
+                className="flex flex-col justify-start items-center text[12px] text-blue-400 hover:underline"
               >
                 <Image
                   src={'/assets/icons/directions.svg'}
