@@ -112,7 +112,7 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
   }, [placesService, selectedPlace, map, marker, onChange]);
 
   return (
-    <div>
+    <div className="relative">
       {/* Location Search Input */}
       <div className="mb-4">
         <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
@@ -140,17 +140,18 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
               borderColor={'#EA4335'}
             />
           </AdvancedMarker>
+          Adv
         </Map>
       </div>
 
       {/* Custom Event location name overlay to replace the AdvancedMarker title*/}
       <div
-        className={`bg-primary text-white py-2 px-4 rounded-sm shadow-lg text-sm transition-opacity ${
+        className={`bg-primary text-white py-1 px-2 rounded-sm shadow-lg text-[12px] transition-opacity ${
           isMarkerHovered ? 'opacity-100' : 'opacity-0'
         }`}
         style={{
           position: 'absolute',
-          top: '55%',
+          top: '60%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           pointerEvents: 'none',
