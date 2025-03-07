@@ -12,7 +12,7 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
         {/* Phone Number */}
         {contactDetails.phoneNumber && (
           <div className="flex items-center gap-2">
-            <Phone />
+            <Phone className="text-white fill-primary" />
             <span className="p-regular-16">{contactDetails.phoneNumber}</span>
           </div>
         )}
@@ -23,7 +23,7 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
             href={`mailto:${contactDetails.email}`}
             className="flex items-center gap-2"
           >
-            <Mail />
+            <Mail className="text-white fill-primary" />
             <span className="p-regular-16 truncate">
               {contactDetails.email}
             </span>
