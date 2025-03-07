@@ -88,7 +88,7 @@ const EventMapContent: FC<MapContentProps> = ({
         }
       }
     });
-  }, [placesService, map, marker, locationMapId]);
+  }, [placesService, map, marker, locationMapId, lat, lng]);
 
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
 
