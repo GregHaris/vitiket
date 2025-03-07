@@ -31,7 +31,6 @@ export default function TimePickerComponent({
                 width={20}
                 height={20}
                 alt="clock"
-                className="filter-grey"
               />
               <p className="ml-3 whitespace-nowrap text-gray-600">
                 {placeholder}
