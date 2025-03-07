@@ -58,7 +58,7 @@ export default function CheckoutDetails({
         confirmEmail: user.emailAddresses[0]?.emailAddress || '',
       });
     }
-  }, [user]);
+  }, [user, form]);
 
   const onSubmit = async () => {
     try {
