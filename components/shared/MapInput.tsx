@@ -140,7 +140,6 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
               borderColor={'#EA4335'}
             />
           </AdvancedMarker>
-          Adv
         </Map>
       </div>
 
