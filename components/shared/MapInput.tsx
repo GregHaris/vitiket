@@ -40,8 +40,13 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
     useState<google.maps.places.PlaceResult | null>(null);
   const [placeDetails, setPlaceDetails] =
     useState<google.maps.places.PlaceResult | null>(null);
+
+  const [isMarkerHovered, setIsMarkerHovered] = useState(false);
+
   const [markerRef, marker] = useAdvancedMarkerRef();
+
   const map = useMap();
+
   const places = useMapsLibrary('places');
   const [placesService, setPlacesService] =
     useState<google.maps.places.PlacesService | null>(null);
@@ -126,7 +131,8 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
             ref={markerRef}
             position={null}
             clickable={true}
-            title={placeDetails?.name || selectedPlace?.name || ''}
+            onMouseEnter={() => setIsMarkerHovered(true)}
+            onMouseLeave={() => setIsMarkerHovered(false)}
           >
             <Pin
               background={'#EA4335'}
@@ -135,6 +141,25 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
             />
           </AdvancedMarker>
         </Map>
+      </div>
+
+      {/* Custom Event location name overlay to replace the AdvancedMarker title*/}
+      <div
+        className={`bg-primary text-white py-2 px-4 rounded-sm shadow-lg text-sm transition-opacity ${
+          isMarkerHovered ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{
+          position: 'absolute',
+          top: '55%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap',
+          minWidth: 'max-content',
+          zIndex: 10,
+        }}
+      >
+        {placeDetails?.name}
       </div>
     </div>
   );

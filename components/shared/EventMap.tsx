@@ -1,6 +1,5 @@
 'use client';
 
-import { FC, memo, useEffect, useMemo, useState } from 'react';
 import {
   APIProvider,
   AdvancedMarker,
@@ -10,10 +9,11 @@ import {
   useAdvancedMarkerRef,
   useMapsLibrary,
 } from '@vis.gl/react-google-maps';
+import { FC, memo, useEffect, useMemo, useState } from 'react';
 
 import { EventMapProps } from '@/types';
-import Image from 'next/image';
 import CustomTooltip from './ToolTip';
+import Image from 'next/image';
 
 const containerStyle = {
   width: '100%',
@@ -42,7 +42,10 @@ const EventMapContent: FC<MapContentProps> = ({
 }) => {
   const [lat, lng] = coordinates.split(',').map(Number);
   const center = useMemo(() => ({ lat, lng }), [lat, lng]);
+
   const [address, locationMapId] = destinationInfo.split(', ||');
+
+  const [isMarkerHovered, setIsMarkerHovered] = useState(false);
 
   const [markerRef, marker] = useAdvancedMarkerRef();
 
@@ -91,15 +94,12 @@ const EventMapContent: FC<MapContentProps> = ({
 
   return (
     <div className="relative">
-
       {/* Custom Event Location Info Window */}
       {placeDetails && (
         <div className="absolute flex gap-3 flex-wrap top-2.5 right-18 bg-white p-4 rounded-sm shadow-lg z-10 whitespace-pre-wrap">
           <div>
             <h3 className="font-bold mb-2">{placeDetails?.name}</h3>
-            <p className="text-sm w-40 whitespace-pre-wrap">
-              {address}
-            </p>
+            <p className="text-sm w-40 whitespace-pre-wrap">{address}</p>
           </div>
           <div>
             <CustomTooltip content="Click for Google Map direction to the event center">
@@ -134,7 +134,8 @@ const EventMapContent: FC<MapContentProps> = ({
           ref={markerRef}
           position={center}
           clickable={true}
-          title={placeDetails?.name || address}
+          onMouseEnter={() => setIsMarkerHovered(true)}
+          onMouseLeave={() => setIsMarkerHovered(false)}
         >
           <Pin
             background={'#EA4335'}
@@ -143,6 +144,25 @@ const EventMapContent: FC<MapContentProps> = ({
           />
         </AdvancedMarker>
       </Map>
+
+      {/* Custom Event location name overlay to replace the AdvancedMarker title */}
+      <div
+        className={`bg-primary text-white py-2 px-4 rounded-sm shadow-lg text-sm transition-opacity ${
+          isMarkerHovered ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{
+          position: 'absolute',
+          top: '55%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap',
+          minWidth: 'max-content',
+          zIndex: 10,
+        }}
+      >
+        {placeDetails?.name}
+      </div>
     </div>
   );
 };
