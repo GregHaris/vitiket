@@ -147,7 +147,7 @@ const EventMapContent: FC<MapContentProps> = ({
 
       {/* Custom Event location name overlay to replace the AdvancedMarker title */}
       <div
-        className={`bg-primary text-white py-2 px-4 rounded-sm shadow-lg text-sm transition-opacity ${
+        className={`bg-primary text-white py-1 px-2 rounded-sm shadow-lg text-[12px] transition-opacity ${
           isMarkerHovered ? 'opacity-100' : 'opacity-0'
         }`}
         style={{
