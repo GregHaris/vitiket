@@ -96,10 +96,10 @@ const EventMapContent: FC<MapContentProps> = ({
     <div className="relative">
       {/* Custom Event Location Info Window */}
       {placeDetails && (
-        <div className="absolute flex gap-3 flex-wrap top-2.5 right-18 bg-white p-4 rounded-sm shadow-lg z-10 whitespace-pre-wrap">
+        <div className="absolute flex flex-col gap-3 flex-wrap bottom-8 left-2.5 bg-white p-4 rounded-sm shadow-lg z-10 whitespace-pre-wrap">
           <div>
             <h3 className="font-bold text-sm mb-2">{placeDetails?.name}</h3>
-            <p className="text-[12px] w-40 whitespace-pre-wrap">{address}</p>
+            <p className="text-[12px] w-40">{address}</p>
           </div>
           <div>
             <CustomTooltip content="Click for Google Map direction to the event center">
