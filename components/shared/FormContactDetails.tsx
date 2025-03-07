@@ -159,9 +159,9 @@ export default function ContactDetails() {
               <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
                 <Image
                   src="/assets/icons/linkedIn.svg"
-                  width={20}
-                  height={20}
-                  alt="calendar"
+                  width={25}
+                  height={25}
+                  alt="linkedIn"
                 />
                 <Input
                   placeholder="https://www.linkedin.com/in/your-profile-name"
