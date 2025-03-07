@@ -107,7 +107,7 @@ const EventMapContent: FC<MapContentProps> = ({
                 href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col justify-start items-center text[12px] text-blue-400 hover:underline"
+                className="flex flex-col justify-start items-center text-sm text-blue-400 hover:underline"
               >
                 <Image
                   src={'/assets/icons/directions.svg'}
