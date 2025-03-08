@@ -90,3 +90,24 @@ export async function deleteUser(clerkId: string) {
     handleError(error);
   }
 }
+
+// Find the user by clerkId and update/ add their Stripe account ID
+export async function updateUserStripeAccountId(
+  clerkId: string,
+  stripeAccountId: string
+) {
+  try {
+    await connectToDatabase();
+
+    const updatedUser = await User.findOneAndUpdate(
+      { clerkId },
+      { stripeAccountId },
+      { new: true }
+    );
+
+    if (!updatedUser) throw new Error('User not found');
+    return JSON.parse(JSON.stringify(updatedUser));
+  } catch (error) {
+    handleError(error);
+  }
+}
