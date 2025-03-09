@@ -44,6 +44,7 @@ export type CreateEventParams = {
     quantity?: number | null;
     isFree?: boolean;
     url?: string;
+    status: 'draft' | 'published';
   };
   contactDetails: {
     email: string;
@@ -78,6 +79,7 @@ export type UpdateEventParams = {
     quantity?: number | null;
     isFree?: boolean;
     url?: string;
+    status: 'draft' | 'published';
   };
   contactDetails: {
     email: string;
@@ -156,6 +158,7 @@ export type Event = {
     name: string;
     color: string;
   };
+  status: 'draft' | 'published';
   contactDetails: {
     email: string;
     phoneNumber?: string;
@@ -287,11 +290,8 @@ export type LocationProps = {
 };
 
 export type MapInputProps = {
-  value: { location: string; coordinates: string;};
-  onChange: (value: {
-    location: string;
-    coordinates: string;
-  }) => void;
+  value: { location: string; coordinates: string };
+  onChange: (value: { location: string; coordinates: string }) => void;
 };
 
 export type PriceCategory = {

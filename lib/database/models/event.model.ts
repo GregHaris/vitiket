@@ -32,6 +32,7 @@ export interface IEvent extends Document {
     x?: string;
     linkedin?: string;
   };
+  status: 'draft' | 'published'; 
 }
 
 const EventSchema = new Schema(
@@ -72,6 +73,11 @@ const EventSchema = new Schema(
       facebook: { type: String },
       x: { type: String },
       linkedin: { type: String },
+    },
+    status: {
+      type: String,
+      enum: ['draft', 'published'],
+      default: 'draft', 
     },
   },
   { timestamps: true }
