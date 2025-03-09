@@ -11,6 +11,10 @@ const UserSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   role: { type: String, default: 'user' },
+  bankDetails: {
+    bankCode: { type: String }, 
+    accountNumber: { type: String }, 
+  },
 });
 
 const User = models.User || model('User', UserSchema);
