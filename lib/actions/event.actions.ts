@@ -37,19 +37,25 @@ const populateEvent = async <T extends IEvent | IEvent[] | null>(
 };
 
 // CREATE
-export async function createEvent({ userId, event, path }: CreateEventParams) {
+export async function createEvent({
+  userId,
+  event,
+  contactDetails,
+  path,
+}: CreateEventParams) {
   try {
     await connectToDatabase();
 
     const organizer = await User.findById(userId);
     if (!organizer) throw new Error('Organizer not found');
 
-
     const newEvent = await Event.create({
       ...event,
       category: event.categoryId,
       type: event.typeId,
       organizer: userId,
+      contactDetails,
+      status: event.isFree ? 'published' : 'draft', // Set status based on isFree
     });
     revalidatePath(path);
 
@@ -75,7 +81,12 @@ export async function getEventById(eventId: string) {
 }
 
 // UPDATE
-export async function updateEvent({ userId, event, path }: UpdateEventParams) {
+export async function updateEvent({
+  userId,
+  event,
+  contactDetails,
+  path,
+}: UpdateEventParams) {
   try {
     await connectToDatabase();
 
@@ -90,6 +101,8 @@ export async function updateEvent({ userId, event, path }: UpdateEventParams) {
         ...event,
         category: event.categoryId,
         type: event.typeId,
+        contactDetails,
+        status: event.status || eventToUpdate.status,
       },
       { new: true }
     );
@@ -134,6 +147,7 @@ export async function getAllEvents({
       : {};
     const conditions = {
       $and: [
+        { status: 'published' },
         categoryCondition ? { category: categoryCondition._id } : {},
         titleCondition,
         locationCondition,
@@ -167,7 +181,7 @@ export async function getEventsByUser({
   try {
     await connectToDatabase();
 
-    const conditions = { organizer: userId };
+    const conditions = { organizer: userId }; 
     const skipAmount = (page - 1) * limit;
 
     const eventsQuery = Event.find(conditions)
@@ -199,7 +213,11 @@ export async function getRelatedEventsByCategory({
 
     const skipAmount = (Number(page) - 1) * limit;
     const conditions = {
-      $and: [{ category: categoryId }, { _id: { $ne: eventId } }],
+      $and: [
+        { status: 'published' }, 
+        { category: categoryId },
+        { _id: { $ne: eventId } },
+      ],
     };
 
     const eventsQuery = Event.find(conditions)
