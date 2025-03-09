@@ -107,7 +107,13 @@ export default function EventForm({
         });
 
         if (newEvent) {
-          router.push(`/events/${newEvent._id}`);
+          if (values.isFree) {
+            router.push(`/events/${newEvent._id}`);
+          } else {
+            router.push(
+              `/organizer/setup?userId=${userId}&eventId=${newEvent._id}`
+            );
+          }
         }
       } catch (error) {
         console.log(error);
@@ -132,7 +138,13 @@ export default function EventForm({
         });
 
         if (updatedEvents) {
-          router.push(`/events/${updatedEvents._id}`);
+          if (values.isFree) {
+            router.push(`/events/${updatedEvents._id}`);
+          } else {
+            router.push(
+              `/organizer/setup?userId=${userId}&eventId=${updatedEvents._id}`
+            );
+          }
         }
       } catch (error) {
         console.log(error);
