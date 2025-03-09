@@ -44,7 +44,7 @@ export type CreateEventParams = {
     quantity?: number | null;
     isFree?: boolean;
     url?: string;
-    status: 'draft' | 'published';
+    status?: 'draft' | 'published';
   };
   contactDetails: {
     email: string;
@@ -79,7 +79,7 @@ export type UpdateEventParams = {
     quantity?: number | null;
     isFree?: boolean;
     url?: string;
-    status: 'draft' | 'published';
+    status?: 'draft' | 'published';
   };
   contactDetails: {
     email: string;
