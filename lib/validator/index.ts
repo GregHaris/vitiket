@@ -175,3 +175,16 @@ export const checkoutFormSchema = z
   });
 
 export type checkoutFormValues = z.infer<typeof checkoutFormSchema>;
+
+export const paymentDetailsSchema = z.object({
+  businessName: z
+    .string()
+    .min(3, { message: 'Business name must be at least 3 characters' }),
+  bankName: z.string().min(1, { message: 'Bank name is required' }),
+  accountNumber: z
+    .string()
+    .min(10, { message: 'Account number must be at least 10 characters' })
+    .max(10, { message: 'Account number must be 10 characters' }),
+});
+
+export type PaymentDetailsValues = z.infer<typeof paymentDetailsSchema>;
