@@ -377,3 +377,11 @@ export type UserInfoInputProps = {
   label: string;
   required?: boolean;
 };
+
+export interface Bank {
+  name: string;
+  code: string;
+  active: boolean;
+  country: string;
+  currency: string;
+}
