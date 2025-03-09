@@ -92,16 +92,16 @@ export async function deleteUser(clerkId: string) {
 }
 
 // Find the user by clerkId and update/ add their Stripe account ID
-export async function updateUserStripeAccountId(
+export async function updateUserPaystackAccountId(
   clerkId: string,
-  stripeAccountId: string
+  paystackAccountId: string
 ) {
   try {
     await connectToDatabase();
 
     const updatedUser = await User.findOneAndUpdate(
       { clerkId },
-      { stripeAccountId },
+      { paystackAccountId },
       { new: true }
     );
 
