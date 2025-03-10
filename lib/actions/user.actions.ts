@@ -92,6 +92,7 @@ export async function updateUserPaymentDetails(
     businessName: string;
     bankName: string;
     accountNumber: string;
+    accountName: string;
   }
 ) {
   try {
@@ -105,7 +106,8 @@ export async function updateUserPaymentDetails(
         bankName: paymentDetails.bankName,
         bankDetails: {
           accountNumber: paymentDetails.accountNumber,
-        }, 
+          accountName: paymentDetails.accountName,
+        },
       },
       { new: true }
     );

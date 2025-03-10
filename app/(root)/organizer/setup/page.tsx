@@ -1,74 +1,93 @@
+import { NextRequest, NextResponse } from 'next/server';
+
 import { Bank } from '@/types';
 import { connectToDatabase } from '@/lib/database';
-import { PaymentDetailsValues } from '@/lib/validator';
-import Event from '@/lib/database/models/event.model';
-import getUserId from '@/utils/userId';
-import PaymentDetailsForm from '@shared/PaymentDetailsForm';
+import { updateUserPaymentDetails } from '@/lib/actions/user.actions';
 import User from '@/lib/database/models/user.model';
 
-async function getUserPaymentDetails(
-  clerkId: string
-): Promise<(PaymentDetailsValues & { subaccountCode: string }) | undefined> {
+export async function POST(req: NextRequest) {
+  const { businessName, bankName, accountNumber } = await req.json();
+  const clerkId = req.headers.get('x-user-id');
+
+  if (!businessName || !bankName || !accountNumber || !clerkId) {
+    return NextResponse.json(
+      { message: 'All fields are required' },
+      { status: 400 }
+    );
+  }
+
   try {
+    // Fetch MongoDB userId using Clerk ID
     await connectToDatabase();
     const user = await User.findOne({ clerkId });
-    if (user && user.subaccountCode) {
-      return {
-        businessName: user.businessName || `${user.firstName} ${user.lastName}`,
-        bankName: user.bankName || '',
-        accountName: user.bankDetails?.accountName || '',
-        accountNumber: user.bankDetails?.accountNumber || '',
-        subaccountCode: user.subaccountCode,
-      };
+    if (!user) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
-    return undefined;
+    const userId = user._id.toString();
+
+    // Fetch banks to map bankName to bank_code
+    const banksRes = await fetch('https://api.paystack.co/bank', {
+      headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` },
+      cache: 'force-cache',
+    });
+    if (!banksRes.ok) {
+      throw new Error('Failed to fetch banks from Paystack');
+    }
+    const banksData = await banksRes.json();
+    const bank = banksData.data.find((b: Bank) => b.name === bankName);
+
+    if (!bank) {
+      return NextResponse.json(
+        { message: 'Invalid bank name' },
+        { status: 400 }
+      );
+    }
+
+    // Create subaccount
+    const subaccountRes = await fetch('https://api.paystack.co/subaccount', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        business_name: businessName,
+        bank_code: bank.code,
+        account_number: accountNumber,
+        percentage_charge: 20,
+      }),
+    });
+
+    const subaccountData = await subaccountRes.json();
+
+    if (!subaccountRes.ok) {
+      return NextResponse.json(
+        { message: subaccountData.message || 'Failed to create subaccount' },
+        { status: subaccountRes.status }
+      );
+    }
+
+    // Save payment details to User model using MongoDB _id
+    await updateUserPaymentDetails(userId, {
+      subaccountCode: subaccountData.data.subaccount_code,
+      businessName,
+      bankName,
+      accountNumber,
+      accountName: subaccountData.data.account_name,
+    });
+
+    return NextResponse.json(
+      {
+        message: 'Subaccount created successfully',
+        subaccountCode: subaccountData.data.subaccount_code,
+      },
+      { status: 201 }
+    );
   } catch (error) {
-    console.error('Error fetching user payment details:', error);
-    return undefined;
+    console.error('Error creating subaccount:', error);
+    return NextResponse.json(
+      { message: (error as Error).message || 'Failed to create subaccount' },
+      { status: 500 }
+    );
   }
-}
-
-async function fetchBanks(): Promise<Bank[]> {
-  const res = await fetch('https://api.paystack.co/bank', {
-    headers: {
-      Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-    },
-    cache: 'force-cache',
-  });
-  if (!res.ok) throw new Error('Failed to fetch banks');
-  const data = await res.json();
-  return data.data.filter((bank: Bank) => bank.active);
-}
-
-export default async function SetupPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ eventId: string }>;
-}) {
-  const userId = await getUserId();
-  const { eventId } = await searchParams;
-
-  if (!userId || !eventId) {
-    throw new Error('Missing clerkId or eventId');
-  }
-
-  await connectToDatabase();
-  if (!userId) throw new Error('User not found');
-
-  const event = await Event.findById(eventId);
-  if (!event) throw new Error('Event not found');
-
-  const banks = await fetchBanks();
-  const existingDetails = await getUserPaymentDetails(userId);
-
-  return (
-    <div className="container mx-auto py-8">
-      <PaymentDetailsForm
-        banks={banks}
-        existingDetails={existingDetails}
-        eventId={eventId}
-        userId={userId}
-      />
-    </div>
-  );
 }
