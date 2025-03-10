@@ -17,6 +17,7 @@ export interface IUser {
   bankDetails?: {
     bankCode?: string;
     accountNumber?: string;
+    accountName?: string;
   };
 }
 
@@ -35,6 +36,7 @@ const UserSchema = new Schema({
   bankName: { type: String },
   bankDetails: {
     bankCode: { type: String },
+    accountName: { type: String },
     accountNumber: { type: String },
   },
 });

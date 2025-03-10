@@ -181,6 +181,7 @@ export const paymentDetailsSchema = z.object({
     .string()
     .min(3, { message: 'Business name must be at least 3 characters' }),
   bankName: z.string().min(1, { message: 'Bank name is required' }),
+  accountName: z.string().min(1, { message: 'Account name is required' }),
   accountNumber: z
     .string()
     .min(10, { message: 'Account number must be at least 10 characters' })
