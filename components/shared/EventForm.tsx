@@ -111,7 +111,7 @@ export default function EventForm({
             router.push(`/events/${newEvent._id}`);
           } else {
             router.push(
-              `/organizer/setup?userId=${userId}&eventId=${newEvent._id}`
+              `/organizer/setup?clerkId=${userId}&eventId=${newEvent._id}`
             );
           }
         }
