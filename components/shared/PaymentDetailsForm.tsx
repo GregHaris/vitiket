@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import { Bank } from '@/types';
 import { PaymentDetailsValues, paymentDetailsSchema } from '@/lib/validator';
+
 import { Button } from '@ui/button';
 import {
   Form,
@@ -26,14 +28,16 @@ import {
 
 interface PaymentDetailsFormProps {
   banks: Bank[];
-  existingDetails?: PaymentDetailsValues & { subaccountCode: string }; 
-  onSubmitSuccess?: (subaccountCode: string) => void; 
+  existingDetails?: PaymentDetailsValues & { subaccountCode: string };
+  onSubmitSuccess?: (subaccountCode: string) => void;
+  userId: string;
 }
 
 export default function PaymentDetailsForm({
   banks,
   existingDetails,
   onSubmitSuccess,
+  userId,
 }: PaymentDetailsFormProps) {
   const [message, setMessage] = useState('');
   const router = useRouter();
@@ -51,7 +55,10 @@ export default function PaymentDetailsForm({
     try {
       const res = await fetch('/api/create-subaccount', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': userId,
+        },
         body: JSON.stringify(data),
       });
 
@@ -64,7 +71,15 @@ export default function PaymentDetailsForm({
       }
     } catch (error) {
       setMessage('An error occurred. Please try again.');
+      console.error(error);
     }
+  };
+
+  const handleReuseDetails = async () => {
+    if (existingDetails && onSubmitSuccess) {
+      onSubmitSuccess(existingDetails.subaccountCode);
+    }
+    router.push('/dashboard');
   };
 
   return (
@@ -136,10 +151,7 @@ export default function PaymentDetailsForm({
                 : 'Save Details'}
             </Button>
             {existingDetails && (
-              <Button
-                variant="outline"
-                onClick={() => router.push('/organizer/dashboard')}
-              >
+              <Button variant="outline" onClick={handleReuseDetails}>
                 Reuse Existing Details
               </Button>
             )}
