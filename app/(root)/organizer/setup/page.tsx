@@ -16,6 +16,7 @@ async function getUserPaymentDetails(
       return {
         businessName: user.businessName || `${user.firstName} ${user.lastName}`,
         bankName: user.bankName || '',
+        accountName: user.bankDetails?.accountName || '',
         accountNumber: user.bankDetails?.accountNumber || '',
         subaccountCode: user.subaccountCode,
       };
