@@ -31,7 +31,8 @@
       ],
       "@ui/*": [
         "./components/ui/*"
-      ], "@shared/*": [
+      ],
+      "@shared/*": [
         "./components/shared/*"
       ],
       "@lib/*": [
@@ -46,7 +47,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "script/migrateEvents.mjs"
   ],
   "exclude": [
     "node_modules"
