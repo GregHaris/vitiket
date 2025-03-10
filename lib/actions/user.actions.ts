@@ -14,7 +14,6 @@ export async function createUser(user: CreateUserParams) {
   try {
     await connectToDatabase();
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email: user.email });
     if (existingUser) {
       return JSON.parse(JSON.stringify(existingUser));
@@ -59,29 +58,23 @@ export async function deleteUser(clerkId: string) {
   try {
     await connectToDatabase();
 
-    // Find user to delete
     const userToDelete = await User.findOne({ clerkId });
 
     if (!userToDelete) {
       throw new Error('User not found');
     }
 
-    // Unlink relationships
     await Promise.all([
-      // Update the 'events' collection to remove references to the user
       Event.updateMany(
         { _id: { $in: userToDelete.events } },
         { $pull: { organizer: userToDelete._id } }
       ),
-
-      // Update the 'orders' collection to remove references to the user
       Order.updateMany(
         { _id: { $in: userToDelete.orders } },
         { $unset: { buyer: 1 } }
       ),
     ]);
 
-    // Delete user
     const deletedUser = await User.findByIdAndDelete(userToDelete._id);
     revalidatePath('/');
 
@@ -91,17 +84,29 @@ export async function deleteUser(clerkId: string) {
   }
 }
 
-// Find the user by clerkId and update/ add their Stripe account ID
-export async function updateUserPaystackAccountCode(
+// Update user payment details including subaccountCode, businessName, bankName, and accountNumber
+export async function updateUserPaymentDetails(
   clerkId: string,
-  paystackAccountCode: string
+  paymentDetails: {
+    subaccountCode: string;
+    businessName: string;
+    bankName: string;
+    accountNumber: string;
+  }
 ) {
   try {
     await connectToDatabase();
 
     const updatedUser = await User.findOneAndUpdate(
       { clerkId },
-      { paystackAccountCode },
+      {
+        subaccountCode: paymentDetails.subaccountCode,
+        businessName: paymentDetails.businessName,
+        bankName: paymentDetails.bankName,
+        bankDetails: {
+          accountNumber: paymentDetails.accountNumber,
+        }, 
+      },
       { new: true }
     );
 
