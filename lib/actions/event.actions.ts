@@ -113,6 +113,39 @@ export async function updateEvent({
   }
 }
 
+// UPDATE EVENT STATUS
+export async function updateEventStatus({
+  userId,
+  eventId,
+  status,
+  path,
+}: {
+  userId: string;
+  eventId: string;
+  status: 'draft' | 'published';
+  path: string;
+}) {
+  try {
+    await connectToDatabase();
+
+    const eventToUpdate = await Event.findById(eventId);
+    if (!eventToUpdate || eventToUpdate.organizer.toHexString() !== userId) {
+      throw new Error('Unauthorized or event not found');
+    }
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      eventId,
+      { status },
+      { new: true }
+    );
+    revalidatePath(path);
+
+    return JSON.parse(JSON.stringify(updatedEvent));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
 // DELETE
 export async function deleteEvent({ eventId, path }: DeleteEventParams) {
   try {
