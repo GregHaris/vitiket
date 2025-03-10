@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Bank } from '@/types';
 import { PaymentDetailsValues, paymentDetailsSchema } from '@/lib/validator';
+import { updateEventStatus } from '@/lib/actions/event.actions';
 
 import { Button } from '@ui/button';
 import {
@@ -29,14 +30,14 @@ import {
 interface PaymentDetailsFormProps {
   banks: Bank[];
   existingDetails?: PaymentDetailsValues & { subaccountCode: string };
-  onSubmitSuccess?: (subaccountCode: string) => void;
+  eventId: string;
   userId: string;
 }
 
 export default function PaymentDetailsForm({
   banks,
   existingDetails,
-  onSubmitSuccess,
+  eventId,
   userId,
 }: PaymentDetailsFormProps) {
   const [message, setMessage] = useState('');
@@ -53,7 +54,7 @@ export default function PaymentDetailsForm({
 
   const onSubmit = async (data: PaymentDetailsValues) => {
     try {
-      const res = await fetch('/api/create-subaccount', {
+      const res = await fetch('/api/paystack/create-subaccount', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +67,7 @@ export default function PaymentDetailsForm({
       setMessage(result.message);
 
       if (res.ok) {
-        onSubmitSuccess?.(result.subaccountCode);
+        await handleSubmitSuccess(result.subaccountCode);
         router.push('/dashboard');
       }
     } catch (error) {
@@ -75,9 +76,23 @@ export default function PaymentDetailsForm({
     }
   };
 
+  const handleSubmitSuccess = async (subaccountCode: string) => {
+    try {
+      await updateEventStatus({
+        userId,
+        eventId,
+        status: 'published',
+        path: `/events/${eventId}`,
+      });
+    } catch (error) {
+      console.error('Error finalizing event:', error);
+      throw error;
+    }
+  };
+
   const handleReuseDetails = async () => {
-    if (existingDetails && onSubmitSuccess) {
-      onSubmitSuccess(existingDetails.subaccountCode);
+    if (existingDetails) {
+      await handleSubmitSuccess(existingDetails.subaccountCode);
     }
     router.push('/dashboard');
   };
@@ -96,7 +111,11 @@ export default function PaymentDetailsForm({
               <FormItem>
                 <FormLabel>Business Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Oasis Events" {...field} />
+                  <Input
+                    placeholder="e.g., Oasis Events"
+                    {...field}
+                    className="input-field p-regular-14"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -113,13 +132,16 @@ export default function PaymentDetailsForm({
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="select-field p-regular-14">
                       <SelectValue placeholder="Select your bank" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {banks.map((bank) => (
-                      <SelectItem key={bank.code} value={bank.name}>
+                    {banks.map((bank, index) => (
+                      <SelectItem
+                        key={`${bank.code}-${bank.name}-${index}`}
+                        value={bank.name}
+                      >
                         {bank.name}
                       </SelectItem>
                     ))}
@@ -136,14 +158,22 @@ export default function PaymentDetailsForm({
               <FormItem>
                 <FormLabel>Account Number</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., 0123456789" {...field} />
+                  <Input
+                    placeholder="e.g., 0123456789"
+                    {...field}
+                    className="input-field p-regular-16"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <div className="flex gap-4">
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+            <Button
+              type="submit"
+              disabled={form.formState.isSubmitting}
+              className="button"
+            >
               {form.formState.isSubmitting
                 ? 'Submitting...'
                 : existingDetails
@@ -151,7 +181,11 @@ export default function PaymentDetailsForm({
                 : 'Save Details'}
             </Button>
             {existingDetails && (
-              <Button variant="outline" onClick={handleReuseDetails}>
+              <Button
+                variant="outline"
+                onClick={handleReuseDetails}
+                className="button"
+              >
                 Reuse Existing Details
               </Button>
             )}
