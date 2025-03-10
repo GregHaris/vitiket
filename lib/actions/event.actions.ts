@@ -55,7 +55,7 @@ export async function createEvent({
       type: event.typeId,
       organizer: userId,
       contactDetails,
-      status: event.isFree ? 'published' : 'draft', // Set status based on isFree
+      status: event.isFree ? 'published' : 'draft',
     });
     revalidatePath(path);
 
