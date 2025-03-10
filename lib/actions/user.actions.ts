@@ -3,10 +3,10 @@
 import { revalidatePath } from 'next/cache';
 
 import { connectToDatabase } from '@/lib/database';
-import User from '@/lib/database/models/user.model';
-import Order from '@/lib/database/models/order.model';
-import Event from '@/lib/database/models/event.model';
 import { handleError } from '@/lib/utils';
+import Event from '@/lib/database/models/event.model';
+import Order from '@/lib/database/models/order.model';
+import User from '@/lib/database/models/user.model';
 
 import { CreateUserParams, UpdateUserParams } from '@/types';
 
@@ -39,11 +39,11 @@ export async function getUserById(userId: string) {
   }
 }
 
-export async function updateUser(clerkId: string, user: UpdateUserParams) {
+export async function updateUser(userId: string, user: UpdateUserParams) {
   try {
     await connectToDatabase();
 
-    const updatedUser = await User.findOneAndUpdate({ clerkId }, user, {
+    const updatedUser = await User.findOneAndUpdate({ userId }, user, {
       new: true,
     });
 
