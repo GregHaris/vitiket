@@ -54,7 +54,7 @@ const Dashboard = async ({ searchParams }: SearchParamProps) => {
               Events Organized
             </h3>
             <Button asChild size="lg" className="button hidden sm:flex">
-              <Link href={'/events/create'}> Create New Event</Link>
+              <Link href={'/create'}> Create New Event</Link>
             </Button>
           </div>
         </section>
