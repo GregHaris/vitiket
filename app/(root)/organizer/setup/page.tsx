@@ -1,7 +1,6 @@
 import { Bank } from '@/types';
 import { connectToDatabase } from '@/lib/database';
 import { PaymentDetailsValues } from '@/lib/validator';
-import { updateEventStatus } from '@/lib/actions/event.actions'; 
 import Event from '@/lib/database/models/event.model';
 import getUserId from '@/utils/userId';
 import PaymentDetailsForm from '@shared/PaymentDetailsForm';
@@ -43,47 +42,31 @@ async function fetchBanks(): Promise<Bank[]> {
 export default async function SetupPage({
   searchParams,
 }: {
-  searchParams: { eventId: string };
+  searchParams: Promise<{ eventId: string }>;
 }) {
-  const clerkId = await getUserId();
-  const eventId = searchParams.eventId;
+  const userId = await getUserId();
+  const { eventId } = await searchParams;
 
-  if (!clerkId || !eventId) {
+  if (!userId || !eventId) {
     throw new Error('Missing clerkId or eventId');
   }
 
   await connectToDatabase();
-  const user = await User.findOne({ clerkId });
-  if (!user) throw new Error('User not found');
-  const userId = user._id.toString();
+  if (!userId) throw new Error('User not found');
 
   const event = await Event.findById(eventId);
   if (!event) throw new Error('Event not found');
 
   const banks = await fetchBanks();
-  const existingDetails = await getUserPaymentDetails(clerkId);
-
-  const handleSubmitSuccess = async () => {
-    try {
-      await updateEventStatus({
-        userId,
-        eventId,
-        status: 'published',
-        path: `/events/${eventId}`,
-      });
-    } catch (error) {
-      console.error('Error finalizing event:', error);
-      throw error;
-    }
-  };
+  const existingDetails = await getUserPaymentDetails(userId);
 
   return (
     <div className="container mx-auto py-8">
       <PaymentDetailsForm
         banks={banks}
         existingDetails={existingDetails}
-        onSubmitSuccess={handleSubmitSuccess}
-        userId={clerkId}
+        eventId={eventId}
+        userId={userId}
       />
     </div>
   );
