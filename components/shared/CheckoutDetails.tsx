@@ -46,6 +46,7 @@ export default function CheckoutDetails({
       lastName: user?.lastName || '',
       email: user?.emailAddresses[0]?.emailAddress || '',
       confirmEmail: user?.emailAddresses[0]?.emailAddress || '',
+      paymentMethod: 'card',
     },
   });
 
@@ -56,11 +57,12 @@ export default function CheckoutDetails({
         lastName: user.lastName || '',
         email: user.emailAddresses[0]?.emailAddress || '',
         confirmEmail: user.emailAddresses[0]?.emailAddress || '',
+        paymentMethod: 'card',
       });
     }
   }, [user, form]);
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: checkoutFormValues) => {
     try {
       const order = {
         eventTitle: event.title,
@@ -70,9 +72,10 @@ export default function CheckoutDetails({
         isFree: event.isFree || false,
         currency: event.currency,
         quantity: quantity,
+        buyerEmail: data.email, 
       };
 
-      // Redirect to Stripe checkout
+      // Redirect to Paystack checkout
       await checkoutOrder(order);
       onCloseDialog();
     } catch (error) {
@@ -88,10 +91,6 @@ export default function CheckoutDetails({
     });
     params.delete('free');
     router.replace(`?${params.toString()}`);
-
-    // Reset the selected tickets and total price
-    selectedTickets = {};
-    totalPrice = 0;
   };
 
   const handleConfirmCancel = () => {
@@ -108,6 +107,7 @@ export default function CheckoutDetails({
         lastName: '',
         email: '',
         confirmEmail: '',
+        paymentMethod: 'card',
       },
       { keepValues: false }
     );
@@ -118,7 +118,6 @@ export default function CheckoutDetails({
     <div className="flex flex-col md:flex-row">
       <div className="w-full md:w-1/2">
         <DialogHeader className="p-6 border-b flex flex-row items-center justify-between">
-          {/* Back to Event Button */}
           <button
             className="cursor-pointer flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
             onClick={() => onCloseDialog()}
@@ -126,8 +125,6 @@ export default function CheckoutDetails({
             <ArrowLeft className="w-5 h-5" />
             Back to Event
           </button>
-
-          {/* Cancel Checkout Button */}
           <button
             className="cursor-pointer text-gray-600 hover:bg-gray-100 p-2 rounded-full"
             title="Cancel checkout"
@@ -141,7 +138,6 @@ export default function CheckoutDetails({
         <div className="p-6">
           <h1 className="text-2xl font-bold mb-6">Checkout</h1>
 
-          {/* User Authentication Message */}
           {user ? (
             <div className="mb-6 text-sm text-gray-600 space-y-6">
               <p>
@@ -154,7 +150,7 @@ export default function CheckoutDetails({
                   Not you?
                 </button>
               </p>
-              <p>If you, please confirm details.</p>
+              <p>Please confirm details.</p>
             </div>
           ) : (
             <div className="mb-6 text-sm text-gray-600">
@@ -188,7 +184,7 @@ export default function CheckoutDetails({
               />
               <UserInfoInput
                 name="email"
-                label="email"
+                label="Email"
                 placeholder="Enter your email"
                 required
               />
@@ -201,7 +197,6 @@ export default function CheckoutDetails({
                 />
               )}
               <PaymentMethodSelector />
-
               <Button type="submit" className="w-full button">
                 {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
               </Button>
@@ -210,7 +205,6 @@ export default function CheckoutDetails({
         </div>
       </div>
 
-      {/* Order Summary */}
       <div className="w-full md:w-1/2 bg-gray-200">
         <Image
           src={event.imageUrl}
@@ -226,9 +220,9 @@ export default function CheckoutDetails({
           <Separator className="bg-gray-300" />
           <div>
             <h4 className="font-bold">Tickets</h4>
-            {Object.entries(selectedTickets).map(([name, quantity]) => (
+            {Object.entries(selectedTickets).map(([name, qty]) => (
               <p key={name} className="text-sm text-gray-500">
-                {quantity} x {name}
+                {qty} x {name}
               </p>
             ))}
           </div>
@@ -243,7 +237,6 @@ export default function CheckoutDetails({
         </div>
       </div>
 
-      {/* Cancel Checkout Dialog */}
       <CancelCheckoutDialog
         isOpen={isCancelDialogOpen}
         onOpenChange={setIsCancelDialogOpen}
