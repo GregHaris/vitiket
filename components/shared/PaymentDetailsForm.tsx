@@ -210,7 +210,7 @@ export default function PaymentDetailsForm({
                             title="Remove Bank Details"
                             onClick={() => {
                               form.setValue('bankName', '');
-                              form.setValue('accountNumber', '');
+                              form.setValue('accountNumber', '');form.setValue('accountName', '');
                               setOpen(true);
                             }}
                           >
@@ -295,7 +295,7 @@ export default function PaymentDetailsForm({
             )}
           />
           <div className="flex gap-4">
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting} className='button'>
               {form.formState.isSubmitting
                 ? 'Submitting...'
                 : existingDetails
@@ -303,7 +303,7 @@ export default function PaymentDetailsForm({
                 : 'Save Details'}
             </Button>
             {existingDetails && (
-              <Button variant="outline" onClick={handleReuseDetails}>
+              <Button variant="outline" className='button' onClick={handleReuseDetails}>
                 Reuse Existing Details
               </Button>
             )}
