@@ -35,13 +35,13 @@ export default function PaymentMethodSelector() {
               </FormItem>
               <FormItem className="flex items-center space-x-3 space-y-0">
                 <FormControl>
-                  <RadioGroupItem value="paypal" />
+                  <RadioGroupItem value="googlePay" />
                 </FormControl>
                 <FormLabel className="font-normal">PayPal</FormLabel>
               </FormItem>
               <FormItem className="flex items-center space-x-3 space-y-0">
                 <FormControl>
-                  <RadioGroupItem value="applepay" />
+                  <RadioGroupItem value="applePay" />
                 </FormControl>
                 <FormLabel className="font-normal">Apple Pay</FormLabel>
               </FormItem>

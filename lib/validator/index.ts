@@ -167,7 +167,7 @@ export const checkoutFormSchema = z
       .string()
       .nonempty({ message: 'Confirm email is required' })
       .email('Invalid email address'),
-    paymentMethod: z.enum(['card', 'paypal', 'applepay']),
+    paymentMethod: z.enum(['card', 'googlePay', 'applePay']),
   })
   .refine((data) => data.email === data.confirmEmail, {
     message: 'Emails do not match',
