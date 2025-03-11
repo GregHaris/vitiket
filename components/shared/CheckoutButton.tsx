@@ -19,7 +19,6 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
     }
   }, [searchParams]);
 
-  // Calculate total quantity and total price
   let totalQuantity = 0;
   let totalPrice = 0;
   const selectedTickets: { [key: string]: number } = {};
@@ -98,7 +97,7 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
             id="checkout-dialog-description"
             className="sr-only"
           >
-            Checkout details and order summary{' '}
+            Checkout details and order summary
           </DialogDescription>
           <CheckoutDetails
             event={event}

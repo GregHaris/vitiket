@@ -2,7 +2,6 @@
 
 import { ObjectId } from 'mongodb';
 import { redirect } from 'next/navigation';
-import Stripe from 'stripe';
 
 import {
   CheckoutOrderParams,
@@ -10,48 +9,95 @@ import {
   GetOrdersByEventParams,
   GetOrdersByUserParams,
 } from '@/types';
-
 import { connectToDatabase } from '../database';
 import { handleError } from '../utils';
 import Event from '../database/models/event.model';
 import Order from '../database/models/order.model';
 import User from '../database/models/user.model';
 
+// Initialize Paystack transaction with split payment
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
-
-  // Convert the total price to cents (Stripe uses cents)
-  const priceInCents = order.isFree ? 0 : Math.round(Number(order.price) * 100);
-
   try {
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
+    await connectToDatabase();
+
+    // Find the event to get the organizer's userId
+    const event = await Event.findById(order.eventId);
+    if (!event) throw new Error('Event not found');
+
+    // Find the organizer to get their subaccountCode
+    const organizer = await User.findById(event.organizer);
+    if (!organizer || !organizer.subaccountCode) {
+      throw new Error('Organizer or subaccount not found');
+    }
+
+    const subaccountCode = organizer.subaccountCode;
+
+    // Calculate amounts (e.g., 80% to host, 20% to platform)
+    const totalAmount = order.isFree
+      ? 0
+      : Math.round(Number(order.price) * 100);
+    const platformPercentage = 20;
+    const hostPercentage = 80;
+    const platformShare = Math.round((platformPercentage / 100) * totalAmount);
+    const hostShare = totalAmount - platformShare;
+
+    // Define the split configuration
+    const split = {
+      type: 'percentage',
+      currency: order.currency.toUpperCase(),
+      subaccounts: [
         {
-          price_data: {
-            currency: order.currency.toLowerCase(),
-            unit_amount: priceInCents,
-            product_data: {
-              name: order.eventTitle,
-            },
-          },
-          quantity: 1,
+          subaccount: subaccountCode,
+          share: hostPercentage,
         },
       ],
-      metadata: {
-        eventId: order.eventId,
-        buyerId: order.buyerId,
-      },
-      mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/dashboard`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}`,
-    });
+      bearer_type: 'subaccount',
+      main_account_share: platformPercentage,
+    };
 
-    redirect(session.url!);
+    const user = await User.findById(order.buyerId);
+    if (!user) throw new Error('User not found');
+
+    // Initialize Paystack transaction
+    const response = await fetch(
+      'https://api.paystack.co/transaction/initialize',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user.email,
+          amount: totalAmount,
+          currency: order.currency.toUpperCase(),
+          reference: `txn_${Date.now()}_${order.eventId}`,
+          callback_url: `${process.env.NEXT_PUBLIC_SERVER_URL}dashboard`,
+          metadata: {
+            eventId: order.eventId,
+            buyerId: order.buyerId,
+            quantity: order.quantity,
+          },
+          split,
+        }),
+      }
+    );
+
+    const data = await response.json();
+    if (!response.ok || !data.status) {
+      throw new Error(
+        data.message || 'Failed to initialize Paystack transaction'
+      );
+    }
+
+    redirect(data.data.authorization_url);
   } catch (error) {
+    console.error('Paystack checkout error:', error);
     throw error;
   }
 };
 
+// CREATE ORDER
 export const createOrder = async (order: CreateOrderParams) => {
   try {
     await connectToDatabase();
@@ -74,7 +120,6 @@ export const createOrder = async (order: CreateOrderParams) => {
     handleError(error);
   }
 };
-
 export const hasUserPurchasedEvent = async (
   userId: string,
   eventId: string
