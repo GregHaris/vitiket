@@ -86,7 +86,7 @@ export async function deleteUser(clerkId: string) {
 
 // Update user payment details including subaccountCode, businessName, bankName, and accountNumber
 export async function updateUserPaymentDetails(
-  clerkId: string,
+  userId: string,
   paymentDetails: {
     subaccountCode: string;
     businessName: string;
@@ -98,8 +98,8 @@ export async function updateUserPaymentDetails(
   try {
     await connectToDatabase();
 
-    const updatedUser = await User.findOneAndUpdate(
-      { clerkId },
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
       {
         subaccountCode: paymentDetails.subaccountCode,
         businessName: paymentDetails.businessName,
