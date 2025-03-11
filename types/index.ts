@@ -198,6 +198,7 @@ export type CheckoutOrderParams = {
 export type CreateOrderParams = {
   eventId: string;
   buyerId: string;
+  stripeId?: string;
   totalAmount: string;
   currency: string;
   priceCategory?: {
