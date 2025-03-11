@@ -3,12 +3,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Bank } from '@/types';
 import { connectToDatabase } from '@/lib/database';
 import { updateUserPaymentDetails } from '@/lib/actions/user.actions';
+import User from '@/lib/database/models/user.model';
 
 export async function POST(req: NextRequest) {
   const { businessName, bankName, accountNumber } = await req.json();
-  const clerkId = req.headers.get('x-user-id'); 
+  const userId = req.headers.get('x-user-id');
 
-  if (!businessName || !bankName || !accountNumber || !clerkId) {
+  if (!businessName || !bankName || !accountNumber || !userId) {
     return NextResponse.json(
       { message: 'All fields are required' },
       { status: 400 }
@@ -16,11 +17,21 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    await connectToDatabase();
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
+
     // Fetch banks to map bankName to bank_code
     const banksRes = await fetch('https://api.paystack.co/bank', {
       headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` },
       cache: 'force-cache',
     });
+    if (!banksRes.ok) {
+      throw new Error('Failed to fetch banks from Paystack');
+    }
     const banksData = await banksRes.json();
     const bank = banksData.data.find((b: Bank) => b.name === bankName);
 
@@ -49,21 +60,24 @@ export async function POST(req: NextRequest) {
     const subaccountData = await subaccountRes.json();
 
     if (!subaccountRes.ok) {
-      throw new Error(subaccountData.message || 'Failed to create subaccount');
+      return NextResponse.json(
+        { message: subaccountData.message || 'Failed to create subaccount' },
+        { status: subaccountRes.status }
+      );
     }
 
-    // Save payment details to User model
-    await connectToDatabase();
-    await updateUserPaymentDetails(clerkId, {
+    // Save payment details to User model using MongoDB _id
+    await updateUserPaymentDetails(userId, {
       subaccountCode: subaccountData.data.subaccount_code,
       businessName,
       bankName,
       accountNumber,
+      accountName: subaccountData.data.account_name,
     });
 
     return NextResponse.json(
       {
-        message: 'Subaccount created successfully',
+        message: 'Account details saved successfully',
         subaccountCode: subaccountData.data.subaccount_code,
       },
       { status: 201 }
@@ -71,7 +85,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Error creating subaccount:', error);
     return NextResponse.json(
-      { message: (error as Error).message || 'Failed to create subaccount' },
+      { message: 'Failed to save account details' },
       { status: 500 }
     );
   }
