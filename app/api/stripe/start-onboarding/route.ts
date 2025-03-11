@@ -1,0 +1,46 @@
+import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
+
+import { connectToDatabase } from '@/lib/database';
+import User from '@/lib/database/models/user.model';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+export async function POST(req: NextRequest) {
+  try {
+    const { userId } = await req.json();
+
+    await connectToDatabase();
+    const user = await User.findById(userId);
+    if (!user) throw new Error('User not found');
+
+    let stripeId = user.stripeId;
+    if (!stripeId) {
+      const account = await stripe.accounts.create({
+        type: 'express',
+        email: user.email,
+        capabilities: {
+          card_payments: { requested: true },
+          transfers: { requested: true },
+        },
+      });
+      stripeId = account.id;
+      await User.findByIdAndUpdate(userId, { stripeId });
+    }
+
+    const accountLink = await stripe.accountLinks.create({
+      account: stripeId,
+      refresh_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/organizer/setup?refresh=true`,
+      return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/dashboard`,
+      type: 'account_onboarding',
+    });
+
+    return NextResponse.json({ url: accountLink.url }, { status: 200 });
+  } catch (error) {
+    console.error('Stripe onboarding error:', error);
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 }
+    );
+  }
+}
