@@ -1,8 +1,9 @@
 import { ReactNode } from 'react';
-import { UseFormReturn } from 'react-hook-form';
+import { UseFormHandleSubmit, UseFormReturn } from 'react-hook-form';
+import { z } from 'zod';
 
 import { currencySymbols } from '@/constants';
-import { eventFormValues } from '@/lib/validator';
+import { eventFormValues, paymentDetailsSchema } from '@/lib/validator';
 import { IEvent } from '@/lib/database/models/event.model';
 
 // ====== USER PARAMS
@@ -406,6 +407,7 @@ export interface PaystackFormProps {
   userId: string;
   setMessage: (msg: string) => void;
   onSubmitSuccess: (accountId: string) => void;
+  handleSubmit: UseFormHandleSubmit<z.infer<typeof paymentDetailsSchema>>;
 }
 
 export interface PaystackFormBankSelectorProps {
@@ -414,4 +416,26 @@ export interface PaystackFormBankSelectorProps {
 
 export interface PaystackFormAccountNameDisplayProps {
   resolvedAccountName: string | null;
+}
+
+export interface PaymentDetailsStripeOnboardingProps {
+  userId: string;
+  existingStripeId?: string;
+  setMessage: (msg: string) => void;
+  onSubmitSuccess: (accountId: string) => void;
+}
+
+export interface PaymentDetailsFormProps {
+  banks: Bank[];
+  existingDetails?: {
+    businessName?: string;
+    bankName?: string;
+    accountNumber?: string;
+    subaccountCode?: string;
+    accountName?: string;
+    stripeId?: string;
+  };
+  eventId: string;
+  userId: string;
+  isNigerianEvent: boolean;
 }
