@@ -385,3 +385,33 @@ export interface Bank {
   country: string;
   currency: string;
 }
+
+export interface PaymentDetailsFormActionsProps {
+  message: string;
+  existingDetails?: {
+    businessName?: string;
+    bankName?: string;
+    accountNumber?: string;
+    subaccountCode?: string;
+    accountName?: string;
+    stripeId?: string;
+  };
+  isNigerianEvent: boolean;
+  onReuse: (accountId: string) => void;
+  isSubmitting: boolean;
+}
+
+export interface PaystackFormProps {
+  banks: Bank[];
+  userId: string;
+  setMessage: (msg: string) => void;
+  onSubmitSuccess: (accountId: string) => void;
+}
+
+export interface PaystackFormBankSelectorProps {
+  banks: Bank[];
+}
+
+export interface PaystackFormAccountNameDisplayProps {
+  resolvedAccountName: string | null;
+}
