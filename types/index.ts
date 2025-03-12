@@ -189,11 +189,18 @@ export type CheckoutOrderParams = {
   isFree: boolean;
   buyerId: string;
   currency: string;
+  quantity: number;
   priceCategory?: {
     name: string;
     price: string;
   };
-  quantity: number;
+  buyerEmail: string;
+  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay'; 
+  cardDetails?: {
+    number: string;
+    expiry: string;
+    cvv: string;
+  };
 };
 
 export type CreateOrderParams = {
