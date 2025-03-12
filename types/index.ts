@@ -214,6 +214,8 @@ export type CreateOrderParams = {
     price: string;
   };
   quantity: number;
+  buyerEmail: string;
+  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
   createdAt: Date;
 };
 
