@@ -439,3 +439,17 @@ export interface PaymentDetailsFormProps {
   userId: string;
   isNigerianEvent: boolean;
 }
+
+export interface PaymentMethodSelectorProps {
+  isNigerianEvent: boolean;
+  orderData: {
+    eventTitle: string;
+    buyerId: string;
+    eventId: string;
+    price: string;
+    isFree: boolean;
+    currency: string;
+    quantity: number;
+    buyerEmail: string;
+  };
+}
