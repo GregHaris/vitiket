@@ -59,7 +59,7 @@ export default async function SetupPage({
   if (!event) throw new Error('Event not found');
 
   const isNigerianEvent =
-    event.currency.toUpperCase() === 'NGN' ||
+    event.currency.toUpperCase() === 'NGN' &&
     event.location.toLowerCase().includes('nigeria');
 
   const banks = await fetchBanks();
