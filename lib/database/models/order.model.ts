@@ -2,7 +2,7 @@ import { Schema, model, models, Document } from 'mongoose';
 
 export interface IOrder extends Document {
   createdAt: Date;
-  stripeId: string;
+  stripeId?: string;
   totalAmount: string;
   currency: string;
   event: {
@@ -15,10 +15,8 @@ export interface IOrder extends Document {
     lastName: string;
     email: string;
   };
-  priceCategory?: {
-    name: string;
-    price: string;
-  };
+  buyerEmail: string;
+  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
   quantity: number;
 }
 
@@ -31,10 +29,7 @@ export type IOrderItem = {
   buyer: string;
   buyerEmail: string;
   currency: string;
-  priceCategory?: {
-    name: string;
-    price: string;
-  };
+  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
   quantity: number;
 };
 
@@ -45,8 +40,8 @@ const OrderSchema = new Schema({
   },
   stripeId: {
     type: String,
-    required: true,
     unique: true,
+    required: false,
   },
   totalAmount: {
     type: String,
@@ -59,14 +54,21 @@ const OrderSchema = new Schema({
   event: {
     type: Schema.Types.ObjectId,
     ref: 'Event',
+    required: true,
   },
   buyer: {
     type: Schema.Types.ObjectId,
     ref: 'User',
+    required: true,
   },
-  priceCategory: {
-    name: { type: String },
-    price: { type: String },
+  buyerEmail: {
+    type: String,
+    required: true,
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['paystack', 'card', 'googlePay', 'applePay'],
+    required: true,
   },
   quantity: {
     type: Number,
