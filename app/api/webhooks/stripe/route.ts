@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       quantity: parseInt(metadata.quantity || '1', 10),
       buyerEmail: metadata?.email || customer_email || undefined,
       createdAt: new Date(),
+      paymentMethod: 'card',
     };
 
     try {
