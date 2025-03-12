@@ -167,12 +167,60 @@ export const checkoutFormSchema = z
       .string()
       .nonempty({ message: 'Confirm email is required' })
       .email('Invalid email address'),
-    paymentMethod: z.enum(['card', 'googlePay', 'applePay']),
+    paymentMethod: z.enum(['paystack', 'card', 'googlePay', 'applePay']),
+    cardNumber: z.string().optional(),
+    expiryDate: z.string().optional(),
+    cvv: z.string().optional(),
   })
   .refine((data) => data.email === data.confirmEmail, {
     message: 'Emails do not match',
     path: ['confirmEmail'],
-  });
+  })
+  .refine(
+    (data) => {
+      if (data.paymentMethod === 'card') {
+        return (
+          data.cardNumber &&
+          data.cardNumber.replace(/\s/g, '').length === 16 &&
+          /^\d{4}\s\d{4}\s\d{4}\s\d{4}$/.test(data.cardNumber)
+        );
+      }
+      return true;
+    },
+    {
+      message: 'Card number must be 16 digits',
+      path: ['cardNumber'],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.paymentMethod === 'card') {
+        return (
+          data.expiryDate &&
+          /^\d{2}\/\d{2}$/.test(data.expiryDate) &&
+          parseInt(data.expiryDate.split('/')[1], 10) >=
+            new Date().getFullYear() % 100
+        );
+      }
+      return true;
+    },
+    {
+      message: 'Invalid or expired date (MM/YY)',
+      path: ['expiryDate'],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.paymentMethod === 'card') {
+        return data.cvv && /^\d{3}$/.test(data.cvv);
+      }
+      return true;
+    },
+    {
+      message: 'CVV must be 3 digits',
+      path: ['cvv'],
+    }
+  );
 
 export type checkoutFormValues = z.infer<typeof checkoutFormSchema>;
 
