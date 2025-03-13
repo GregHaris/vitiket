@@ -52,7 +52,7 @@ export default function PaymentMethodSelector({
                   type="button"
                   variant="default"
                   onClick={handlePaystackCheckout}
-                  className="w-full sm:w-auto"
+                  className="button sm:w-auto"
                 >
                   Pay with Paystack
                 </Button>
@@ -65,7 +65,7 @@ export default function PaymentMethodSelector({
                       setValue('paymentMethod', 'card');
                       setShowCardForm(true);
                     }}
-                    className="w-full sm:w-auto"
+                    className="button sm:w-auto"
                   >
                     Card
                   </Button>
@@ -75,7 +75,7 @@ export default function PaymentMethodSelector({
                       field.value === 'googlePay' ? 'default' : 'outline'
                     }
                     onClick={() => handleStripeMethod('googlePay')}
-                    className="w-full sm:w-auto"
+                    className="button sm:w-auto"
                   >
                     Google Pay
                   </Button>
@@ -96,6 +96,7 @@ export default function PaymentMethodSelector({
                     <FormLabel>Card Number</FormLabel>
                     <FormControl>
                       <Input
+                        className="input-field p-regular-16"
                         placeholder="1234 5678 9012 3456"
                         maxLength={19}
                         onChange={(e) => {
@@ -116,6 +117,7 @@ export default function PaymentMethodSelector({
                       <FormLabel>Expiry Date</FormLabel>
                       <FormControl>
                         <Input
+                          className="input-field p-regular-16"
                           placeholder="MM/YY"
                           maxLength={5}
                           onChange={(e) => {
@@ -134,6 +136,7 @@ export default function PaymentMethodSelector({
                       <FormLabel>CVV</FormLabel>
                       <FormControl>
                         <Input
+                          className="input-field p-regular-16"
                           placeholder="123"
                           maxLength={3}
                           onChange={(e) => {
