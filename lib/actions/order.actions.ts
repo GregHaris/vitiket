@@ -198,7 +198,7 @@ export const checkoutOrder = async (
   if (!event) throw new Error('Event not found');
 
   const isNigerianEvent =
-    order.currency.toUpperCase() === 'NGN' ||
+    order.currency.toUpperCase() === 'NGN' &&
     event.location.toLowerCase().includes('nigeria');
 
   if (isNigerianEvent) {
