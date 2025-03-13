@@ -52,7 +52,7 @@ export default function PaymentMethodSelector({
                   type="button"
                   variant="default"
                   onClick={handlePaystackCheckout}
-                  className="button sm:w-auto"
+                  className="w-full rounded-md h-[40px] cursor-pointer sm:w-auto"
                 >
                   Pay with Paystack
                 </Button>
@@ -65,7 +65,7 @@ export default function PaymentMethodSelector({
                       setValue('paymentMethod', 'card');
                       setShowCardForm(true);
                     }}
-                    className="button sm:w-auto"
+                    className="rounded-md h-[40px] cursor-pointer w-full sm:w-auto"
                   >
                     Card
                   </Button>
@@ -75,7 +75,7 @@ export default function PaymentMethodSelector({
                       field.value === 'googlePay' ? 'default' : 'outline'
                     }
                     onClick={() => handleStripeMethod('googlePay')}
-                    className="button sm:w-auto"
+                    className="w-full rounded-md h-[40px] cursor-pointer sm:w-auto"
                   >
                     Google Pay
                   </Button>
@@ -83,7 +83,7 @@ export default function PaymentMethodSelector({
                     type="button"
                     variant={field.value === 'applePay' ? 'default' : 'outline'}
                     onClick={() => handleStripeMethod('applePay')}
-                    className="w-full sm:w-auto"
+                    className="w-full rounded-md h-[40px] cursor-pointer sm:w-auto"
                   >
                     Apple Pay
                   </Button>
