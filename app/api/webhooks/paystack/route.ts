@@ -30,13 +30,19 @@ export async function POST(req: NextRequest) {
       const metadata = data.metadata;
 
       const order = {
-        eventId: metadata.eventId,
-        buyerId: metadata.buyerId,
-        totalAmount: (data.amount / 100).toString(), 
-        currency: data.currency,
-        buyerEmail: data.customer.email,
-        quantity: metadata.quantity,
-        priceCategory: metadata.priceCategories, 
+        eventId: String(metadata.eventId),
+        buyerId: String(metadata.buyerId),
+        totalAmount: (data.amount / 100).toString(),
+        currency: String(data.currency),
+        buyerEmail: String(data.customer.email),
+        quantity: Number(metadata.quantity),
+        priceCategory: metadata.priceCategories
+          ? {
+              name: String(metadata.priceCategories.name),
+              price: String(metadata.priceCategories.price),
+            }
+          : undefined,
+        paymentMethod: 'paystack' as const,
         createdAt: new Date(),
       };
 
