@@ -1,11 +1,11 @@
-import { loadStripe } from '@stripe/stripe-js';
+'use client';
+
 import { useEffect } from 'react';
 
 import { Button } from '../ui/button';
 import { checkoutOrder } from '@/lib/actions/order.actions';
+import { CheckoutOrderParams } from '@/types';
 import { IEvent } from '@/lib/database/models/event.model';
-
-loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const Checkout = ({
   event,
@@ -19,12 +19,10 @@ const Checkout = ({
   totalPrice: number;
 }) => {
   useEffect(() => {
-    // Check to see if this is a redirect back from Checkout
     const query = new URLSearchParams(window.location.search);
     if (query.get('success')) {
       console.log('Order placed! You will receive an email confirmation.');
     }
-
     if (query.get('canceled')) {
       console.log(
         'Order canceled -- continue to shop around and checkout when you’re ready.'
@@ -33,7 +31,11 @@ const Checkout = ({
   }, []);
 
   const onCheckout = async () => {
-    const order = {
+    const isNigerianEvent =
+      event.currency.toUpperCase() === 'NGN' &&
+      event.location?.toLowerCase().includes('nigeria');
+
+    const order: CheckoutOrderParams = {
       eventTitle: event.title,
       buyerId: userId,
       eventId: event._id,
@@ -41,6 +43,8 @@ const Checkout = ({
       isFree: event.isFree || false,
       currency: event.currency,
       quantity: quantity,
+      buyerEmail: '',
+      paymentMethod: isNigerianEvent ? 'paystack' : 'card', 
     };
 
     await checkoutOrder(order);
