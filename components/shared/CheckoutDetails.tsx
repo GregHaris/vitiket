@@ -19,7 +19,7 @@ import { Form } from '@ui/form';
 import { Separator } from '@ui/separator';
 
 import CancelCheckoutDialog from './CancelCheckoutDialog';
-import PaymentMethodSelector from './FormPaymentMethodSelector';
+import PaymentMethodSelector from './FormPaymentMethods';
 import UserInfoInput from './FormUserInfoInput';
 
 export default function CheckoutDetails({
@@ -38,6 +38,9 @@ export default function CheckoutDetails({
 
   const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const isNigerianEvent =
+    event.currency.toUpperCase() === 'NGN' &&
+    event.location?.toLowerCase().includes('nigeria');
 
   const form = useForm<checkoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -46,7 +49,10 @@ export default function CheckoutDetails({
       lastName: user?.lastName || '',
       email: user?.emailAddresses[0]?.emailAddress || '',
       confirmEmail: user?.emailAddresses[0]?.emailAddress || '',
-      paymentMethod: 'card',
+      paymentMethod: isNigerianEvent ? 'paystack' : 'card',
+      cardNumber: '',
+      expiryDate: '',
+      cvv: '',
     },
   });
 
@@ -57,10 +63,13 @@ export default function CheckoutDetails({
         lastName: user.lastName || '',
         email: user.emailAddresses[0]?.emailAddress || '',
         confirmEmail: user.emailAddresses[0]?.emailAddress || '',
-        paymentMethod: 'card',
+        paymentMethod: isNigerianEvent ? 'paystack' : 'card',
+        cardNumber: '',
+        expiryDate: '',
+        cvv: '',
       });
     }
-  }, [user, form]);
+  }, [user, form, isNigerianEvent]);
 
   const onSubmit = async (data: checkoutFormValues) => {
     try {
@@ -72,14 +81,25 @@ export default function CheckoutDetails({
         isFree: event.isFree || false,
         currency: event.currency,
         quantity: quantity,
-        buyerEmail: data.email, 
+        buyerEmail: data.email,
+        paymentMethod: data.paymentMethod,
+        ...(data.paymentMethod === 'card' &&
+          !isNigerianEvent && {
+            cardDetails: {
+              number: data.cardNumber?.replace(/\s/g, '') || '',
+              expiry: data.expiryDate || '',
+              cvv: data.cvv || '',
+            },
+          }),
       };
 
-      // Redirect to Paystack checkout
       await checkoutOrder(order);
-      onCloseDialog();
+      if (!isNigerianEvent && data.paymentMethod === 'card') {
+        onCloseDialog();
+      }
     } catch (error) {
       console.error('Checkout failed:', error);
+      form.setError('root', { message: 'Checkout failed. Please try again.' });
     }
   };
 
@@ -107,7 +127,10 @@ export default function CheckoutDetails({
         lastName: '',
         email: '',
         confirmEmail: '',
-        paymentMethod: 'card',
+        paymentMethod: isNigerianEvent ? 'paystack' : 'card',
+        cardNumber: '',
+        expiryDate: '',
+        cvv: '',
       },
       { keepValues: false }
     );
@@ -196,10 +219,25 @@ export default function CheckoutDetails({
                   required
                 />
               )}
-              <PaymentMethodSelector />
-              <Button type="submit" className="w-full button">
-                {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
-              </Button>
+              <PaymentMethodSelector
+                isNigerianEvent={isNigerianEvent as boolean}
+                orderData={{
+                  eventTitle: event.title,
+                  buyerId: user?.id || '',
+                  eventId: event._id,
+                  price: totalPrice.toString(),
+                  isFree: event.isFree || false,
+                  currency: event.currency,
+                  quantity: quantity,
+                  buyerEmail: form.getValues('email'),
+                }}
+              />
+
+              {!isNigerianEvent && form.watch('paymentMethod') === 'card' && (
+                <Button type="submit" className="w-full button">
+                  {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
+                </Button>
+              )}
             </form>
           </Form>
         </div>
@@ -221,7 +259,7 @@ export default function CheckoutDetails({
           <div>
             <h4 className="font-bold">Tickets</h4>
             {Object.entries(selectedTickets).map(([name, qty]) => (
-              <p key={name} className="text-sm text-gray-500">
+              <p key={name} className="text-sm text-gray-600">
                 {qty} x {name}
               </p>
             ))}
