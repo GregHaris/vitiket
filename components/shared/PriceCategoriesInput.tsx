@@ -28,14 +28,13 @@ export default function PriceCategoriesInput() {
 
   if (isFree) return null;
 
-  // Filter available categories
   const selectedCategories = fields.map((field) => field.name);
   const availableCategories = predefinedCategories[locationType].filter(
     (category) => !selectedCategories.includes(category) || category === 'Other'
   );
 
   const addCategory = (category: string) => {
-    append({ name: category, price: '0.00' });
+    append({ name: category, price: '0.00', quantity: null });
   };
 
   return (
@@ -94,6 +93,37 @@ export default function PriceCategoriesInput() {
                       {...field}
                       placeholder="Enter price"
                       className="input-field p-regular-14"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex flex-col">
+            <FormField
+              control={control}
+              name={`priceCategories.${index}.quantity`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
+                    Quantity{' '}
+                    <span className="text-sm italic text-gray-500">
+                      (optional)
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      placeholder="Enter quantity (optional)"
+                      className="input-field p-regular-14"
+                      value={field.value ?? ''}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value ? parseInt(e.target.value, 10) : null
+                        )
+                      }
                     />
                   </FormControl>
                   <FormMessage />

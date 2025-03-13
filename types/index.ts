@@ -307,6 +307,7 @@ export type MapInputProps = {
 export type PriceCategory = {
   name: string;
   price: string;
+  quantity?: number | null;
 };
 
 export type IsFreeCheckboxProps = {

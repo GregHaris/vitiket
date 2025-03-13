@@ -58,6 +58,13 @@ export const eventFormSchema = z
         z.object({
           name: z.string().min(1, { message: 'Category name is required' }),
           price: z.string().min(1, { message: 'Price is required' }),
+          quantity: z
+            .number()
+            .nullable()
+            .optional()
+            .transform((val) =>
+              val === null || val === undefined ? null : val
+            ),
         })
       )
       .optional(),
