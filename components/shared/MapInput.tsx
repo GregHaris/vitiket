@@ -40,18 +40,16 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
     useState<google.maps.places.PlaceResult | null>(null);
   const [placeDetails, setPlaceDetails] =
     useState<google.maps.places.PlaceResult | null>(null);
-
   const [isMarkerHovered, setIsMarkerHovered] = useState(false);
 
   const [markerRef, marker] = useAdvancedMarkerRef();
-
   const map = useMap();
-
   const places = useMapsLibrary('places');
+  const core = useMapsLibrary('core');
   const [placesService, setPlacesService] =
     useState<google.maps.places.PlacesService | null>(null);
 
-  // Initialize PlacesService
+  // Initialize PlacesService when map and places library are ready
   useEffect(() => {
     if (!places || !map) return;
 
@@ -59,21 +57,21 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
     setPlacesService(service);
   }, [places, map]);
 
-  // Parse the initial value (if provided) to set the marker position
+  // Set initial marker position from value.coordinates when core library is loaded
   useEffect(() => {
-    if (value?.coordinates) {
-      const [lat, lng] = value.coordinates.split(',').map(Number);
-      if (!isNaN(lat) && !isNaN(lng)) {
-        setSelectedPlace({
-          geometry: {
-            location: new google.maps.LatLng(lat, lng),
-          },
-          formatted_address: value.location,
-          name: value.location,
-        } as google.maps.places.PlaceResult);
-      }
+    if (!core || !value?.coordinates) return;
+
+    const [lat, lng] = value.coordinates.split(',').map(Number);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      setSelectedPlace({
+        geometry: {
+          location: new core.LatLng(lat, lng),
+        },
+        formatted_address: value.location,
+        name: value.location,
+      } as google.maps.places.PlaceResult);
     }
-  }, [value]);
+  }, [core, value]);
 
   // Fetch full place details when a place is selected
   useEffect(() => {
@@ -143,7 +141,7 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
         </Map>
       </div>
 
-      {/* Custom Event location name overlay to replace the AdvancedMarker title*/}
+      {/* Custom Event location name overlay */}
       <div
         className={`bg-primary text-white py-1 px-2 rounded-sm shadow-lg text-[12px] transition-opacity ${
           isMarkerHovered ? 'opacity-100' : 'opacity-0'
