@@ -46,9 +46,9 @@ export async function POST(req: NextRequest) {
       totalAmount: amount_total ? (amount_total / 100).toString() : '0',
       currency: currency?.toLowerCase() || 'usd',
       quantity: parseInt(metadata.quantity || '1', 10),
-      buyerEmail: metadata?.email || customer_email || '', // Default to empty string
+      buyerEmail: metadata?.email || customer_email || '',
       createdAt: new Date(),
-      paymentMethod: 'card' as const, // Ensure literal type
+      paymentMethod: 'card' as const, 
     };
 
     try {
