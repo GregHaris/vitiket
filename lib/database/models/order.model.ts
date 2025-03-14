@@ -10,7 +10,7 @@ export interface IOrder extends Document {
     title: string;
   };
   buyer: {
-    _id: string;
+    _id?: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -21,7 +21,7 @@ export interface IOrder extends Document {
 }
 
 export type IOrderItem = {
-  _id: string;
+  _id?: string;
   totalAmount: string;
   createdAt: Date;
   eventTitle: string;
