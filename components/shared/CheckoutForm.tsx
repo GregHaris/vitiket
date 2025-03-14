@@ -7,7 +7,9 @@ import {
   useElements,
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+import UserInfoInput from './FormUserInfoInput';
 
 import { Button } from '@ui/button';
 import { checkoutOrder } from '@/lib/actions/order.actions';
@@ -17,9 +19,6 @@ import { CheckoutDetailsProps } from '@/types';
 import { Form } from '@ui/form';
 
 import PaymentMethodSelector from './FormPaymentMethods';
-import UserInfoInput from './FormUserInfoInput';
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -49,9 +48,7 @@ const CheckoutFormContent = ({
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (data: checkoutFormValues) => {
-    console.log('Form submitted:', data); // Debug log
     if (!stripe || !elements) {
-      console.log('Stripe or Elements not ready');
       setError('Payment system not initialized. Please try again.');
       return;
     }
@@ -68,10 +65,8 @@ const CheckoutFormContent = ({
         buyerEmail: data.email,
         paymentMethod: data.paymentMethod,
       };
-      console.log('Calling checkoutOrder with:', order); // Debug log
 
       const result = await checkoutOrder(order);
-      console.log('checkoutOrder result:', result); // Debug log
 
       if (data.paymentMethod === 'card' && !isNigerianEvent) {
         if (!result || !result.clientSecret) {
@@ -94,9 +89,7 @@ const CheckoutFormContent = ({
 
         if (paymentError) {
           setError(paymentError.message || 'Payment failed');
-          console.log('Payment error:', paymentError); // Debug log
         } else if (paymentIntent?.status === 'succeeded') {
-          console.log('Payment succeeded:', paymentIntent); // Debug log
           await createOrder({
             stripeId: paymentIntent.id,
             eventId: order.eventId,
@@ -111,7 +104,6 @@ const CheckoutFormContent = ({
           onCloseDialog();
         }
       }
-      // Note: Paystack, Google Pay, Apple Pay redirect via checkoutOrder, so no further action needed here
     } catch (error) {
       console.error('Checkout failed:', error);
       setError('Checkout failed. Please try again.');
@@ -121,36 +113,13 @@ const CheckoutFormContent = ({
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Checkout</h1>
-      {userId ? (
-        <div className="mb-6 text-sm text-gray-600 space-y-6">
-          <p>
-            Logged in as <strong>{form.getValues('email')}</strong>.{' '}
-            <button
-              onClick={onSignOut}
-              className="cursor-pointer text-blue-600 hover:underline"
-            >
-              Not you?
-            </button>
-          </p>
-          <p>Please confirm details.</p>
-        </div>
-      ) : (
-        <div className="mb-6 text-sm text-gray-600">
-          <p>
-            <Link
-              href={`/sign-in?redirect_url=${encodeURIComponent(
-                window.location.href + '&checkout=true'
-              )}`}
-              className="cursor-pointer text-blue-600 hover:underline"
-            >
-              Sign in
-            </Link>{' '}
-            for faster checkout.
-          </p>
-        </div>
-      )}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form
+          onSubmit={(e) => {
+            form.handleSubmit(onSubmit)(e);
+          }}
+          className="space-y-6"
+        >
           <UserInfoInput
             name="firstName"
             label="First name"
