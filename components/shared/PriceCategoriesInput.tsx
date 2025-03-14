@@ -54,74 +54,22 @@ export default function PriceCategoriesInput() {
         ))}
       </div>
       {fields.map((field, index) => (
-        <div
-          key={field.id}
-          className="relative flex flex-col md:flex-row gap-4 items-center md:mb-15"
-        >
-          <div className="flex flex-col">
-            <FormField
-              control={control}
-              name={`priceCategories.${index}.name`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium">
-                    Name <span className="text-red-400">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Category Name"
-                      className="input-field p-regular-14"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex flex-col">
-            <FormField
-              control={control}
-              name={`priceCategories.${index}.price`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium">
-                    Price <span className="text-red-400">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Enter price"
-                      className="input-field p-regular-14"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="md:absolute md:top-20">
-            <div className="flex flex-col ">
+        <div key={field.id} className="flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col">
               <FormField
                 control={control}
-                name={`priceCategories.${index}.quantity`}
+                name={`priceCategories.${index}.name`}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium flex flex-nowrap">
-                      Quantity
+                    <FormLabel className="text-sm font-medium">
+                      Name <span className="text-red-400">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        type="number"
-                        placeholder="Eg., 100"
-                        className=" bg-grey-50 h-[40px] focus-visible:ring-offset-0 md:w-[50%] hide-number-spinners placeholder:text-gray-400 rounded-md px-4 py-3 border border-gray-300 focus-visible:ring-transparent outline-none shadow-none p-regular-14"
-                        value={field.value ?? ''}
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.value ? parseInt(e.target.value, 10) : null
-                          )
-                        }
+                        placeholder="Category Name"
+                        className="input-field p-regular-14"
                       />
                     </FormControl>
                     <FormMessage />
@@ -129,18 +77,80 @@ export default function PriceCategoriesInput() {
                 )}
               />
             </div>
+            <div className="flex flex-col">
+              <FormField
+                control={control}
+                name={`priceCategories.${index}.price`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">
+                      Price <span className="text-red-400">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Enter price"
+                        className="input-field p-regular-14"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => remove(index)}
+              className="hidden md:flex text-red-500 hover:text-red-700 cursor-pointer"
+              aria-label="Remove category"
+              title="Remove category"
+            >
+              <X />
+            </Button>
           </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => remove(index)}
-            className="text-red-500 hover:text-red-700 cursor-pointer"
-            aria-label="Remove category"
-            title="Remove category"
-          >
-            <X />
-          </Button>
+          <div className="flex flex-col">
+            <FormField
+              control={control}
+              name={`priceCategories.${index}.quantity`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium flex flex-nowrap">
+                    Quantity
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      placeholder="Eg., 100"
+                      className=" bg-grey-50 h-[40px] focus-visible:ring-offset-0 md:w-[30%] hide-number-spinners placeholder:text-gray-400 rounded-md px-4 py-3 border border-gray-300 focus-visible:ring-transparent outline-none shadow-none p-regular-14"
+                      value={field.value ?? ''}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value ? parseInt(e.target.value, 10) : null
+                        )
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className='flex justify-center'>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => remove(index)}
+              className="md:hidden text-red-500 hover:text-red-700 cursor-pointer"
+              aria-label="Remove category"
+              title="Remove category"
+            >
+              <X />
+            </Button>
+          </div>
         </div>
       ))}
     </div>
