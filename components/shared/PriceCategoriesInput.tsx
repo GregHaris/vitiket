@@ -56,7 +56,7 @@ export default function PriceCategoriesInput() {
       {fields.map((field, index) => (
         <div
           key={field.id}
-          className="flex flex-col md:flex-row gap-4 items-center"
+          className="relative flex flex-col md:flex-row gap-4 items-center md:mb-15"
         >
           <div className="flex flex-col">
             <FormField
@@ -100,36 +100,35 @@ export default function PriceCategoriesInput() {
               )}
             />
           </div>
-          <div className="flex flex-col">
-            <FormField
-              control={control}
-              name={`priceCategories.${index}.quantity`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium">
-                    Quantity{' '}
-                    <span className="text-sm italic text-gray-500">
-                      (optional)
-                    </span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="number"
-                      placeholder="Enter quantity (optional)"
-                      className="input-field p-regular-14"
-                      value={field.value ?? ''}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value ? parseInt(e.target.value, 10) : null
-                        )
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <div className="md:absolute md:top-20">
+            <div className="flex flex-col ">
+              <FormField
+                control={control}
+                name={`priceCategories.${index}.quantity`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium flex flex-nowrap">
+                      Quantity
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        placeholder="Eg., 100"
+                        className=" bg-grey-50 h-[40px] focus-visible:ring-offset-0 md:w-[50%] hide-number-spinners placeholder:text-gray-400 rounded-md px-4 py-3 border border-gray-300 focus-visible:ring-transparent outline-none shadow-none p-regular-14"
+                        value={field.value ?? ''}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value ? parseInt(e.target.value, 10) : null
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
           <Button
             type="button"
