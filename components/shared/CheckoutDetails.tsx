@@ -4,7 +4,7 @@ import { ArrowLeft, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { useUser, useClerk } from '@clerk/nextjs';
+import { useClerk, useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -16,6 +16,7 @@ import { checkoutOrder } from '@/lib/actions/order.actions';
 import { currencySymbols } from '@/constants';
 import { DialogHeader, DialogTitle } from '@ui/dialog';
 import { Form } from '@ui/form';
+import { getUserIdByClerkId } from '@/lib/actions/user.actions';
 import { Separator } from '@ui/separator';
 
 import CancelCheckoutDialog from './CancelCheckoutDialog';
@@ -38,6 +39,7 @@ export default function CheckoutDetails({
 
   const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const isNigerianEvent =
     event.currency.toUpperCase() === 'NGN' &&
     event.location?.toLowerCase().includes('nigeria');
@@ -56,26 +58,36 @@ export default function CheckoutDetails({
     },
   });
 
+  // Fetch MongoDB _id for signed-in user
   useEffect(() => {
-    if (user) {
-      form.reset({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.emailAddresses[0]?.emailAddress || '',
-        confirmEmail: user.emailAddresses[0]?.emailAddress || '',
-        paymentMethod: isNigerianEvent ? 'paystack' : 'card',
-        cardNumber: '',
-        expiryDate: '',
-        cvv: '',
-      });
-    }
+    const fetchMongoUserId = async () => {
+      if (user) {
+        try {
+          const userData = await getUserIdByClerkId(user.id);
+          setUserId(userData._id);
+          form.reset({
+            firstName: user.firstName || '',
+            lastName: user.lastName || '',
+            email: user.emailAddresses[0]?.emailAddress || '',
+            confirmEmail: user.emailAddresses[0]?.emailAddress || '',
+            paymentMethod: isNigerianEvent ? 'paystack' : 'card',
+            cardNumber: '',
+            expiryDate: '',
+            cvv: '',
+          });
+        } catch (error) {
+          console.error('Failed to fetch MongoDB user ID:', error);
+        }
+      }
+    };
+    fetchMongoUserId();
   }, [user, form, isNigerianEvent]);
 
   const onSubmit = async (data: checkoutFormValues) => {
     try {
       const order = {
         eventTitle: event.title,
-        buyerId: user?.id || '',
+        buyerId: userId || 'guest',
         eventId: event._id,
         price: totalPrice.toString(),
         isFree: event.isFree || false,
@@ -127,10 +139,6 @@ export default function CheckoutDetails({
         lastName: '',
         email: '',
         confirmEmail: '',
-        paymentMethod: isNigerianEvent ? 'paystack' : 'card',
-        cardNumber: '',
-        expiryDate: '',
-        cvv: '',
       },
       { keepValues: false }
     );
@@ -223,7 +231,7 @@ export default function CheckoutDetails({
                 isNigerianEvent={isNigerianEvent as boolean}
                 orderData={{
                   eventTitle: event.title,
-                  buyerId: user?.id || '',
+                  buyerId: userId || '',
                   eventId: event._id,
                   price: totalPrice.toString(),
                   isFree: event.isFree || false,
