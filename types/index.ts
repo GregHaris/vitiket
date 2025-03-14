@@ -187,7 +187,7 @@ export type CheckoutOrderParams = {
   eventId: string;
   price: string;
   isFree: boolean;
-  buyerId: string;
+  buyerId?: string;
   currency: string;
   quantity: number;
   priceCategory?: {
@@ -205,7 +205,7 @@ export type CheckoutOrderParams = {
 
 export type CreateOrderParams = {
   eventId: string;
-  buyerId: string;
+  buyerId?: string;
   stripeId?: string;
   totalAmount: string;
   currency: string;
