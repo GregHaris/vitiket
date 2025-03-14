@@ -107,23 +107,12 @@ const checkoutStripe = async (
       : Math.round(Number(order.price) * 100);
     const platformFee = Math.round(totalAmount * 0.2);
 
-    if (order.paymentMethod === 'card' && order.cardDetails) {
-      const paymentMethod = await stripe.paymentMethods.create({
-        type: 'card',
-        card: {
-          number: order.cardDetails.number,
-          exp_month: parseInt(order.cardDetails.expiry.split('/')[0], 10),
-          exp_year: parseInt(order.cardDetails.expiry.split('/')[1], 10),
-          cvc: order.cardDetails.cvv,
-        },
-      });
-
+    if (order.paymentMethod === 'card') {
+      // Create PaymentIntent without card details
       const paymentIntent = await stripe.paymentIntents.create({
         amount: totalAmount,
         currency: order.currency.toLowerCase(),
-        payment_method: paymentMethod.id,
-        confirmation_method: 'automatic',
-        confirm: true,
+        payment_method_types: ['card'],
         metadata: {
           eventId: order.eventId,
           buyerId: order.buyerId || null,
@@ -132,22 +121,9 @@ const checkoutStripe = async (
         application_fee_amount: platformFee,
         transfer_data: { destination: organizer.stripeId },
       });
-      if (paymentIntent.status === 'succeeded') {
-        await createOrder({
-          stripeId: paymentIntent.id,
-          eventId: order.eventId,
-          buyerId: order?.buyerId === 'guest' ? undefined : order.buyerId,
-          totalAmount: (totalAmount / 100).toString(),
-          currency: order.currency,
-          quantity: order.quantity,
-          buyerEmail: user?.email || order.buyerEmail,
-          paymentMethod: order.paymentMethod,
-          createdAt: new Date(),
-        });
-        redirect('/dashboard?success=true');
-      } else {
-        throw new Error('Payment failed');
-      }
+
+      // Return client_secret for client-side confirmation
+      return { clientSecret: paymentIntent.client_secret };
     } else {
       const session = await stripe.checkout.sessions.create({
         payment_method_types: [
@@ -204,7 +180,8 @@ export const checkoutOrder = async (
   if (isNigerianEvent) {
     await checkoutPaystack(order);
   } else {
-    await checkoutStripe(order);
+    const result = await checkoutStripe(order);
+    return result; 
   }
 };
 
