@@ -195,12 +195,7 @@ export type CheckoutOrderParams = {
     price: string;
   };
   buyerEmail: string;
-  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay'; 
-  cardDetails?: {
-    number: string;
-    expiry: string;
-    cvv: string;
-  };
+  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
 };
 
 export type CreateOrderParams = {
