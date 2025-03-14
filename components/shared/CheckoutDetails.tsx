@@ -45,9 +45,6 @@ export default function CheckoutDetails({
       email: user?.emailAddresses[0]?.emailAddress || '',
       confirmEmail: user?.emailAddresses[0]?.emailAddress || '',
       paymentMethod: isNigerianEvent ? 'paystack' : 'card',
-      cardNumber: '',
-      expiryDate: '',
-      cvv: '',
     },
   });
 
@@ -63,9 +60,6 @@ export default function CheckoutDetails({
             email: user.emailAddresses[0]?.emailAddress || '',
             confirmEmail: user.emailAddresses[0]?.emailAddress || '',
             paymentMethod: isNigerianEvent ? 'paystack' : 'card',
-            cardNumber: '',
-            expiryDate: '',
-            cvv: '',
           });
         } catch (error) {
           console.error('Failed to fetch MongoDB user ID:', error);
