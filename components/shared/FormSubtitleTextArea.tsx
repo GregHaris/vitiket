@@ -19,8 +19,7 @@ export default function SubtitleInput() {
       render={({ field }) => (
         <FormItem>
           <FormLabel className="text-sm font-medium">
-            Subtitle{' '}
-            <span className="italic text-gray-500 text-sm">(optional)</span>
+            Subtitle
           </FormLabel>
           <FormControl>
             <Textarea

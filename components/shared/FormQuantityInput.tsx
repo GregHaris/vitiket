@@ -21,8 +21,7 @@ export default function QuantityInput() {
         render={({ field }) => (
           <FormItem>
             <FormLabel className="text-sm font-medium">
-              Ticket Quantity{' '}
-              <span className="italic text-gray-500 text-sm">(optional)</span>
+              Ticket Quantity
             </FormLabel>
             <FormControl>
               <Input
