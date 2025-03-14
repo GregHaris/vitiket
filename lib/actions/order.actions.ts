@@ -39,7 +39,7 @@ const checkoutPaystack = async (order: CheckoutOrderParams) => {
       : Math.round(Number(order.price) * 100);
 
     const payload = {
-      email: user.email,
+      email: user.email || order.buyerEmail,
       amount: totalAmount,
       currency: order.currency.toUpperCase(),
       reference: `txn_${Date.now()}_${order.eventId}`,
@@ -126,7 +126,7 @@ const checkoutStripe = async (
         confirm: true,
         metadata: {
           eventId: order.eventId,
-          buyerId: order.buyerId,
+          buyerId: order.buyerId || null,
           quantity: order.quantity,
         },
         application_fee_amount: platformFee,
@@ -136,11 +136,11 @@ const checkoutStripe = async (
         await createOrder({
           stripeId: paymentIntent.id,
           eventId: order.eventId,
-          buyerId: order.buyerId,
+          buyerId: order?.buyerId === 'guest' ? undefined : order.buyerId,
           totalAmount: (totalAmount / 100).toString(),
           currency: order.currency,
           quantity: order.quantity,
-          buyerEmail: user.email,
+          buyerEmail: user?.email || order.buyerEmail,
           paymentMethod: order.paymentMethod,
           createdAt: new Date(),
         });
