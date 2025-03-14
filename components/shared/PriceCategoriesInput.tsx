@@ -98,17 +98,19 @@ export default function PriceCategoriesInput() {
                 )}
               />
             </div>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => remove(index)}
-              className="hidden md:flex text-red-500 hover:text-red-700 cursor-pointer"
-              aria-label="Remove category"
-              title="Remove category"
-            >
-              <X />
-            </Button>
+            <div className="hidden md:flex md:items-end">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => remove(index)}
+                className="text-red-500 hover:text-red-700 cursor-pointer"
+                aria-label="Remove category"
+                title="Remove category"
+              >
+                <X />
+              </Button>
+            </div>
           </div>
           <div className="flex flex-col">
             <FormField
@@ -138,13 +140,13 @@ export default function PriceCategoriesInput() {
               )}
             />
           </div>
-          <div className='flex justify-center'>
+          <div className="flex justify-center md:hidden">
             <Button
               type="button"
               variant="ghost"
               size="icon"
               onClick={() => remove(index)}
-              className="md:hidden text-red-500 hover:text-red-700 cursor-pointer"
+              className=" text-red-500 hover:text-red-700 cursor-pointer"
               aria-label="Remove category"
               title="Remove category"
             >
