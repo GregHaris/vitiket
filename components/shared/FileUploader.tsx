@@ -38,8 +38,8 @@ export default function FileUploader({
 
       // Upload the file to UploadThing
       const res = await startUpload([newFile]);
-      if (res && res[0]?.url) {
-        onFieldChange(res[0].url);
+      if (res && res[0]?.ufsUrl) {
+        onFieldChange(res[0].ufsUrl);
       }
     },
     [setFiles, onFieldChange, startUpload]

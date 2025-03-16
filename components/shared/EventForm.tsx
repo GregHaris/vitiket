@@ -79,7 +79,7 @@ export default function EventForm({
     if (files.length > 0) {
       const uploadedImages = await startUpload(files);
       if (!uploadedImages) return;
-      uploadedImageUrl = uploadedImages[0].url;
+      uploadedImageUrl = uploadedImages[0].ufsUrl;
     }
 
     const eventData = {
