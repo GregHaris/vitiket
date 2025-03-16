@@ -396,7 +396,19 @@ export interface PaymentDetails {
   businessName?: string;
   bankName?: string;
   accountNumber?: string;
+  accountName?: string;
   subaccountCode?: string;
+  stripeId?: string;
+}
+
+export interface PaymentDetailsUpdate {
+  subaccountCode?: string;
+  businessName?: string;
+  bankName?: string;
+  bankDetails?: {
+    accountNumber: string;
+    accountName: string;
+  };
   stripeId?: string;
 }
 
