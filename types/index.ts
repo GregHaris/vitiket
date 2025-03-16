@@ -247,8 +247,6 @@ export type EventFormProps = {
   type: 'Create' | 'Update';
   event?: IEvent;
   eventId?: string;
-  subaccountCode?: string;
-  stripeId?: string;
 };
 
 export type PaginationProps = {
