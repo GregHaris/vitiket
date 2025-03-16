@@ -152,9 +152,16 @@ export default function EventForm({
           if (values.isFree) {
             router.push(`/events/${updatedEvents._id}`);
           } else {
-            router.push(
-              `/organizer/setup?userId=${userId}&eventId=${updatedEvents._id}`
-            );
+            const hasPaymentDetails = subaccountCode || stripeId;
+            if (hasPaymentDetails) {
+              router.push(
+                `/organizer?userId=${userId}&eventId=${newEvent._id}`
+              );
+            } else {
+              router.push(
+                `/organizer/setup?userId=${userId}&eventId=${newEvent._id}`
+              );
+            }
           }
         }
       } catch (error) {
