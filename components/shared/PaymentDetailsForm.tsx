@@ -32,7 +32,7 @@ export default function PaymentDetailsForm({
     },
   });
 
-  const handleSubmitSuccess = async (accountId: string) => {
+  const handleSubmitSuccess = async () => {
     try {
       await import('@/lib/actions/event.actions').then(
         ({ updateEventStatus }) =>
@@ -43,7 +43,7 @@ export default function PaymentDetailsForm({
             path: `/events/${eventId}`,
           })
       );
-      router.push('/dashboard');
+      router.push(`/events/${eventId}`);
     } catch (error) {
       console.error('Error finalizing event:', error);
       throw error;
