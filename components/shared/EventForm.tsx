@@ -36,8 +36,6 @@ import AddImage from './FormAddImageSection';
 
 export default function EventForm({
   userId,
-  subaccountCode,
-  stripeId,
   type,
   event,
   eventId,
@@ -45,7 +43,6 @@ export default function EventForm({
   const { startUpload } = useUploadThing('imageUploader');
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
-  const user = getUserById;
 
   const initialValues =
     event && type === 'Update'
@@ -75,6 +72,8 @@ export default function EventForm({
   const isFree = form.watch('isFree');
 
   async function onSubmit(values: z.infer<typeof eventFormSchema>) {
+    const user = await getUserById(userId);
+
     let uploadedImageUrl: string = values.imageUrl;
 
     if (files.length > 0) {
@@ -114,7 +113,7 @@ export default function EventForm({
           if (values.isFree) {
             router.push(`/events/${newEvent._id}`);
           } else {
-            const hasPaymentDetails = subaccountCode || stripeId;
+            const hasPaymentDetails = user.subaccountCode || user.stripeId;
             if (hasPaymentDetails) {
               router.push(
                 `/organizer?userId=${userId}&eventId=${newEvent._id}`
@@ -152,7 +151,7 @@ export default function EventForm({
           if (values.isFree) {
             router.push(`/events/${updatedEvents._id}`);
           } else {
-            const hasPaymentDetails = subaccountCode || stripeId;
+            const hasPaymentDetails = user.subaccountCode || user.stripeId;
             if (hasPaymentDetails) {
               router.push(
                 `/organizer?userId=${userId}&eventId=${updatedEvents._id}`
