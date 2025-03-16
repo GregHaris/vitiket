@@ -3,7 +3,12 @@
 import { revalidatePath } from 'next/cache';
 
 import { connectToDatabase } from '@/lib/database';
-import { CreateUserParams, UpdateUserParams } from '@/types';
+import {
+  CreateUserParams,
+  PaymentDetails,
+  PaymentDetailsUpdate,
+  UpdateUserParams,
+} from '@/types';
 import { handleError } from '@/lib/utils';
 import Event from '@/lib/database/models/event.model';
 import Order from '@/lib/database/models/order.model';
@@ -101,30 +106,28 @@ export async function deleteUser(clerkId: string) {
 // Update user payment details including subaccountCode, businessName, bankName, and accountNumber
 export async function updateUserPaymentDetails(
   userId: string,
-  paymentDetails: {
-    subaccountCode: string;
-    businessName: string;
-    bankName: string;
-    accountNumber: string;
-    accountName: string;
-  }
+  paymentDetails: PaymentDetails
 ) {
   try {
     await connectToDatabase();
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      {
-        subaccountCode: paymentDetails.subaccountCode,
-        businessName: paymentDetails.businessName,
-        bankName: paymentDetails.bankName,
-        bankDetails: {
-          accountNumber: paymentDetails.accountNumber,
-          accountName: paymentDetails.accountName,
-        },
-      },
-      { new: true }
-    );
+    const updateData: PaymentDetailsUpdate = {};
+    if (paymentDetails.subaccountCode)
+      updateData.subaccountCode = paymentDetails.subaccountCode;
+    if (paymentDetails.businessName)
+      updateData.businessName = paymentDetails.businessName;
+    if (paymentDetails.bankName) updateData.bankName = paymentDetails.bankName;
+    if (paymentDetails.accountNumber || paymentDetails.accountName) {
+      updateData.bankDetails = {
+        accountNumber: paymentDetails.accountNumber || '',
+        accountName: paymentDetails.accountName || '',
+      };
+    }
+    if (paymentDetails.stripeId) updateData.stripeId = paymentDetails.stripeId;
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+    });
 
     if (!updatedUser) throw new Error('User not found');
     return JSON.parse(JSON.stringify(updatedUser));
