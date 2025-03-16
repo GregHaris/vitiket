@@ -1,11 +1,9 @@
-import { getUserById } from '@/lib/actions/user.actions';
 import EventForm from '@shared/EventForm';
 import EventFormHeading from '@shared/EventFormHeading';
 import getUserId from '@/utils/userId';
 
 const CreateEvent = async () => {
   const userId = await getUserId();
-  const user = await getUserById(userId);
 
   return (
     <>
@@ -13,12 +11,7 @@ const CreateEvent = async () => {
         <EventFormHeading />
       </section>
       <div className="wrapper my-8">
-        <EventForm
-          userId={userId}
-          subaccountCode={user.subaccountCode}
-          stripeId={user.stripeId} 
-          type="Create"
-        />
+        <EventForm userId={userId} type="Create" />
       </div>
     </>
   );
