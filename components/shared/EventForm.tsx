@@ -155,11 +155,11 @@ export default function EventForm({
             const hasPaymentDetails = subaccountCode || stripeId;
             if (hasPaymentDetails) {
               router.push(
-                `/organizer?userId=${userId}&eventId=${newEvent._id}`
+                `/organizer?userId=${userId}&eventId=${updatedEvents._id}`
               );
             } else {
               router.push(
-                `/organizer/setup?userId=${userId}&eventId=${newEvent._id}`
+                `/organizer/setup?userId=${userId}&eventId=${updatedEvents._id}`
               );
             }
           }
