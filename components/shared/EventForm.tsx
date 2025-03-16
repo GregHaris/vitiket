@@ -2,6 +2,7 @@
 
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import Image from 'next/image';
@@ -12,6 +13,7 @@ import { eventDefaultValues } from '@/constants';
 import { EventFormProps } from '@/types';
 import { eventFormSchema } from '@/lib/validator/index';
 import { Form } from '@ui/form';
+import { getUserById } from '@/lib/actions/user.actions';
 import { useUploadThing } from '@/lib/uploadthing';
 
 import CategorySelector from './FormCategorySelector';
@@ -31,10 +33,11 @@ import TitleInput from './FormTitleInput';
 import QuantityInput from './FormQuantityInput';
 import Url from './FormUrlInput';
 import AddImage from './FormAddImageSection';
-import { useState } from 'react';
 
 export default function EventForm({
   userId,
+  subaccountCode,
+  stripeId,
   type,
   event,
   eventId,
@@ -42,6 +45,7 @@ export default function EventForm({
   const { startUpload } = useUploadThing('imageUploader');
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
+  const user = getUserById;
 
   const initialValues =
     event && type === 'Update'
@@ -110,9 +114,16 @@ export default function EventForm({
           if (values.isFree) {
             router.push(`/events/${newEvent._id}`);
           } else {
-            router.push(
-              `/organizer/setup?userId=${userId}&eventId=${newEvent._id}`
-            );
+            const hasPaymentDetails = subaccountCode || stripeId;
+            if (hasPaymentDetails) {
+              router.push(
+                `/organizer?userId=${userId}&eventId=${newEvent._id}`
+              );
+            } else {
+              router.push(
+                `/organizer/setup?userId=${userId}&eventId=${newEvent._id}`
+              );
+            }
           }
         }
       } catch (error) {
