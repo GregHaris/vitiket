@@ -431,7 +431,7 @@ export interface PaystackFormProps {
   banks: Bank[];
   userId: string;
   setMessage: (msg: string) => void;
-  onSubmitSuccess: (accountId: string) => void;
+  onSubmitSuccess: () => Promise<void>;
   handleSubmit: UseFormHandleSubmit<z.infer<typeof paymentDetailsSchema>>;
 }
 
@@ -447,7 +447,7 @@ export interface PaymentDetailsStripeOnboardingProps {
   userId: string;
   existingStripeId?: string;
   setMessage: (msg: string) => void;
-  onSubmitSuccess: (accountId: string) => void;
+  onSubmitSuccess: () => Promise<void>;
 }
 
 export interface PaymentDetailsFormProps {
