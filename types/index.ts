@@ -437,7 +437,6 @@ export interface PaystackFormProps {
     accountName?: string;
     subaccountCode?: string;
   };
-  eventId?: string;
   onSubmitSuccess: () => Promise<void>;
   handleSubmit: UseFormHandleSubmit<z.infer<typeof paymentDetailsSchema>>;
 }
