@@ -504,5 +504,5 @@ export type VerificationResult = {
 } | null;
 
 export type TicketCardProps = {
-  order: IOrder & { event: IEvent };
+  order: IOrder;
 };
