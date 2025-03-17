@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create subaccount
+    // Create subaccount with 0% charge (host pays only gateway fees)
     const subaccountRes = await fetch('https://api.paystack.co/subaccount', {
       method: 'POST',
       headers: {
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         business_name: businessName,
         bank_code: bank.code,
         account_number: accountNumber,
-        percentage_charge: 20,
+        percentage_charge: 0, 
       }),
     });
 
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Save payment details to User model using MongoDB _id
+    // Save payment details to User model
     await updateUserPaymentDetails(userId, {
       subaccountCode: subaccountData.data.subaccount_code,
       businessName,
