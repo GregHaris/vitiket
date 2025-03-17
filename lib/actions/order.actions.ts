@@ -319,12 +319,18 @@ export async function getOrdersByUser({
       .populate({
         path: 'event',
         model: Event,
-        select: '_id title subtitle imageUrl currency startDate location',
+        select:
+          '_id title subtitle imageUrl currency startDate location organizer',
         populate: {
           path: 'organizer',
           model: User,
           select: '_id firstName lastName',
         },
+      })
+      .populate({
+        path: 'buyer',
+        model: User,
+        select: '_id firstName lastName email',
       });
 
     const ordersCount = await Order.distinct('event._id').countDocuments(
