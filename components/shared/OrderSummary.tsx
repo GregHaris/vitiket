@@ -16,6 +16,9 @@ export default function OrderSummary({
   totalPrice: number;
   selectedTickets: { [key: string]: number };
 }) {
+  const ticketPrice = totalPrice / 1.05;
+  const platformFee = totalPrice - ticketPrice;
+
   return (
     <div className="w-full md:w-1/2 bg-gray-200">
       <Image
@@ -37,6 +40,19 @@ export default function OrderSummary({
               {qty} x {name}
             </p>
           ))}
+        </div>
+        <Separator className="bg-gray-300" />
+        <div>
+          <h4 className="font-bold">Subtotal</h4>
+          <p className="text-sm text-gray-600">
+            {currencySymbol}
+            {parseFloat(ticketPrice.toString()).toLocaleString()}
+          </p>
+          <h4 className="font-bold mt-2">Platform Fee (5%)</h4>
+          <p className="text-sm text-gray-600">
+            {currencySymbol}
+            {parseFloat(platformFee.toString()).toLocaleString()}
+          </p>
         </div>
         <Separator className="bg-gray-300" />
         <div>

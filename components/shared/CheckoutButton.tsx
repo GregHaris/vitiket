@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-
 import { Button } from '@ui/button';
 import { CheckoutButtonProps, CurrencyKey } from '@/types';
 import { currencySymbols } from '@/constants';
@@ -14,13 +13,11 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
-    if (searchParams?.get('checkout') === 'true') {
-      setIsDialogOpen(true);
-    }
+    if (searchParams?.get('checkout') === 'true') setIsDialogOpen(true);
   }, [searchParams]);
 
   let totalQuantity = 0;
-  let totalPrice = 0;
+  let ticketPrice = 0;
   const selectedTickets: { [key: string]: number } = {};
 
   if (event.isFree) {
@@ -33,10 +30,13 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
       if (quantity > 0) {
         selectedTickets[category.name] = quantity;
         totalQuantity += quantity;
-        totalPrice += quantity * Number(category.price);
+        ticketPrice += quantity * Number(category.price);
       }
     });
   }
+
+  const platformFee = ticketPrice * 0.05;
+  const totalPrice = ticketPrice + platformFee;
 
   useEffect(() => {
     if (searchParams?.get('checkout') === 'true' && totalQuantity === 0) {
@@ -52,13 +52,8 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
 
   const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
 
-  const handleCheckout = () => {
-    setIsDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-  };
+  const handleCheckout = () => setIsDialogOpen(true);
+  const handleCloseDialog = () => setIsDialogOpen(false);
 
   return (
     <>
@@ -67,22 +62,27 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
           <Button
             className="button w-full md:w-[300px] cursor-pointer font-bold transition-all duration-100"
             size={'lg'}
-            onClick={() => {
+            onClick={() =>
               document
                 .getElementById('price-section')
-                ?.scrollIntoView({ behavior: 'smooth' });
-            }}
+                ?.scrollIntoView({ behavior: 'smooth' })
+            }
           >
             Get Tickets
           </Button>
         ) : (
           <Button
-            className="button w-full md:w-[300px] cursor-pointer font-bold transition-all duration-300"
+            className="rounded-md min-h-[56px] cursor-pointer text-primary-50 w-full md:w-[300px] font-bold transition-all duration-300 flex flex-col items-center justify-center gap-1 py-2"
             size={'lg'}
             onClick={handleCheckout}
           >
-            Checkout - {currencySymbol}
-            {totalPrice}
+            <span>Checkout</span>
+            <span>
+              {currencySymbol}
+              {ticketPrice.toLocaleString()} + {currencySymbol}
+              {platformFee.toLocaleString()}{' '}
+              <span className="text-sm">(5% fee)</span>
+            </span>
           </Button>
         )}
       </div>
