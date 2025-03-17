@@ -319,6 +319,7 @@ export async function getOrdersByUser({
       .populate({
         path: 'event',
         model: Event,
+        select: '_id title subtitle imageUrl currency startDate location',
         populate: {
           path: 'organizer',
           model: User,
