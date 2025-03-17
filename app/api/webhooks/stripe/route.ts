@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       eventId: metadata.eventId,
       buyerId: metadata.buyerId,
       totalAmount: amount_total ? (amount_total / 100).toString() : '0',
-      currency: currency?.toLowerCase() || 'usd',
+      currency: currency?.toLowerCase() || 'ngn',
       quantity: parseInt(metadata.quantity || '1', 10),
       buyerEmail: metadata?.email || customer_email || '',
       createdAt: new Date(),
