@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { currencySymbols } from '@/constants';
 import { eventFormValues, paymentDetailsSchema } from '@/lib/validator';
 import { IEvent } from '@/lib/database/models/event.model';
+import { IOrder } from '@/lib/database/models/order.model';
 
 // ====== USER PARAMS
 export type CreateUserParams = {
@@ -501,3 +502,7 @@ export type VerificationResult = {
   paymentMethod: string;
   createdAt: string;
 } | null;
+
+export type TicketCardProps = {
+  order: IOrder & { event: IEvent };
+};
