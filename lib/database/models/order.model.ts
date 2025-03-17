@@ -1,16 +1,16 @@
 import { Schema, model, models, Document } from 'mongoose';
 
+import { IEvent } from './event.model';
+
 export interface IOrder extends Document {
+  _id: string;
   createdAt: Date;
+  event: IEvent;
   stripeId?: string;
   totalAmount: string;
   currency: string;
-  event: {
-    _id: string;
-    title: string;
-  };
   buyer: {
-    _id?: string;
+    _id: string;
     firstName: string;
     lastName: string;
     email: string;
