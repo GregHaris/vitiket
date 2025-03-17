@@ -4,14 +4,20 @@ import { PaymentDetailsStripeOnboardingProps } from '@/types';
 
 export default function StripeOnboarding({
   userId,
+  existingStripeId,
   setMessage,
-}: PaymentDetailsStripeOnboardingProps) {
+  eventId,
+}: PaymentDetailsStripeOnboardingProps & {
+  existingStripeId?: string;
+  onSubmitSuccess: () => void;
+  eventId: string;
+}) {
   const handleStripeOnboarding = async () => {
     try {
       const res = await fetch('/api/stripe/start-onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ userId, eventId }),
       });
       const { url } = await res.json();
       if (res.ok) {
@@ -26,14 +32,27 @@ export default function StripeOnboarding({
   };
 
   return (
-    <div className="space-y-4">
-      <p>Connect your Stripe account to receive payments for this event.</p>
+    <div className="space-y-6">
+      {existingStripeId ? (
+        <>
+          <p>Update your Stripe account.</p>
+          <p>
+            {' '}
+            <strong>Stripe Account Id: </strong> {existingStripeId}
+          </p>
+        </>
+      ) : (
+        <p>
+          {' '}
+          'Connect your Stripe account to receive payments for this event.'
+        </p>
+      )}
       <button
         type="button"
         onClick={handleStripeOnboarding}
         className="button bg-primary text-white px-3 py-2 rounded-md"
       >
-        Connect with Stripe
+        {existingStripeId ? 'Update Stripe Account' : 'Connect with Stripe'}
       </button>
     </div>
   );
