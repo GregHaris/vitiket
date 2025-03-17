@@ -484,3 +484,20 @@ export interface PaymentMethodSelectorProps {
     buyerEmail: string;
   };
 }
+
+export type VerificationResult = {
+  valid: boolean;
+  orderId: string;
+  event: {
+    title: string;
+    subtitle: string;
+    startDate: string;
+    location: string;
+    organizer: string;
+  };
+  buyerId: string;
+  quantity: number;
+  totalAmount: string;
+  paymentMethod: string;
+  createdAt: string;
+} | null;
