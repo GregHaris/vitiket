@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 
-import { CheckoutDetailsProps, CurrencyKey } from '@/types';
+import { CheckoutDetailsProps } from '@/types';
 import { Separator } from '@ui/separator';
 
 export default function OrderSummary({
