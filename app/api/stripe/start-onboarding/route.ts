@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await req.json();
+    const { userId, eventId } = await req.json();
 
     await connectToDatabase();
     const user = await User.findById(userId);
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     const accountLink = await stripe.accountLinks.create({
       account: stripeId,
       refresh_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/organizer/setup?userId=${userId}refresh=true`,
-      return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/dashboard`,
+      return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${eventId}`,
       type: 'account_onboarding',
     });
 
