@@ -430,6 +430,13 @@ export interface PaymentDetailsFormActionsProps {
 export interface PaystackFormProps {
   banks: Bank[];
   userId: string;
+  existingDetails?: {
+    businessName?: string;
+    bankName?: string;
+    accountNumber?: string;
+    accountName?: string;
+    subaccountCode?: string;
+  };
   setMessage: (msg: string) => void;
   onSubmitSuccess: () => Promise<void>;
   handleSubmit: UseFormHandleSubmit<z.infer<typeof paymentDetailsSchema>>;
