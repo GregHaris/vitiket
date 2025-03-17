@@ -4,28 +4,41 @@ import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
+import { Button } from '@ui/button';
 import { paymentDetailsSchema } from '@/lib/validator';
 import { PaystackFormProps } from '@/types';
-import AccountNumberInput from './PaystackFormAccountNumberInput';
 import AccountNameDisplay from './PaystackFormAccountNameDisplay';
+import AccountNumberInput from './PaystackFormAccountNumberInput';
 import BankSelector from './PaystackFormBankSelector';
 import BusinessNameInput from './PaystackFormBusinessNameInput';
 
 export default function PaystackForm({
   banks,
   userId,
-  setMessage,
-  onSubmitSuccess,
   handleSubmit,
+  existingDetails,
+  onSubmitSuccess,
 }: PaystackFormProps) {
   const { watch, setValue, setError, clearErrors, formState } =
     useFormContext<z.infer<typeof paymentDetailsSchema>>();
   const [resolvedAccountName, setResolvedAccountName] = useState<string | null>(
     null
   );
+  const [message, setMessage] = useState<string>('');
 
   const accountNumber = watch('accountNumber');
   const bankName = watch('bankName');
+
+  // Watch all form fields to compare with existingDetails
+  const formValues = watch();
+
+  // Check if form values match existingDetails
+  const hasChanges =
+    !existingDetails?.subaccountCode ||
+    formValues.businessName !== (existingDetails?.businessName || '') ||
+    formValues.bankName !== (existingDetails?.bankName || '') ||
+    formValues.accountNumber !== (existingDetails?.accountNumber || '') ||
+    formValues.accountName !== (existingDetails?.accountName || '');
 
   useEffect(() => {
     const resolveAccountName = async () => {
@@ -41,7 +54,6 @@ export default function PaystackForm({
             `/api/paystack/verify-account?account_number=${accountNumber}&bank_code=${bank.code}`
           );
           const data = await res.json();
-          console.log('Server verify response:', data);
 
           if (res.ok && data.accountName) {
             setResolvedAccountName(data.accountName);
@@ -81,23 +93,67 @@ export default function PaystackForm({
       });
 
       const result = await res.json();
-      setMessage(result.message);
-
-      if (res.ok) {
-        await onSubmitSuccess(result.subaccountCode);
+      if (!res.ok) {
+        console.error('API error:', result);
+        setMessage(result.message || 'Failed to save/update payment details.');
+        return;
       }
+
+      setMessage(
+        existingDetails?.subaccountCode
+          ? 'A new Paystack subaccount has been created with your updated details.'
+          : result.message || 'Payment details saved successfully.'
+      );
+      await onSubmitSuccess();
     } catch (error) {
+      console.error('Submission error:', error);
       setMessage('An error occurred. Please try again.');
-      console.error(error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {existingDetails?.subaccountCode && (
+        <p className="text-sm text-muted-foreground">
+          Note: Updating your payment details will create a new Paystack
+          subaccount, replacing the existing one.
+        </p>
+      )}
       <BusinessNameInput />
       <BankSelector banks={banks} />
       <AccountNumberInput />
       <AccountNameDisplay resolvedAccountName={resolvedAccountName} />
+      <div className="flex gap-4">
+        <Button
+          type="submit"
+          disabled={
+            formState.isSubmitting ||
+            (!!existingDetails?.subaccountCode && !hasChanges)
+          }
+          className="button hover:bg-primary-600 bg-primary px-4 py-2"
+        >
+          {formState.isSubmitting
+            ? 'Submitting...'
+            : existingDetails?.subaccountCode
+            ? 'Update Details'
+            : 'Save Details'}
+        </Button>
+        {existingDetails?.subaccountCode && (
+          <Button
+            variant="outline"
+            className="rounded-md h-[40px] cursor-pointer hover:bg-gray-200 text-black bg-white border border-gray-300 px-4 py-2"
+            onClick={() => onSubmitSuccess()}
+            disabled={
+              !existingDetails?.subaccountCode || formState.isSubmitting
+            }
+          >
+            Reuse Existing Details
+          </Button>
+        )}
+      </div>
+      {message && !formState.errors && (
+        <p className="text-sm text-muted-foreground">{message}</p>
+      )}
     </form>
   );
 }
