@@ -120,6 +120,7 @@ export default function PaymentDetailsForm({
               onSubmitSuccess(userId, eventId, router, setMessage)
             }
             eventId={eventId}
+            existingBusinessName={effectiveDetails?.businessName} 
           />
         )}
         {message && <p className="text-sm text-muted-foreground">{message}</p>}
