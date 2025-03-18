@@ -34,48 +34,58 @@ export type IOrderItem = {
   quantity: number;
 };
 
-const OrderSchema = new Schema({
-  createdAt: {
-    type: Date,
-    default: Date.now,
+const OrderSchema = new Schema(
+  {
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    stripeId: {
+      type: String,
+      unique: true,
+      required: false,
+    },
+    totalAmount: {
+      type: String,
+      required: true,
+    },
+    currency: {
+      type: String,
+      required: true,
+    },
+    event: {
+      type: Schema.Types.ObjectId,
+      ref: 'Event',
+      required: true,
+    },
+    buyer: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: false,
+    },
+    buyerEmail: {
+      type: String,
+      required: true,
+    },
+    paymentMethod: {
+      type: String,
+      enum: ['paystack', 'card', 'googlePay', 'applePay'],
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    priceCategories: [
+      {
+        name: { type: String, required: true },
+        price: { type: String, required: true },
+        quantity: { type: Number, required: true },
+      },
+    ],
   },
-  stripeId: {
-    type: String,
-    unique: true,
-    required: false,
-  },
-  totalAmount: {
-    type: String,
-    required: true,
-  },
-  currency: {
-    type: String,
-    required: true,
-  },
-  event: {
-    type: Schema.Types.ObjectId,
-    ref: 'Event',
-    required: true,
-  },
-  buyer: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: false,
-  },
-  buyerEmail: {
-    type: String,
-    required: true,
-  },
-  paymentMethod: {
-    type: String,
-    enum: ['paystack', 'card', 'googlePay', 'applePay'],
-    required: true,
-  },
-  quantity: {
-    type: Number,
-    required: true,
-  },
-});
+  { strict: false }
+);
 
 const Order = models.Order || model('Order', OrderSchema);
 
