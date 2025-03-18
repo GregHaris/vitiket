@@ -5,6 +5,7 @@ import Stripe from 'stripe';
 
 import {
   CheckoutOrderParams,
+  CheckoutOrderResponse,
   CreateOrderParams,
   GetOrdersByEventParams,
   GetOrdersByUserParams,
@@ -20,7 +21,9 @@ import User from '../database/models/user.model';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 // PAYSTACK CHECKOUT
-const checkoutPaystack = async (order: CheckoutOrderParams) => {
+const checkoutPaystack = async (
+  order: CheckoutOrderParams
+): Promise<CheckoutOrderResponse> => {
   try {
     await connectToDatabase();
 
@@ -53,7 +56,7 @@ const checkoutPaystack = async (order: CheckoutOrderParams) => {
       currency: order.currency,
       paymentMethod: 'paystack',
       quantity: order.quantity,
-      ...(order.isFree ? {} : { priceCategories: order.priceCategories }),
+      ...(order.isFree ? {} : { priceCategories: order.priceCategories }), // Optional for free events
     });
 
     const reference = `txn_${Date.now()}_${order.eventId}`;
@@ -128,7 +131,7 @@ const checkoutStripe = async (
   order: CheckoutOrderParams & {
     cardDetails?: { number: string; expiry: string; cvv: string };
   }
-) => {
+): Promise<CheckoutOrderResponse> => {
   try {
     await connectToDatabase();
 
@@ -159,7 +162,7 @@ const checkoutStripe = async (
       currency: order.currency,
       paymentMethod: order.paymentMethod || 'stripe',
       quantity: order.quantity,
-      ...(order.isFree ? {} : { priceCategories: order.priceCategories }), 
+      ...(order.isFree ? {} : { priceCategories: order.priceCategories }),
     });
 
     if (order.paymentMethod === 'card') {
@@ -197,7 +200,7 @@ const checkoutStripe = async (
       });
 
       return {
-        clientSecret: paymentIntent.client_secret,
+        clientSecret: paymentIntent.client_secret!,
         orderId: newOrder._id.toString(),
       };
     } else {
@@ -269,7 +272,7 @@ const checkoutStripe = async (
         quantity: order.quantity,
       });
 
-      return { url: session.url, orderId: newOrder._id.toString() };
+      return { url: session.url!, orderId: newOrder._id.toString() };
     }
   } catch (error) {
     console.error('Stripe checkout error:', error);
