@@ -1,58 +1,89 @@
 'use server';
 
 import { NextRequest, NextResponse } from 'next/server';
-
-import { createOrder } from '@/lib/actions/order.actions';
-import { connectToDatabase } from '@/lib/database';
 import crypto from 'crypto';
 
-export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const signature = req.headers.get('x-paystack-signature');
+import { connectToDatabase } from '@/lib/database';
+import { createOrder } from '@/lib/actions/order.actions';
 
-    // Verify webhook signature
-    const secret = process.env.PAYSTACK_SECRET_KEY!;
-    const hash = crypto
-      .createHmac('sha512', secret)
-      .update(JSON.stringify(body))
-      .digest('hex');
+export async function POST(req: NextRequest) {
+  const body = await req.text();
+  const signature = req.headers.get('x-paystack-signature') as string;
+  const secret = process.env.PAYSTACK_SECRET_KEY!;
+
+  let eventData;
+  try {
+    const hash = crypto.createHmac('sha512', secret).update(body).digest('hex');
     if (hash !== signature) {
+      console.error('Paystack webhook signature verification failed:', {
+        signature,
+        hash,
+      });
       return NextResponse.json(
         { message: 'Invalid signature' },
         { status: 401 }
       );
     }
 
-    const event = body.event;
-    if (event === 'charge.success') {
-      const data = body.data;
-      const metadata = data.metadata;
+    eventData = JSON.parse(body);
+  } catch (err) {
+    console.error('Webhook signature verification or parsing failed:', err);
+    return NextResponse.json(
+      { message: 'Webhook error', error: (err as Error).message },
+      { status: 400 }
+    );
+  }
 
-      const order = {
-        eventId: String(metadata.eventId),
-        buyerId: String(metadata.buyerId),
-        totalAmount: (data.amount / 100).toString(),
-        currency: String(data.currency),
-        buyerEmail: String(data.customer.email),
-        quantity: Number(metadata.quantity),
-        priceCategory: metadata.priceCategories
-          ? {
-              name: String(metadata.priceCategories.name),
-              price: String(metadata.priceCategories.price),
-            }
-          : undefined,
-        paymentMethod: 'paystack' as const,
-        createdAt: new Date(),
-      };
+  const event = eventData.event;
+  console.log('Webhook event received:', event);
 
-      await connectToDatabase();
-      await createOrder(order);
+  if (event === 'charge.success') {
+    const data = eventData.data;
+    const metadata = data.metadata;
+
+    if (!metadata?.eventId || !metadata?.buyerId) {
+      console.error('Missing metadata in Paystack webhook:', data);
+      return NextResponse.json(
+        { message: 'Missing metadata' },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json({ message: 'Webhook received' }, { status: 200 });
-  } catch (error) {
-    console.error('Webhook error:', error);
-    return NextResponse.json({ message: 'Webhook failed' }, { status: 500 });
+    await connectToDatabase();
+
+    const order = {
+      eventId: String(metadata.eventId),
+      buyerId: String(metadata.buyerId),
+      totalAmount: (data.amount / 100).toString(),
+      currency: data.currency?.toUpperCase() || 'NGN',
+      buyerEmail: data.customer?.email || '',
+      quantity: parseInt(metadata.quantity || '1', 10),
+      priceCategory: metadata.priceCategories
+        ? {
+            name: String(metadata.priceCategories.name),
+            price: String(metadata.priceCategories.price),
+          }
+        : undefined,
+      paymentMethod: 'paystack' as const,
+      createdAt: new Date(),
+    };
+
+    try {
+      console.log('Creating order:', order);
+      const newOrder = await createOrder(order);
+      console.log('Order created from Paystack webhook:', newOrder);
+      return NextResponse.json(
+        { message: 'Order created', order: newOrder },
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error('Failed to create order:', error);
+      return NextResponse.json(
+        { message: 'Order creation failed', error: (error as Error).message },
+        { status: 500 }
+      );
+    }
   }
+
+  return NextResponse.json({ message: 'Event received' }, { status: 200 });
 }
