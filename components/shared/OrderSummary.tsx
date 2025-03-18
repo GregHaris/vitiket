@@ -14,7 +14,7 @@ export default function OrderSummary({
   event: CheckoutDetailsProps['event'];
   currencySymbol: string;
   totalPrice: number;
-  selectedTickets: { [key: string]: number };
+  selectedTickets?: { name: string; price: string; quantity: number }[];
 }) {
   const ticketPrice = totalPrice / 1.05;
   const platformFee = totalPrice - ticketPrice;
@@ -35,11 +35,16 @@ export default function OrderSummary({
         <Separator className="bg-gray-300" />
         <div>
           <h4 className="font-bold">Tickets</h4>
-          {Object.entries(selectedTickets).map(([name, qty]) => (
-            <p key={name} className="text-sm text-gray-600">
-              {qty} x {name}
-            </p>
-          ))}
+          {selectedTickets && selectedTickets.length > 0 ? (
+            selectedTickets.map((cat, index) => (
+              <p key={index} className="text-sm text-gray-600">
+                {cat.quantity} x {cat.name} - {currencySymbol}
+                {(Number(cat.price) * cat.quantity).toLocaleString()}
+              </p>
+            ))
+          ) : (
+            <p className="text-sm text-gray-600">{event.quantity} x Ticket</p>
+          )}
         </div>
         <Separator className="bg-gray-300" />
         <div>
