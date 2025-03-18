@@ -187,11 +187,11 @@ export type CreateTypeParams = {
 export type CheckoutOrderParams = {
   eventTitle: string;
   eventId: string;
-  price?: string; 
+  price?: string;
   isFree: boolean;
   buyerId?: string;
   currency: string;
-  quantity: number; 
+  quantity: number;
   priceCategories?: { name: string; price: string; quantity: number }[];
   buyerEmail: string;
   paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
@@ -515,3 +515,7 @@ export interface TicketEmailParams {
   currency: string;
   quantity: number;
 }
+
+export type CheckoutOrderResponse =
+  | { url: string; orderId: string; clientSecret?: never }
+  | { clientSecret: string; orderId: string; url?: never };
