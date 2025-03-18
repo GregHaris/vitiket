@@ -88,6 +88,9 @@ export default function OrganizerConfirmationPage() {
             <>
               <h3 className="text-2xl font-bold">Stripe Details</h3>
               <p>
+                <strong>Business Name:</strong> {userDetails.businessName}
+              </p>
+              <p>
                 Your Stripe account is connected{' '}
                 <strong>(ID: {userDetails.stripeId})</strong>.
               </p>
