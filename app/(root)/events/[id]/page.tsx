@@ -36,6 +36,12 @@ const EventDetails = async (props: SearchParamProps) => {
 
   const eventLocation = event.location.split(', ||')[0];
 
+  const hostName =
+    event.organizer?.businessName ||
+    (event.organizer?.firstName && event.organizer?.lastName
+      ? `${event.organizer.firstName} ${event.organizer.lastName}`
+      : 'Unknown Host');
+
   return (
     <>
       <section className="wrapper pb-20 md:pb-0">
@@ -78,9 +84,7 @@ const EventDetails = async (props: SearchParamProps) => {
 
                   <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
                     <span className="font-bold">Host:</span>{' '}
-                    <span>
-                      {event.organizer?.firstName} {event.organizer?.lastName}
-                    </span>
+                    <span>{hostName}</span>
                   </p>
                   <div className="flex gap-2 md:gap-3 items-center">
                     <Image
