@@ -372,7 +372,7 @@ export interface CheckoutDetailsProps {
   event: IEvent;
   quantity: number;
   totalPrice: number;
-  selectedTickets: { [key: string]: number };
+  selectedTickets?: { name: string; price: string; quantity: number }[];
   onCloseDialog: () => void;
 }
 
