@@ -32,7 +32,14 @@ export default function TicketCard({ order }: TicketCardProps) {
         <Separator className="bg-gray-300" />
         <div>
           <h4 className="font-bold text-gray-800">Tickets</h4>
-          {order.quantity > 0 && (
+          {order.priceCategories && order.priceCategories.length > 0 ? (
+            order.priceCategories.map((cat, index) => (
+              <p key={index} className="text-sm text-gray-600">
+                {cat.quantity} x {cat.name} - {currencySymbol}
+                {(Number(cat.price) * cat.quantity).toLocaleString()}
+              </p>
+            ))
+          ) : (
             <p className="text-sm text-gray-600">{order.quantity} x Ticket</p>
           )}
         </div>
