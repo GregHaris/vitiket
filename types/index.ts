@@ -147,6 +147,7 @@ export type Event = {
   url?: string;
   organizer: {
     _id: string;
+    businessName: string;
     firstName: string;
     lastName: string;
   };
