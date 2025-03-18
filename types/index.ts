@@ -506,3 +506,14 @@ export type VerificationResult = {
 export type TicketCardProps = {
   order: IOrder;
 };
+
+export interface TicketEmailParams {
+  email: string;
+  eventTitle: string;
+  eventSubtitle?: string;
+  eventImage: string;
+  orderId: string;
+  totalAmount: string;
+  currency: string;
+  quantity: number;
+}
