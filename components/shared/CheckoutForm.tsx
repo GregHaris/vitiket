@@ -1,14 +1,15 @@
 'use client';
 
 import {
-  CardElement,
   Elements,
+  CardElement,
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import Link from 'next/link';
 
 import { Button } from '@ui/button';
 import { checkoutOrder } from '@/lib/actions/order.actions';
@@ -47,6 +48,10 @@ const CheckoutFormContent = ({
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState<string | null>(null);
+
+  const handleSignOut = async () => {
+    await onSignOut();
+  };
 
   const onSubmit = async (data: checkoutFormValues) => {
     if (!stripe || !elements) {
@@ -122,6 +127,37 @@ const CheckoutFormContent = ({
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Checkout</h1>
+
+      {/* User Authentication Message */}
+      {userId ? (
+        <div className="mb-6 text-sm text-gray-600 space-y-6">
+          <p>
+            Logged in as <strong>{form.getValues('email')}</strong>.{' '}
+            <button
+              onClick={handleSignOut}
+              className="cursor-pointer text-blue-600 hover:underline"
+            >
+              Not you?
+            </button>
+          </p>
+          <p>If you, please confirm details.</p>
+        </div>
+      ) : (
+        <div className="mb-6 text-sm text-gray-600">
+          <p>
+            <Link
+              href={`/sign-in?redirect_url=${encodeURIComponent(
+                window.location.href + '&checkout=true'
+              )}`}
+              className="cursor-pointer text-blue-600 hover:underline"
+            >
+              Sign in
+            </Link>{' '}
+            for a faster checkout experience.
+          </p>
+        </div>
+      )}
+
       <Form {...form}>
         <form
           onSubmit={(e) => {
@@ -211,15 +247,6 @@ const CheckoutFormContent = ({
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
-            </Button>
-          )}
-          {userId && (
-            <Button
-              type="button"
-              onClick={onSignOut}
-              className="w-full button bg-gray-200 text-black hover:bg-gray-300"
-            >
-              Sign Out
             </Button>
           )}
         </form>
