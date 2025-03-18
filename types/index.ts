@@ -519,3 +519,19 @@ export interface TicketEmailParams {
 export type CheckoutOrderResponse =
   | { url: string; orderId: string; clientSecret?: never }
   | { clientSecret: string; orderId: string; url?: never };
+
+export interface EventDetailsClientProps {
+  event: IEvent & {
+    organizer: {
+      businessName?: string;
+      firstName: string;
+      lastName: string;
+      _id: string;
+    };
+  };
+}
+
+export type CheckoutContextType = {
+  resetCheckout: () => void;
+  onResetCheckout: (callback: () => void) => void;
+};
