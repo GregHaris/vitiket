@@ -1,7 +1,6 @@
 'use server';
 
 import { ObjectId } from 'mongodb';
-import { redirect } from 'next/navigation';
 import Stripe from 'stripe';
 
 import {
@@ -12,6 +11,8 @@ import {
 } from '@/types';
 import { connectToDatabase } from '../database';
 import { handleError } from '../utils';
+import { IOrder } from '@/lib/database/models/order.model'; 
+import { sendTicketEmail } from '@/utils/email';
 import Event from '../database/models/event.model';
 import Order from '../database/models/order.model';
 import User from '../database/models/user.model';
@@ -27,7 +28,6 @@ const checkoutPaystack = async (order: CheckoutOrderParams) => {
     if (!event) throw new Error('Event not found');
 
     const user = await User.findById(order.buyerId);
-    if (!user) throw new Error('User not found');
 
     const organizer = await User.findById(event.organizer);
     if (!organizer || !organizer.subaccountCode)
@@ -41,13 +41,25 @@ const checkoutPaystack = async (order: CheckoutOrderParams) => {
     const platformFee = Math.round(ticketAmount * 0.05);
     const totalAmount = ticketAmount + platformFee;
 
+    const newOrder: IOrder = await Order.create({
+      event: order.eventId,
+      buyer: order.buyerId,
+      buyerEmail: order.buyerEmail,
+      totalAmount: (totalAmount / 100).toString(),
+      currency: order.currency,
+      paymentMethod: 'paystack',
+      quantity: order.quantity,
+    });
+
     const reference = `txn_${Date.now()}_${order.eventId}`;
     const payload = {
-      email: user.email || order.buyerEmail,
+      email: user?.email || order.buyerEmail,
       amount: totalAmount,
       currency: order.currency.toUpperCase(),
       reference,
-      callback_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/dashboard?success=true&reference=${reference}`,
+      callback_url: `${
+        process.env.NEXT_PUBLIC_SERVER_URL
+      }/checkout-success?orderId=${newOrder._id.toString()}`,
       metadata: {
         eventId: order.eventId,
         buyerId: order.buyerId,
@@ -63,7 +75,6 @@ const checkoutPaystack = async (order: CheckoutOrderParams) => {
       },
     };
 
-    console.log('Paystack payload:', JSON.stringify(payload, null, 2));
     const response = await fetch(
       'https://api.paystack.co/transaction/initialize',
       {
@@ -77,13 +88,27 @@ const checkoutPaystack = async (order: CheckoutOrderParams) => {
     );
 
     const data = await response.json();
-    console.log('Paystack response:', data);
     if (!response.ok || !data.status)
       throw new Error(
         data.message || 'Failed to initialize Paystack transaction'
       );
 
-    redirect(data.data.authorization_url);
+    // Send email with ticket
+    await sendTicketEmail({
+      email: order.buyerEmail,
+      eventTitle: event.title,
+      eventSubtitle: event.subtitle,
+      eventImage: event.imageUrl,
+      orderId: newOrder._id.toString(),
+      totalAmount: newOrder.totalAmount,
+      currency: order.currency,
+      quantity: order.quantity,
+    });
+
+    return {
+      url: data.data.authorization_url,
+      orderId: newOrder._id.toString(),
+    };
   } catch (error) {
     console.error('Paystack checkout error:', error);
     throw error;
@@ -103,7 +128,6 @@ const checkoutStripe = async (
     if (!event) throw new Error('Event not found');
 
     const user = await User.findById(order.buyerId);
-    if (!user) throw new Error('User not found');
 
     const organizer = await User.findById(event.organizer);
     if (!organizer || !organizer.stripeId)
@@ -116,6 +140,16 @@ const checkoutStripe = async (
     const totalAmount = ticketAmount + platformFee;
 
     if (order.paymentMethod === 'card') {
+      const newOrder: IOrder = await Order.create({
+        event: order.eventId,
+        buyer: order.buyerId,
+        buyerEmail: user?.email || order.buyerEmail,
+        totalAmount: (totalAmount / 100).toString(),
+        currency: order.currency,
+        paymentMethod: 'card',
+        quantity: order.quantity,
+      });
+
       const paymentIntent = await stripe.paymentIntents.create({
         amount: totalAmount,
         currency: order.currency.toLowerCase(),
@@ -129,44 +163,94 @@ const checkoutStripe = async (
         application_fee_amount: 0,
         transfer_data: { destination: organizer.stripeId },
       });
-      return { clientSecret: paymentIntent.client_secret };
+
+      // Update order with paymentIntent ID
+      newOrder.stripeId = paymentIntent.id;
+      await newOrder.save();
+
+      // Send email with ticket
+      await sendTicketEmail({
+        email: order.buyerEmail,
+        eventTitle: event.title,
+        eventSubtitle: event.subtitle,
+        eventImage: event.imageUrl,
+        orderId: newOrder._id.toString(),
+        totalAmount: newOrder.totalAmount,
+        currency: order.currency,
+        quantity: order.quantity,
+      });
+
+      return {
+        clientSecret: paymentIntent.client_secret,
+        orderId: newOrder._id.toString(),
+      };
     } else {
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card', 'google_pay', 'apple_pay'],
-        line_items: [
-          {
-            price_data: {
-              currency: order.currency.toLowerCase(),
-              product_data: { name: `Event Ticket (${event.title})` },
-              unit_amount: ticketAmount,
+      const newOrder: IOrder = await Order.create({
+        event: order.eventId,
+        buyer: order.buyerId,
+        buyerEmail: user?.email || order.buyerEmail,
+        totalAmount: (totalAmount / 100).toString(),
+        currency: order.currency,
+        paymentMethod: order.paymentMethod || 'stripe',
+        quantity: order.quantity,
+      });
+
+      const session: Stripe.Checkout.Session =
+        await stripe.checkout.sessions.create({
+          payment_method_types: ['card', 'google_pay', 'apple_pay'],
+          line_items: [
+            {
+              price_data: {
+                currency: order.currency.toLowerCase(),
+                product_data: { name: `Event Ticket (${event.title})` },
+                unit_amount: ticketAmount,
+              },
+              quantity: order.quantity,
             },
-            quantity: order.quantity,
-          },
-          {
-            price_data: {
-              currency: order.currency.toLowerCase(),
-              product_data: { name: 'Platform Fee (5%)' },
-              unit_amount: platformFee,
+            {
+              price_data: {
+                currency: order.currency.toLowerCase(),
+                product_data: { name: 'Platform Fee (5%)' },
+                unit_amount: platformFee,
+              },
+              quantity: 1,
             },
-            quantity: 1,
+          ],
+          mode: 'payment',
+          success_url: `${
+            process.env.NEXT_PUBLIC_SERVER_URL
+          }/checkout-success?orderId=${newOrder._id.toString()}`,
+          cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?canceled=true`,
+          customer_email: user?.email || order.buyerEmail,
+          metadata: {
+            eventId: order.eventId,
+            buyerId: order.buyerId,
+            quantity: order.quantity.toString(),
+            platformFee: platformFee / 100,
           },
-        ],
-        mode: 'payment',
-        success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/dashboard?success=true`,
-        cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?canceled=true`,
-        customer_email: user.email || order.buyerEmail,
-        metadata: {
-          eventId: order.eventId,
-          buyerId: order.buyerId,
-          quantity: order.quantity.toString(),
-          platformFee: platformFee / 100,
-        },
-        payment_intent_data: {
-          application_fee_amount: 0,
-          transfer_data: { destination: organizer.stripeId },
-        },
-      } as Stripe.Checkout.SessionCreateParams);
-      redirect(session.url!);
+          payment_intent_data: {
+            application_fee_amount: 0,
+            transfer_data: { destination: organizer.stripeId },
+          },
+        } as Stripe.Checkout.SessionCreateParams);
+
+      // Update order with session ID
+      newOrder.stripeId = session.id;
+      await newOrder.save();
+
+      // Send email with ticket
+      await sendTicketEmail({
+        email: order.buyerEmail,
+        eventTitle: event.title,
+        eventSubtitle: event.subtitle,
+        eventImage: event.imageUrl,
+        orderId: newOrder._id.toString(),
+        totalAmount: newOrder.totalAmount,
+        currency: order.currency,
+        quantity: order.quantity,
+      });
+
+      return { url: session.url, orderId: newOrder._id.toString() };
     }
   } catch (error) {
     console.error('Stripe checkout error:', error);
@@ -189,10 +273,9 @@ export const checkoutOrder = async (
     event.location.toLowerCase().includes('nigeria');
 
   if (isNigerianEvent) {
-    await checkoutPaystack(order);
+    return await checkoutPaystack(order);
   } else {
-    const result = await checkoutStripe(order);
-    return result;
+    return await checkoutStripe(order);
   }
 };
 
