@@ -11,7 +11,7 @@ import {
 } from '@/types';
 import { connectToDatabase } from '../database';
 import { handleError } from '../utils';
-import { IOrder } from '@/lib/database/models/order.model'; 
+import { IOrder } from '@/lib/database/models/order.model';
 import { sendTicketEmail } from '@/utils/email';
 import Event from '../database/models/event.model';
 import Order from '../database/models/order.model';
@@ -37,7 +37,11 @@ const checkoutPaystack = async (order: CheckoutOrderParams) => {
 
     const ticketAmount = order.isFree
       ? 0
-      : Math.round(Number(order.price) * 100);
+      : order.priceCategories!.reduce(
+          (sum, cat) =>
+            sum + Math.round(Number(cat.price) * 100) * cat.quantity,
+          0
+        );
     const platformFee = Math.round(ticketAmount * 0.05);
     const totalAmount = ticketAmount + platformFee;
 
@@ -49,6 +53,7 @@ const checkoutPaystack = async (order: CheckoutOrderParams) => {
       currency: order.currency,
       paymentMethod: 'paystack',
       quantity: order.quantity,
+      ...(order.isFree ? {} : { priceCategories: order.priceCategories }),
     });
 
     const reference = `txn_${Date.now()}_${order.eventId}`;
@@ -65,6 +70,9 @@ const checkoutPaystack = async (order: CheckoutOrderParams) => {
         buyerId: order.buyerId,
         quantity: order.quantity,
         platformFee: platformFee / 100,
+        ...(order.priceCategories && {
+          priceCategories: JSON.stringify(order.priceCategories),
+        }),
       },
       split: {
         type: 'percentage',
@@ -135,21 +143,26 @@ const checkoutStripe = async (
 
     const ticketAmount = order.isFree
       ? 0
-      : Math.round(Number(order.price) * 100);
+      : order.priceCategories!.reduce(
+          (sum, cat) =>
+            sum + Math.round(Number(cat.price) * 100) * cat.quantity,
+          0
+        );
     const platformFee = Math.round(ticketAmount * 0.05);
     const totalAmount = ticketAmount + platformFee;
 
-    if (order.paymentMethod === 'card') {
-      const newOrder: IOrder = await Order.create({
-        event: order.eventId,
-        buyer: order.buyerId,
-        buyerEmail: user?.email || order.buyerEmail,
-        totalAmount: (totalAmount / 100).toString(),
-        currency: order.currency,
-        paymentMethod: 'card',
-        quantity: order.quantity,
-      });
+    const newOrder: IOrder = await Order.create({
+      event: order.eventId,
+      buyer: order.buyerId,
+      buyerEmail: user?.email || order.buyerEmail,
+      totalAmount: (totalAmount / 100).toString(),
+      currency: order.currency,
+      paymentMethod: order.paymentMethod || 'stripe',
+      quantity: order.quantity,
+      ...(order.isFree ? {} : { priceCategories: order.priceCategories }), 
+    });
 
+    if (order.paymentMethod === 'card') {
       const paymentIntent = await stripe.paymentIntents.create({
         amount: totalAmount,
         currency: order.currency.toLowerCase(),
@@ -159,6 +172,9 @@ const checkoutStripe = async (
           buyerId: order.buyerId || null,
           quantity: order.quantity,
           platformFee: platformFee / 100,
+          ...(order.priceCategories && {
+            priceCategories: JSON.stringify(order.priceCategories),
+          }),
         },
         application_fee_amount: 0,
         transfer_data: { destination: organizer.stripeId },
@@ -185,37 +201,37 @@ const checkoutStripe = async (
         orderId: newOrder._id.toString(),
       };
     } else {
-      const newOrder: IOrder = await Order.create({
-        event: order.eventId,
-        buyer: order.buyerId,
-        buyerEmail: user?.email || order.buyerEmail,
-        totalAmount: (totalAmount / 100).toString(),
-        currency: order.currency,
-        paymentMethod: order.paymentMethod || 'stripe',
-        quantity: order.quantity,
-      });
-
       const session: Stripe.Checkout.Session =
         await stripe.checkout.sessions.create({
           payment_method_types: ['card', 'google_pay', 'apple_pay'],
-          line_items: [
-            {
-              price_data: {
-                currency: order.currency.toLowerCase(),
-                product_data: { name: `Event Ticket (${event.title})` },
-                unit_amount: ticketAmount,
-              },
-              quantity: order.quantity,
-            },
-            {
-              price_data: {
-                currency: order.currency.toLowerCase(),
-                product_data: { name: 'Platform Fee (5%)' },
-                unit_amount: platformFee,
-              },
-              quantity: 1,
-            },
-          ],
+          line_items: order.isFree
+            ? [
+                {
+                  price_data: {
+                    currency: order.currency.toLowerCase(),
+                    product_data: { name: `${event.title} - Free Ticket` },
+                    unit_amount: 0,
+                  },
+                  quantity: order.quantity,
+                },
+              ]
+            : order
+                .priceCategories!.map((cat) => ({
+                  price_data: {
+                    currency: order.currency.toLowerCase(),
+                    product_data: { name: `${event.title} - ${cat.name}` },
+                    unit_amount: Math.round(Number(cat.price) * 100),
+                  },
+                  quantity: cat.quantity,
+                }))
+                .concat({
+                  price_data: {
+                    currency: order.currency.toLowerCase(),
+                    product_data: { name: 'Platform Fee (5%)' },
+                    unit_amount: platformFee,
+                  },
+                  quantity: 1,
+                }),
           mode: 'payment',
           success_url: `${
             process.env.NEXT_PUBLIC_SERVER_URL
@@ -227,6 +243,9 @@ const checkoutStripe = async (
             buyerId: order.buyerId,
             quantity: order.quantity.toString(),
             platformFee: platformFee / 100,
+            ...(order.priceCategories && {
+              priceCategories: JSON.stringify(order.priceCategories),
+            }),
           },
           payment_intent_data: {
             application_fee_amount: 0,
