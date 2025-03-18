@@ -1,23 +1,22 @@
 'use client';
 
 import {
-  Elements,
   CardElement,
+  Elements,
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import UserInfoInput from './FormUserInfoInput';
 
 import { Button } from '@ui/button';
 import { checkoutOrder } from '@/lib/actions/order.actions';
 import { createOrder } from '@/lib/actions/order.actions';
+import { CheckoutDetailsProps, CheckoutOrderResponse } from '@/types';
 import { checkoutFormValues } from '@/lib/validator';
-import { CheckoutDetailsProps } from '@/types';
 import { Form } from '@ui/form';
-
+import UserInfoInput from './FormUserInfoInput';
 import PaymentMethodSelector from './FormPaymentMethods';
 
 const stripePromise = loadStripe(
@@ -33,6 +32,7 @@ const CheckoutFormContent = ({
   onCloseDialog,
   form,
   onSignOut,
+  priceCategories,
 }: {
   event: CheckoutDetailsProps['event'];
   quantity: number;
@@ -42,6 +42,7 @@ const CheckoutFormContent = ({
   onCloseDialog: () => void;
   form: ReturnType<typeof useForm<checkoutFormValues>>;
   onSignOut: () => Promise<void>;
+  priceCategories?: { name: string; price: string; quantity: number }[];
 }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -62,46 +63,54 @@ const CheckoutFormContent = ({
         isFree: event.isFree || false,
         currency: event.currency,
         quantity: quantity,
+        ...(event.isFree ? {} : { priceCategories }),
         buyerEmail: data.email,
         paymentMethod: data.paymentMethod,
       };
 
-      const result = await checkoutOrder(order);
+      const result: CheckoutOrderResponse = await checkoutOrder(order);
 
       if (data.paymentMethod === 'card' && !isNigerianEvent) {
-        if (!result || !result.clientSecret) {
+        if ('clientSecret' in result && result.clientSecret) {
+          const cardElement = elements.getElement(CardElement);
+          if (!cardElement) throw new Error('Card element not found');
+
+          const { error: paymentError, paymentIntent } =
+            await stripe.confirmCardPayment(result.clientSecret, {
+              payment_method: {
+                card: cardElement,
+                billing_details: {
+                  name: `${data.firstName} ${data.lastName}`,
+                  email: data.email,
+                },
+              },
+            });
+
+          if (paymentError) {
+            setError(paymentError.message || 'Payment failed');
+          } else if (paymentIntent?.status === 'succeeded') {
+            await createOrder({
+              stripeId: paymentIntent.id,
+              eventId: order.eventId,
+              buyerId: order.buyerId === 'guest' ? undefined : order.buyerId,
+              totalAmount: totalPrice.toString(),
+              currency: order.currency,
+              quantity: order.quantity,
+              ...(event.isFree ? {} : { priceCategories }),
+              buyerEmail: data.email,
+              paymentMethod: 'card',
+              createdAt: new Date(),
+            });
+            onCloseDialog();
+          }
+        } else {
           throw new Error('Failed to get payment intent from server');
         }
-
-        const cardElement = elements.getElement(CardElement);
-        if (!cardElement) throw new Error('Card element not found');
-
-        const { error: paymentError, paymentIntent } =
-          await stripe.confirmCardPayment(result.clientSecret, {
-            payment_method: {
-              card: cardElement,
-              billing_details: {
-                name: `${data.firstName} ${data.lastName}`,
-                email: data.email,
-              },
-            },
-          });
-
-        if (paymentError) {
-          setError(paymentError.message || 'Payment failed');
-        } else if (paymentIntent?.status === 'succeeded') {
-          await createOrder({
-            stripeId: paymentIntent.id,
-            eventId: order.eventId,
-            buyerId: order.buyerId === 'guest' ? undefined : order.buyerId,
-            totalAmount: totalPrice.toString(),
-            currency: order.currency,
-            quantity: order.quantity,
-            buyerEmail: data.email,
-            paymentMethod: 'card',
-            createdAt: new Date(),
-          });
-          onCloseDialog();
+      } else {
+        if ('url' in result && result.url) {
+          window.location.href = result.url;
+        } else {
+          throw new Error('Unexpected response from payment provider');
         }
       }
     } catch (error) {
@@ -156,13 +165,14 @@ const CheckoutFormContent = ({
               isFree: event.isFree || false,
               currency: event.currency,
               quantity: quantity,
+              ...(event.isFree ? {} : { priceCategories }),
               buyerEmail: form.getValues('email'),
             }}
           />
           {!isNigerianEvent && form.watch('paymentMethod') === 'card' && (
             <div className="space-y-4">
               <label className="text-sm font-medium">Card Information</label>
-              <div className="border border-gray-300 rounded-md">
+              <div className="border border-gray-300 rounded-md p-2">
                 <CardElement
                   options={{
                     style: {
@@ -194,6 +204,24 @@ const CheckoutFormContent = ({
               </Button>
             </div>
           )}
+          {(isNigerianEvent || form.watch('paymentMethod') !== 'card') && (
+            <Button
+              type="submit"
+              className="w-full button"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
+            </Button>
+          )}
+          {userId && (
+            <Button
+              type="button"
+              onClick={onSignOut}
+              className="w-full button bg-gray-200 text-black hover:bg-gray-300"
+            >
+              Sign Out
+            </Button>
+          )}
         </form>
       </Form>
     </div>
@@ -209,6 +237,7 @@ export default function CheckoutForm({
   onCloseDialog,
   form,
   onSignOut,
+  priceCategories,
 }: {
   event: CheckoutDetailsProps['event'];
   quantity: number;
@@ -218,6 +247,7 @@ export default function CheckoutForm({
   onCloseDialog: () => void;
   form: ReturnType<typeof useForm<checkoutFormValues>>;
   onSignOut: () => Promise<void>;
+  priceCategories?: { name: string; price: string; quantity: number }[];
 }) {
   return (
     <Elements stripe={stripePromise}>
@@ -230,6 +260,7 @@ export default function CheckoutForm({
         onCloseDialog={onCloseDialog}
         form={form}
         onSignOut={onSignOut}
+        priceCategories={priceCategories}
       />
     </Elements>
   );
