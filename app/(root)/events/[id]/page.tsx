@@ -5,7 +5,7 @@ import {
 } from '@/lib/actions/event.actions';
 import { SearchParamProps } from '@/types';
 import Collection from '@shared/Collection';
-import EventDetailsClient from './EventDetailsClient';
+import EventDetails from './EventDetails';
 
 export default async function EventDetailsPage(props: SearchParamProps) {
   const resolvedSearchParams = await props.searchParams;
@@ -29,7 +29,7 @@ export default async function EventDetailsPage(props: SearchParamProps) {
 
   return (
     <>
-      <EventDetailsClient event={event} />
+      <EventDetails event={event} />
       <section className="wrapper my-7 flex flex-col gap-8 md:gap-12">
         <h2 className="h2-bold">Related Events</h2>
         <Collection

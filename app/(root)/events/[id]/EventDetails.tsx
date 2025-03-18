@@ -14,7 +14,7 @@ import SafeHTMLRenderer from '@shared/SafeHTMLRenderer';
 
 
 
-export default function EventDetailsClient({ event }: EventDetailsClientProps) {
+export default function EventDetails({ event }: EventDetailsClientProps) {
   const isSameDate =
     formatDateTime(event.startDate).dateOnly ===
     formatDateTime(event.endDate).dateOnly;
