@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@ui/button';
 import { CheckoutButtonProps, CurrencyKey } from '@/types';
 import { currencySymbols } from '@/constants';
@@ -10,6 +10,7 @@ import CheckoutDetails from '@shared/CheckoutDetails';
 
 export default function CheckoutButton({ event }: CheckoutButtonProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -59,7 +60,16 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
   const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
 
   const handleCheckout = () => setIsDialogOpen(true);
-  const handleCloseDialog = () => setIsDialogOpen(false);
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    const params = new URLSearchParams(searchParams?.toString());
+    params.delete('checkout');
+    event.priceCategories?.forEach((_, index) => {
+      params.delete(`category-${index}`);
+    });
+    params.delete('free');
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <>

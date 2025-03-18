@@ -74,7 +74,7 @@ export default function CheckoutDetails({
       params.delete(`category-${index}`);
     });
     params.delete('free');
-    router.replace(`?${params.toString()}`);
+    router.replace(`?${params.toString()}`, { scroll: false });
   };
 
   const handleConfirmCancel = () => {

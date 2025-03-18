@@ -10,7 +10,6 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Generate IDs for price categories
   const priceCategoriesWithIds = event.priceCategories?.map(
     (category, index) => ({
       ...category,
@@ -18,7 +17,6 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
     })
   );
 
-  // Initialize state for quantities
   const [quantities, setQuantities] = useState<{ [key: string]: number }>(
     () => {
       const initialQuantities: { [key: string]: number } = {};
@@ -34,15 +32,23 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
     }
   );
 
-  // Debounce URL updates
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const newSearchParams = new URLSearchParams(searchParams?.toString());
+      let hasQuantities = false;
       Object.entries(quantities).forEach(([categoryId, quantity]) => {
-        newSearchParams.set(categoryId, quantity.toString());
+        if (quantity > 0) {
+          newSearchParams.set(categoryId, quantity.toString());
+          hasQuantities = true;
+        } else {
+          newSearchParams.delete(categoryId);
+        }
       });
-      router.replace(`?${newSearchParams.toString()}`, { scroll: false });
-    }, 500); 
+
+      if (hasQuantities || newSearchParams.get('checkout')) {
+        router.replace(`?${newSearchParams.toString()}`, { scroll: false });
+      }
+    }, 500);
 
     return () => clearTimeout(timeoutId);
   }, [quantities, searchParams, router]);
@@ -53,6 +59,21 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
       return { ...prev, [categoryId]: newQuantity };
     });
   };
+
+  // Reset quantities when searchParams are cleared
+  useEffect(() => {
+    const hasCheckout = searchParams?.get('checkout') === 'true';
+    const hasQuantities = Object.values(quantities).some((q) => q > 0);
+    if (!hasCheckout && hasQuantities) {
+      setQuantities((prev) => {
+        const resetQuantities: { [key: string]: number } = {};
+        Object.keys(prev).forEach((key) => {
+          resetQuantities[key] = 0;
+        });
+        return resetQuantities;
+      });
+    }
+  }, [searchParams]);
 
   return (
     <div className="flex flex-col gap-4 w-full">
