@@ -10,7 +10,7 @@ import {
 import CheckoutButton from '@shared/CheckoutButton';
 import Collection from '@shared/Collection';
 import ContactHost from '@shared/ContactHost';
-import EventMap from '@shared/EventMap';
+import EventMapWrapper from '@shared/EventMapWrapper';
 import PriceCards from '@shared/PriceCards';
 import SafeHTMLRenderer from '@shared/SafeHTMLRenderer';
 
@@ -46,7 +46,6 @@ const EventDetails = async (props: SearchParamProps) => {
     <>
       <section className="wrapper pb-20 md:pb-0">
         <div className="2xl:max-w-7xl space-y-6 w-full">
-          {/* Event Image */}
           <div className="w-full">
             <Image
               src={event.imageUrl}
@@ -59,26 +58,25 @@ const EventDetails = async (props: SearchParamProps) => {
           <div className="flex w-full flex-col gap-8 p-5 md:p-10">
             <div className="flex flex-col gap-2 space-y-6">
               <div className="flex justify-between gap-3">
-                {/* Event Details */}
                 <div className="flex flex-col gap-5">
                   <h2 className="text-4xl font-bold">{event.title}</h2>
 
                   <div className="flex flex-col md:flex-row gap-5 flex-wrap">
                     <p
-                      className=" text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
+                      className="text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
                       style={{ color: event.type?.color }}
                     >
                       {event.type?.name}
                     </p>
                     <p
-                      className=" text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
+                      className="text-sm font-bold rounded-full bg-gray-100 px-4 py-2.5 w-fit"
                       style={{ color: event.category?.color }}
                     >
                       {event.category?.name}
                     </p>
                   </div>
 
-                  <p className="p-regular-16 lg:p-regular-18 ">
+                  <p className="p-regular-16 lg:p-regular-18">
                     {event.subtitle}
                   </p>
 
@@ -94,7 +92,6 @@ const EventDetails = async (props: SearchParamProps) => {
                       height={32}
                     />
                     <div className="p-medium-16 lg:p-regular-20 items-center">
-                      {/* Conditionally render the date */}
                       {isSameDate ? (
                         <p>{formatDateTime(event.startDate).dateOnly}</p>
                       ) : (
@@ -138,7 +135,6 @@ const EventDetails = async (props: SearchParamProps) => {
                     <SafeHTMLRenderer html={event.description} />
                   </div>
 
-                  {/* Price Section */}
                   <div id="price-section" className="flex flex-col gap-3">
                     <h3 className="text-2xl font-bold">Tickets</h3>
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -149,14 +145,13 @@ const EventDetails = async (props: SearchParamProps) => {
                     </div>
                   </div>
 
-                  {/* Map Section */}
                   {(event.locationType === 'Physical' ||
                     event.location === 'Hybrid') &&
                     event.coordinates && (
                       <div className="flex flex-col gap-3">
                         <h3 className="text-2xl font-bold">Direction</h3>
                         <div className="w-full h-[400px]">
-                          <EventMap
+                          <EventMapWrapper
                             coordinates={event.coordinates}
                             destinationInfo={event.location}
                           />
@@ -171,7 +166,6 @@ const EventDetails = async (props: SearchParamProps) => {
                   </div>
                 </div>
 
-                {/* Sticky Checkout Button */}
                 <div>
                   <CheckoutButton event={event} />
                 </div>
@@ -181,7 +175,6 @@ const EventDetails = async (props: SearchParamProps) => {
         </div>
       </section>
 
-      {/* Related Events */}
       <section className="wrapper my-7 flex flex-col gap-8 md:gap-12">
         <h2 className="h2-bold">Related Events</h2>
         <Collection
