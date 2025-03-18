@@ -18,17 +18,23 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
 
   let totalQuantity = 0;
   let ticketPrice = 0;
-  const selectedTickets: { [key: string]: number } = {};
+  let priceCategories:
+    | { name: string; price: string; quantity: number }[]
+    | undefined;
 
   if (event.isFree) {
     totalQuantity = Number(searchParams?.get('free')) || 0;
-    selectedTickets['free'] = totalQuantity;
   } else {
+    priceCategories = [];
     event.priceCategories?.forEach((category, index) => {
       const categoryId = `category-${index}`;
       const quantity = Number(searchParams?.get(categoryId)) || 0;
       if (quantity > 0) {
-        selectedTickets[category.name] = quantity;
+        priceCategories?.push({
+          name: category.name,
+          price: category.price,
+          quantity,
+        });
         totalQuantity += quantity;
         ticketPrice += quantity * Number(category.price);
       }
@@ -103,7 +109,7 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
             event={event}
             quantity={totalQuantity}
             totalPrice={totalPrice}
-            selectedTickets={selectedTickets}
+            selectedTickets={priceCategories}
             onCloseDialog={handleCloseDialog}
           />
         </DialogContent>

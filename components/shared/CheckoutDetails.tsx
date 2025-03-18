@@ -22,9 +22,7 @@ export default function CheckoutDetails({
   totalPrice,
   selectedTickets,
   onCloseDialog,
-}: CheckoutDetailsProps & {
-  selectedTickets: { [key: string]: number };
-}) {
+}: CheckoutDetailsProps) {
   const { user } = useUser();
   const clerk = useClerk();
   const searchParams = useSearchParams();
@@ -115,6 +113,7 @@ export default function CheckoutDetails({
           onCloseDialog={onCloseDialog}
           form={form}
           onSignOut={handleSignOut}
+          priceCategories={selectedTickets}
         />
       </div>
       <OrderSummary
