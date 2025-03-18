@@ -74,13 +74,17 @@ export default function CheckoutDetails({
       params.delete(`category-${index}`);
     });
     params.delete('free');
-    router.replace(`?${params.toString()}`, { scroll: false });
+    router.replace(`?${params.toString()}`);
   };
 
   const handleConfirmCancel = () => {
     resetSearchParams();
     setIsCancelDialogOpen(false);
-    onCloseDialog();
+    onCloseDialog(true);
+  };
+
+  const handleBack = () => {
+    onCloseDialog(false);
   };
 
   const handleSignOut = async () => {
@@ -101,7 +105,7 @@ export default function CheckoutDetails({
     <div className="flex flex-col md:flex-row">
       <div className="w-full md:w-1/2">
         <CheckoutHeader
-          onBack={onCloseDialog}
+          onBack={handleBack}
           onCancel={() => setIsCancelDialogOpen(true)}
         />
         <CheckoutForm

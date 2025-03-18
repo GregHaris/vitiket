@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-
 import PriceCard from './PriceCardUI';
 import { PriceCardsProps } from '@/types';
+import { useCheckout } from '@shared/CheckoutContext';
 
 const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { onResetCheckout } = useCheckout();
 
   const priceCategoriesWithIds = event.priceCategories?.map(
     (category, index) => ({
@@ -32,22 +33,32 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
     }
   );
 
+  // Reset quantities when the reset event is triggered
+  useEffect(() => {
+    const unsubscribe = onResetCheckout(() => {
+      setQuantities((prev) => {
+        const resetQuantities: { [key: string]: number } = {};
+        Object.keys(prev).forEach((key) => {
+          resetQuantities[key] = 0;
+        });
+        return resetQuantities;
+      });
+    });
+    return unsubscribe; // Cleanup listener on unmount
+  }, [onResetCheckout]);
+
+  // Sync URL with quantities
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const newSearchParams = new URLSearchParams(searchParams?.toString());
-      let hasQuantities = false;
       Object.entries(quantities).forEach(([categoryId, quantity]) => {
         if (quantity > 0) {
           newSearchParams.set(categoryId, quantity.toString());
-          hasQuantities = true;
         } else {
           newSearchParams.delete(categoryId);
         }
       });
-
-      if (hasQuantities || newSearchParams.get('checkout')) {
-        router.replace(`?${newSearchParams.toString()}`, { scroll: false });
-      }
+      router.replace(`?${newSearchParams.toString()}`, { scroll: false });
     }, 500);
 
     return () => clearTimeout(timeoutId);
@@ -59,21 +70,6 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
       return { ...prev, [categoryId]: newQuantity };
     });
   };
-
-  // Reset quantities when searchParams are cleared
-  useEffect(() => {
-    const hasCheckout = searchParams?.get('checkout') === 'true';
-    const hasQuantities = Object.values(quantities).some((q) => q > 0);
-    if (!hasCheckout && hasQuantities) {
-      setQuantities((prev) => {
-        const resetQuantities: { [key: string]: number } = {};
-        Object.keys(prev).forEach((key) => {
-          resetQuantities[key] = 0;
-        });
-        return resetQuantities;
-      });
-    }
-  }, [searchParams]);
 
   return (
     <div className="flex flex-col gap-4 w-full">
