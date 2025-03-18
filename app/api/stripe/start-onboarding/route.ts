@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, eventId } = await req.json();
+    const { userId, eventId, businessName } = await req.json();
 
     await connectToDatabase();
     const user = await User.findById(userId);
@@ -19,18 +19,25 @@ export async function POST(req: NextRequest) {
       const account = await stripe.accounts.create({
         type: 'express',
         email: user.email,
+        business_type: businessName ? 'company' : 'individual', 
+        company: businessName ? { name: businessName } : undefined,
         capabilities: {
           card_payments: { requested: true },
           transfers: { requested: true },
         },
       });
       stripeId = account.id;
-      await User.findByIdAndUpdate(userId, { stripeId });
     }
+
+    // Update user with stripeId and businessName
+    await User.findByIdAndUpdate(userId, {
+      stripeId,
+      ...(businessName && { businessName }),
+    });
 
     const accountLink = await stripe.accountLinks.create({
       account: stripeId,
-      refresh_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/organizer/setup?userId=${userId}refresh=true`,
+      refresh_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/organizer/setup?userId=${userId}&refresh=true`,
       return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${eventId}`,
       type: 'account_onboarding',
     });
