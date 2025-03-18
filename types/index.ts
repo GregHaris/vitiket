@@ -318,8 +318,8 @@ export type TooltipProps = {
 };
 
 export type EventMapProps = {
-  coordinates: string;
-  destinationInfo: string;
+  coordinates?: string;
+  destinationInfo?: string;
 };
 
 export type CurrencyKey = keyof typeof currencySymbols;
