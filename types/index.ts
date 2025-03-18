@@ -366,7 +366,6 @@ export type ManageTypeAndCategoryProps = {
 
 export type CheckoutButtonProps = {
   event: IEvent;
-  onResetSelections?: () => void;
 };
 
 export interface CheckoutDetailsProps {
@@ -374,7 +373,7 @@ export interface CheckoutDetailsProps {
   quantity: number;
   totalPrice: number;
   selectedTickets?: { name: string; price: string; quantity: number }[];
-  onCloseDialog: () => void;
+  onCloseDialog: (reset?: boolean) => void;
 }
 
 export type UserInfoInputProps = {
