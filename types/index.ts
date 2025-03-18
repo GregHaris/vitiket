@@ -366,6 +366,7 @@ export type ManageTypeAndCategoryProps = {
 
 export type CheckoutButtonProps = {
   event: IEvent;
+  onResetSelections?: () => void;
 };
 
 export interface CheckoutDetailsProps {
