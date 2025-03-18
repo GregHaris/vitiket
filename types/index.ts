@@ -187,15 +187,12 @@ export type CreateTypeParams = {
 export type CheckoutOrderParams = {
   eventTitle: string;
   eventId: string;
-  price: string;
+  price?: string; 
   isFree: boolean;
   buyerId?: string;
   currency: string;
-  quantity: number;
-  priceCategory?: {
-    name: string;
-    price: string;
-  };
+  quantity: number; 
+  priceCategories?: { name: string; price: string; quantity: number }[];
   buyerEmail: string;
   paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
 };

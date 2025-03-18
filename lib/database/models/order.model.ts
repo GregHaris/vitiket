@@ -18,6 +18,7 @@ export interface IOrder extends Document {
   buyerEmail: string;
   paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
   quantity: number;
+  priceCategories?: { name: string; price: string; quantity: number }[];
 }
 
 export type IOrderItem = {
