@@ -30,7 +30,7 @@ const populateEvent = async <T extends IEvent | IEvent[] | null>(
     .populate({
       path: 'organizer',
       model: User,
-      select: '_id firstName lastName',
+      select: '_id firstName lastName businessName',
     })
     .populate({ path: 'category', model: Category, select: '_id name color' })
     .populate({ path: 'type', model: Type, select: '_id name color' });
