@@ -51,7 +51,7 @@ const checkoutPaystack = async (
     const reference = `txn_${Date.now()}_${order.eventId}`;
     const newOrder: IOrder = await Order.create({
       event: order.eventId,
-      buyer: order.buyerId,
+      buyer: order.buyerId === 'guest' ? null : order.buyerId,
       buyerEmail: order.buyerEmail,
       totalAmount: (totalAmount / 100).toString(),
       currency: order.currency,
@@ -68,7 +68,7 @@ const checkoutPaystack = async (
       reference,
       callback_url: `${
         process.env.NEXT_PUBLIC_SERVER_URL
-      }/checkout-success?orderId=${newOrder._id.toString()}`,
+      }/checkout-success/${newOrder._id.toString()}`,
       metadata: {
         eventId: order.eventId,
         buyerId: order.buyerId,
@@ -157,6 +157,17 @@ const checkoutStripe = async (
     let stripeId: string;
     let result: CheckoutOrderResponse;
 
+    const newOrder: IOrder = await Order.create({
+      event: order.eventId,
+      buyer: order.buyerId === 'guest' ? null : order.buyerId,
+      buyerEmail: user?.email || order.buyerEmail,
+      totalAmount: (totalAmount / 100).toString(),
+      currency: order.currency,
+      paymentMethod: order.paymentMethod || 'stripe',
+      quantity: order.quantity,
+      ...(order.isFree ? {} : { priceCategories: order.priceCategories }),
+    });
+
     if (order.paymentMethod === 'card') {
       const paymentIntent = await stripe.paymentIntents.create({
         amount: totalAmount,
@@ -176,9 +187,10 @@ const checkoutStripe = async (
       });
 
       stripeId = paymentIntent.id;
+      await Order.findByIdAndUpdate(newOrder._id, { stripeId });
       result = {
         clientSecret: paymentIntent.client_secret!,
-        orderId: '',
+        orderId: newOrder._id.toString(),
       };
     } else {
       const session: Stripe.Checkout.Session =
@@ -213,7 +225,9 @@ const checkoutStripe = async (
                   quantity: 1,
                 }),
           mode: 'payment',
-          success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/checkout-success?orderId={CHECKOUT_SESSION_ID}`,
+          success_url: `${
+            process.env.NEXT_PUBLIC_SERVER_URL
+          }/checkout-success/${newOrder._id.toString()}`,
           cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?canceled=true`,
           customer_email: user?.email || order.buyerEmail,
           metadata: {
@@ -232,20 +246,9 @@ const checkoutStripe = async (
         } as Stripe.Checkout.SessionCreateParams);
 
       stripeId = session.id;
-      result = { url: session.url!, orderId: '' };
+      await Order.findByIdAndUpdate(newOrder._id, { stripeId });
+      result = { url: session.url!, orderId: newOrder._id.toString() };
     }
-
-    const newOrder: IOrder = await Order.create({
-      event: order.eventId,
-      buyer: order.buyerId,
-      buyerEmail: user?.email || order.buyerEmail,
-      totalAmount: (totalAmount / 100).toString(),
-      currency: order.currency,
-      paymentMethod: order.paymentMethod || 'stripe',
-      quantity: order.quantity,
-      stripeId,
-      ...(order.isFree ? {} : { priceCategories: order.priceCategories }),
-    });
 
     await sendTicketEmail({
       email: order.buyerEmail,
@@ -258,7 +261,6 @@ const checkoutStripe = async (
       quantity: order.quantity,
     });
 
-    result.orderId = newOrder._id.toString();
     return result;
   } catch (error) {
     console.error('Stripe checkout error:', error);
