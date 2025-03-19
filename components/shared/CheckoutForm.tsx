@@ -93,13 +93,11 @@ const CheckoutFormContent = ({
             if (!userId) {
               localStorage.setItem('guestCheckoutEmail', data.email);
             }
-            window.location.href = `/checkout-success?orderId=${result.orderId}`;
+            window.location.href = `/events/${event._id}?success=${result.orderId}`;
           }
 
           if (paymentError) {
             setError(paymentError.message || 'Payment failed');
-          } else if (paymentIntent?.status === 'succeeded') {
-            window.location.href = `/checkout-success/${result.orderId}`;
           }
         } else {
           throw new Error('Failed to get payment intent from server');
