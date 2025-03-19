@@ -83,6 +83,8 @@ const OrderSchema = new Schema(
         quantity: { type: Number, required: true },
       },
     ],
+    reference: { type: String, unique: true },
+    paymentStatus: { type: String, default: 'pending' },
   },
   { strict: false }
 );
