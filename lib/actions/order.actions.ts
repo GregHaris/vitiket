@@ -48,6 +48,7 @@ const checkoutPaystack = async (
     const platformFee = Math.round(ticketAmount * 0.05);
     const totalAmount = ticketAmount + platformFee;
 
+    const reference = `txn_${Date.now()}_${order.eventId}`;
     const newOrder: IOrder = await Order.create({
       event: order.eventId,
       buyer: order.buyerId,
@@ -56,10 +57,10 @@ const checkoutPaystack = async (
       currency: order.currency,
       paymentMethod: 'paystack',
       quantity: order.quantity,
-      ...(order.isFree ? {} : { priceCategories: order.priceCategories }), // Optional for free events
+      reference,
+      ...(order.isFree ? {} : { priceCategories: order.priceCategories }),
     });
 
-    const reference = `txn_${Date.now()}_${order.eventId}`;
     const payload = {
       email: user?.email || order.buyerEmail,
       amount: totalAmount,
@@ -104,7 +105,6 @@ const checkoutPaystack = async (
         data.message || 'Failed to initialize Paystack transaction'
       );
 
-    // Send email with ticket
     await sendTicketEmail({
       email: order.buyerEmail,
       eventTitle: event.title,
@@ -154,16 +154,8 @@ const checkoutStripe = async (
     const platformFee = Math.round(ticketAmount * 0.05);
     const totalAmount = ticketAmount + platformFee;
 
-    const newOrder: IOrder = await Order.create({
-      event: order.eventId,
-      buyer: order.buyerId,
-      buyerEmail: user?.email || order.buyerEmail,
-      totalAmount: (totalAmount / 100).toString(),
-      currency: order.currency,
-      paymentMethod: order.paymentMethod || 'stripe',
-      quantity: order.quantity,
-      ...(order.isFree ? {} : { priceCategories: order.priceCategories }),
-    });
+    let stripeId: string;
+    let result: CheckoutOrderResponse;
 
     if (order.paymentMethod === 'card') {
       const paymentIntent = await stripe.paymentIntents.create({
@@ -183,25 +175,10 @@ const checkoutStripe = async (
         transfer_data: { destination: organizer.stripeId },
       });
 
-      // Update order with paymentIntent ID
-      newOrder.stripeId = paymentIntent.id;
-      await newOrder.save();
-
-      // Send email with ticket
-      await sendTicketEmail({
-        email: order.buyerEmail,
-        eventTitle: event.title,
-        eventSubtitle: event.subtitle,
-        eventImage: event.imageUrl,
-        orderId: newOrder._id.toString(),
-        totalAmount: newOrder.totalAmount,
-        currency: order.currency,
-        quantity: order.quantity,
-      });
-
-      return {
+      stripeId = paymentIntent.id;
+      result = {
         clientSecret: paymentIntent.client_secret!,
-        orderId: newOrder._id.toString(),
+        orderId: '',
       };
     } else {
       const session: Stripe.Checkout.Session =
@@ -236,9 +213,7 @@ const checkoutStripe = async (
                   quantity: 1,
                 }),
           mode: 'payment',
-          success_url: `${
-            process.env.NEXT_PUBLIC_SERVER_URL
-          }/checkout-success?orderId=${newOrder._id.toString()}`,
+          success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/checkout-success?orderId={CHECKOUT_SESSION_ID}`,
           cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?canceled=true`,
           customer_email: user?.email || order.buyerEmail,
           metadata: {
@@ -256,24 +231,35 @@ const checkoutStripe = async (
           },
         } as Stripe.Checkout.SessionCreateParams);
 
-      // Update order with session ID
-      newOrder.stripeId = session.id;
-      await newOrder.save();
-
-      // Send email with ticket
-      await sendTicketEmail({
-        email: order.buyerEmail,
-        eventTitle: event.title,
-        eventSubtitle: event.subtitle,
-        eventImage: event.imageUrl,
-        orderId: newOrder._id.toString(),
-        totalAmount: newOrder.totalAmount,
-        currency: order.currency,
-        quantity: order.quantity,
-      });
-
-      return { url: session.url!, orderId: newOrder._id.toString() };
+      stripeId = session.id;
+      result = { url: session.url!, orderId: '' };
     }
+
+    const newOrder: IOrder = await Order.create({
+      event: order.eventId,
+      buyer: order.buyerId,
+      buyerEmail: user?.email || order.buyerEmail,
+      totalAmount: (totalAmount / 100).toString(),
+      currency: order.currency,
+      paymentMethod: order.paymentMethod || 'stripe',
+      quantity: order.quantity,
+      stripeId,
+      ...(order.isFree ? {} : { priceCategories: order.priceCategories }),
+    });
+
+    await sendTicketEmail({
+      email: order.buyerEmail,
+      eventTitle: event.title,
+      eventSubtitle: event.subtitle,
+      eventImage: event.imageUrl,
+      orderId: newOrder._id.toString(),
+      totalAmount: newOrder.totalAmount,
+      currency: order.currency,
+      quantity: order.quantity,
+    });
+
+    result.orderId = newOrder._id.toString();
+    return result;
   } catch (error) {
     console.error('Stripe checkout error:', error);
     throw error;
@@ -289,6 +275,17 @@ export const checkoutOrder = async (
   await connectToDatabase();
   const event = await Event.findById(order.eventId).populate('organizer');
   if (!event) throw new Error('Event not found');
+
+  const existingOrder = await Order.findOne({
+    event: order.eventId,
+    $or: [
+      { buyer: order.buyerId },
+      { buyerEmail: order.buyerEmail, buyer: null },
+    ],
+  });
+  if (existingOrder) {
+    throw new Error('You have already purchased a ticket for this event.');
+  }
 
   const isNigerianEvent =
     order.currency.toUpperCase() === 'NGN' &&
@@ -307,12 +304,12 @@ export const createOrder = async (order: CreateOrderParams) => {
     await connectToDatabase();
 
     const user = await User.findById(order.buyerId);
-    if (!user) throw new Error('User not found');
+    if (!user && order.buyerId !== 'guest') throw new Error('User not found');
 
     const newOrder = await Order.create({
       ...order,
       event: order.eventId,
-      buyer: order.buyerId,
+      buyer: order.buyerId === 'guest' ? null : order.buyerId,
       buyerEmail: order.buyerEmail,
       paymentMethod: order.paymentMethod,
       quantity: order.quantity,
@@ -338,6 +335,21 @@ export const hasUserPurchasedEvent = async (
     return !!order;
   } catch (error) {
     handleError(error);
+    return false;
+  }
+};
+
+export const hasUserPurchasedEventByEmail = async (
+  email: string,
+  eventId: string
+) => {
+  try {
+    await connectToDatabase();
+    const order = await Order.findOne({ buyerEmail: email, event: eventId });
+    return !!order;
+  } catch (error) {
+    handleError(error);
+    return false;
   }
 };
 
@@ -362,7 +374,10 @@ export async function getOrdersByEvent({
         },
       },
       {
-        $unwind: '$buyer',
+        $unwind: {
+          path: '$buyer',
+          preserveNullAndEmptyArrays: true,
+        },
       },
       {
         $lookup: {
@@ -383,16 +398,25 @@ export async function getOrdersByEvent({
           eventTitle: '$event.title',
           eventId: '$event._id',
           buyer: {
-            $concat: ['$buyer.firstName', ' ', '$buyer.lastName'],
+            $cond: {
+              if: { $eq: ['$buyer', null] },
+              then: 'Guest',
+              else: { $concat: ['$buyer.firstName', ' ', '$buyer.lastName'] },
+            },
           },
-          buyerEmail: '$buyer.email',
+          buyerEmail: 1,
         },
       },
       {
         $match: {
           $and: [
             { eventId: eventObjectId },
-            { buyer: { $regex: RegExp(searchString, 'i') } },
+            {
+              $or: [
+                { buyer: { $regex: RegExp(searchString, 'i') } },
+                { buyerEmail: { $regex: RegExp(searchString, 'i') } },
+              ],
+            },
           ],
         },
       },
