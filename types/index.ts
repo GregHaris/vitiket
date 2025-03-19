@@ -194,6 +194,8 @@ export type CheckoutOrderParams = {
   quantity: number;
   priceCategories?: { name: string; price: string; quantity: number }[];
   buyerEmail: string;
+  firstName?: string; 
+  lastName?: string;
   paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
 };
 
@@ -201,6 +203,8 @@ export type CreateOrderParams = {
   eventId: string;
   buyerId?: string;
   stripeId?: string;
+  firstName: string; 
+  lastName: string;
   totalAmount: string;
   currency: string;
   priceCategories?: { name: string; price: string; quantity: number }[];
@@ -505,6 +509,7 @@ export type TicketCardProps = {
 
 export interface TicketEmailParams {
   email: string;
+  firstName: string;
   eventTitle: string;
   eventSubtitle?: string;
   eventImage: string;
