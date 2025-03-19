@@ -203,15 +203,12 @@ export type CreateOrderParams = {
   stripeId?: string;
   totalAmount: string;
   currency: string;
-  priceCategory?: {
-    name: string;
-    price: string;
-  };
+  priceCategories?: { name: string; price: string; quantity: number }[];
   quantity: number;
   buyerEmail: string;
   reference?: string;
   paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
-  createdAt: Date;
+  createdAt?: Date;
 };
 
 export type GetOrdersByEventParams = {
