@@ -2,21 +2,39 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+
 import { Button } from '@ui/button';
 import { CheckoutButtonProps, CurrencyKey } from '@/types';
 import { currencySymbols } from '@/constants';
 import { Dialog, DialogContent, DialogDescription } from '@ui/dialog';
-import CheckoutDetails from '@shared/CheckoutDetails';
+import { hasUserPurchasedEventByEmail } from '@/lib/actions/order.actions';
 import { useCheckout } from '@shared/CheckoutContext';
+import CheckoutDetails from '@shared/CheckoutDetails';
 
-export default function CheckoutButton({ event }: CheckoutButtonProps) {
+export default function CheckoutButton({
+  event,
+  hasPurchased,
+}: CheckoutButtonProps & { hasPurchased?: boolean }) {
   const searchParams = useSearchParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { resetCheckout } = useCheckout();
+  const [guestPurchased, setGuestPurchased] = useState(false);
 
   useEffect(() => {
     if (searchParams?.get('checkout') === 'true') setIsDialogOpen(true);
   }, [searchParams]);
+
+  useEffect(() => {
+    const checkGuestPurchase = async () => {
+      const email = localStorage.getItem('guestCheckoutEmail');
+      if (email) {
+        const purchased = await hasUserPurchasedEventByEmail(email, event._id);
+        setGuestPurchased(purchased);
+      }
+    };
+    checkGuestPurchase();
+  }, [event._id]);
 
   let totalQuantity = 0;
   let ticketPrice = 0;
@@ -63,7 +81,7 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
   const handleCheckout = () => setIsDialogOpen(true);
   const handleCloseDialog = (reset: boolean = false) => {
     if (reset) {
-      resetCheckout(); // Trigger the reset event
+      resetCheckout();
       const params = new URLSearchParams(searchParams?.toString());
       params.delete('checkout');
       if (event.isFree) {
@@ -82,6 +100,8 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
     setIsDialogOpen(false);
   };
 
+  const isPurchased = hasPurchased || guestPurchased;
+
   return (
     <>
       <div className="fixed bottom-0 left-0 right-0 w-full md:sticky md:top-4 z-50 p-3 bg-white rounded-md shadow-gray-300 shadow-lg transition-all duration-300">
@@ -97,6 +117,20 @@ export default function CheckoutButton({ event }: CheckoutButtonProps) {
           >
             Get Tickets
           </Button>
+        ) : isPurchased ? (
+          <div className="text-center p-2 bg-green-100 rounded-md w-full md:w-[300px]">
+            <p className="text-green-700 font-semibold">
+              You’ve already purchased this event!
+            </p>
+            {hasPurchased && (
+              <Link
+                href={`/dashboard`}
+                className="text-blue-600 hover:underline"
+              >
+                View your tickets
+              </Link>
+            )}
+          </div>
         ) : (
           <Button
             className="rounded-md min-h-[56px] cursor-pointer text-primary-50 w-full md:w-[300px] font-bold transition-all duration-300 flex flex-col items-center justify-center gap-1 py-2"
