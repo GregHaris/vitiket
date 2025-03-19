@@ -2,22 +2,60 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
+import { Button } from '@ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@ui/dialog';
 import { CurrencyKey, EventDetailsClientProps } from '@/types';
 import { currencySymbols } from '@/constants';
 import { CheckoutProvider } from '@shared/CheckoutContext';
 import { formatDateTime } from '@/lib/utils';
+import { IOrder } from '@/lib/database/models/order.model';
 import CheckoutButton from '@shared/CheckoutButton';
 import ContactHost from '@shared/ContactHost';
 import EventMapWrapper from '@shared/EventMapWrapper';
 import PriceCards from '@shared/PriceCards';
 import SafeHTMLRenderer from '@shared/SafeHTMLRenderer';
+import TicketCard from '@shared/TicketCard';
+
+async function fetchOrder(orderId: string): Promise<IOrder | null> {
+  try {
+    const response = await fetch(`/api/orders/${orderId}`);
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    return null;
+  }
+}
 
 export default function EventDetails({
   event,
   hasPurchased,
   userId,
 }: EventDetailsClientProps & { hasPurchased: boolean; userId: string | null }) {
+  const searchParams = useSearchParams();
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [order, setOrder] = useState<IOrder | null>(null);
+
+  useEffect(() => {
+    const successOrderId = searchParams.get('success');
+    if (successOrderId) {
+      fetchOrder(successOrderId).then((fetchedOrder) => {
+        if (fetchedOrder) {
+          setOrder(fetchedOrder);
+          setIsSuccessOpen(true);
+        }
+      });
+    }
+  }, [searchParams]);
+
   const isSameDate =
     formatDateTime(event.startDate).dateOnly ===
     formatDateTime(event.endDate).dateOnly;
@@ -29,6 +67,10 @@ export default function EventDetails({
     (event.organizer?.firstName && event.organizer?.lastName
       ? `${event.organizer.firstName} ${event.organizer.lastName}`
       : 'Unknown Host');
+
+  const handleBackToEvent = () => {
+    setIsSuccessOpen(false);
+  };
 
   return (
     <CheckoutProvider>
@@ -176,6 +218,53 @@ export default function EventDetails({
           </div>
         </div>
       </section>
+
+      <Dialog open={isSuccessOpen} onOpenChange={setIsSuccessOpen}>
+        <DialogTitle className="sr-only">
+          {' '}
+          Successful checkout confirmation{' '}
+        </DialogTitle>
+        <DialogContent
+          className="sm:max-w-[90%] md:max-w-[800px] lg:max-w-[1000px] w-full max-h-[90vh] overflow-y-auto border-none bg-white rounded-lg shadow-lg p-0"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <DialogDescription className="sr-only">
+            Purchase confirmation details
+          </DialogDescription>
+          {order ? (
+            <div className="flex flex-col m-5 items-center ">
+              <div className="space-y-6 ">
+                <div className="flex flex-col items-center space-y-6">
+                  <h2 className="text-2xl font-bold text-green-600">
+                    Purchase Successful!
+                  </h2>
+                  <p className="text-gray-600">
+                    Your ticket has been sent to your email. Here’s your order
+                    summary:
+                  </p>
+                  <TicketCard order={order} />
+                </div>
+                <div className="flex gap-4 flex-nowrap justify-center">
+                  <Link
+                    href="/"
+                    className="w-full h-[40px] bg-primary-500 text-sm text-white py-2 rounded-lg hover:bg-primary-600 transition text-center"
+                  >
+                    Continue Browsing
+                  </Link>
+                  <Button
+                    onClick={handleBackToEvent}
+                    className="w-full h-[40px] bg-gray-200 text-gray-800 py-2 rounded-lg cursor-pointer hover:bg-gray-300 transition text-center p-regular-14"
+                  >
+                    Back to Event
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p>Loading order...</p>
+          )}
+        </DialogContent>
+      </Dialog>
     </CheckoutProvider>
   );
 }
