@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { CurrencyKey, EventDetailsClientProps } from '@/types';
 import { currencySymbols } from '@/constants';
@@ -12,9 +13,11 @@ import EventMapWrapper from '@shared/EventMapWrapper';
 import PriceCards from '@shared/PriceCards';
 import SafeHTMLRenderer from '@shared/SafeHTMLRenderer';
 
-
-
-export default function EventDetails({ event }: EventDetailsClientProps) {
+export default function EventDetails({
+  event,
+  hasPurchased,
+  userId,
+}: EventDetailsClientProps & { hasPurchased: boolean; userId: string | null }) {
   const isSameDate =
     formatDateTime(event.startDate).dateOnly ===
     formatDateTime(event.endDate).dateOnly;
@@ -64,6 +67,20 @@ export default function EventDetails({ event }: EventDetailsClientProps) {
                   <p className="p-regular-16 lg:p-regular-18">
                     {event.subtitle}
                   </p>
+
+                  {hasPurchased && userId && (
+                    <div className="bg-green-100 p-4 rounded-lg">
+                      <p className="text-green-700 font-semibold">
+                        You’ve already purchased this event!{' '}
+                        <Link
+                          href={`/dashboard`}
+                          className="text-blue-600 hover:underline"
+                        >
+                          View your tickets
+                        </Link>
+                      </p>
+                    </div>
+                  )}
 
                   <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
                     <span className="font-bold">Host:</span>{' '}
@@ -152,7 +169,7 @@ export default function EventDetails({ event }: EventDetailsClientProps) {
                 </div>
 
                 <div>
-                  <CheckoutButton event={event} />
+                  <CheckoutButton event={event} hasPurchased={hasPurchased} />
                 </div>
               </div>
             </div>

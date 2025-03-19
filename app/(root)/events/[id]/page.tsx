@@ -1,26 +1,26 @@
-import { IEvent } from '@/lib/database/models/event.model';
 import {
   getEventById,
   getRelatedEventsByCategory,
 } from '@/lib/actions/event.actions';
+import { hasUserPurchasedEvent } from '@/lib/actions/order.actions';
 import { SearchParamProps } from '@/types';
 import Collection from '@shared/Collection';
 import EventDetails from './EventDetails';
+import getUserId from '@/utils/userId';
 
 export default async function EventDetailsPage(props: SearchParamProps) {
   const resolvedSearchParams = await props.searchParams;
   const params = await props.params;
+  const userId = await getUserId();
 
   const { id } = params;
+  const event = await getEventById(id);
 
-  const event: IEvent & {
-    organizer: {
-      businessName?: string;
-      firstName: string;
-      lastName: string;
-      _id: string;
-    };
-  } = await getEventById(id);
+  // Check if user has purchased the event using userId directly
+  const hasPurchased = userId
+    ? (await hasUserPurchasedEvent(userId, id)) ?? false
+    : false;
+
   const relatedEvents = await getRelatedEventsByCategory({
     categoryId: event.category?._id,
     eventId: event._id,
@@ -29,7 +29,7 @@ export default async function EventDetailsPage(props: SearchParamProps) {
 
   return (
     <>
-      <EventDetails event={event} />
+      <EventDetails event={event} hasPurchased={hasPurchased} userId={userId} />
       <section className="wrapper my-7 flex flex-col gap-8 md:gap-12">
         <h2 className="h2-bold">Related Events</h2>
         <Collection
