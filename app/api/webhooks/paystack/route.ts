@@ -73,6 +73,8 @@ export async function POST(req: NextRequest) {
           : undefined,
         reference,
         paymentStatus: 'completed',
+        firstName: metadata.firstName, 
+        lastName: metadata.lastName, 
       });
 
       await sendTicketEmail({
@@ -84,6 +86,7 @@ export async function POST(req: NextRequest) {
         totalAmount: existingOrder.totalAmount,
         currency: currency?.toUpperCase() || 'NGN',
         quantity: Number(metadata.quantity),
+        firstName: existingOrder.firstName,
       });
     } else {
       existingOrder = await Order.findOneAndUpdate(

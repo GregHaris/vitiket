@@ -55,13 +55,15 @@ export async function POST(req: NextRequest) {
         buyerEmail: session.customer_email,
         totalAmount: amount_total ? (amount_total / 100).toString() : '0',
         currency: currency?.toLowerCase() || 'usd',
-        paymentMethod: 'stripe', 
+        paymentMethod: 'stripe',
         quantity: Number(metadata.quantity),
         priceCategories: metadata.priceCategories
           ? JSON.parse(metadata.priceCategories)
           : undefined,
         stripeId: id,
         paymentStatus: 'completed',
+        firstName: metadata.firstName,
+        lastName: metadata.lastName,
       });
 
       await sendTicketEmail({
@@ -73,6 +75,7 @@ export async function POST(req: NextRequest) {
         totalAmount: existingOrder.totalAmount,
         currency: currency?.toLowerCase() || 'usd',
         quantity: Number(metadata.quantity),
+        firstName: existingOrder.firstName,
       });
     } else {
       existingOrder = await Order.findOneAndUpdate(

@@ -12,7 +12,6 @@ import {
 } from '@/types';
 import { connectToDatabase } from '../database';
 import { handleError } from '../utils';
-import { IOrder } from '@/lib/database/models/order.model';
 import { sendTicketEmail } from '@/utils/email';
 import Event from '../database/models/event.model';
 import Order from '../database/models/order.model';
@@ -51,7 +50,6 @@ const checkoutPaystack = async (
 
     const reference = `txn_${Date.now()}_${order.eventId}`;
 
-    // Don’t create order yet; wait for webhook confirmation
     const payload = {
       email: user?.email || order.buyerEmail,
       amount: totalAmount,
@@ -63,6 +61,8 @@ const checkoutPaystack = async (
         buyerId: order.buyerId,
         quantity: order.quantity,
         platformFee: platformFee / 100,
+        firstName: order.firstName || user?.firstName,
+        lastName: order.lastName || user?.lastName,
         ...(order.priceCategories && {
           priceCategories: JSON.stringify(order.priceCategories),
         }),
@@ -96,7 +96,7 @@ const checkoutPaystack = async (
 
     return {
       url: data.data.authorization_url,
-      orderId: reference, // Temporary ID
+      orderId: reference,
     };
   } catch (error) {
     console.error('Paystack checkout error:', error);
@@ -116,7 +116,6 @@ const checkoutStripe = async (
     const event = await Event.findById(order.eventId);
     if (!event) throw new Error('Event not found');
 
-    // Skip User lookup for guest checkouts
     const user =
       order.buyerId === 'guest' ? null : await User.findById(order.buyerId);
 
@@ -147,6 +146,8 @@ const checkoutStripe = async (
           buyerId: order.buyerId || null,
           quantity: order.quantity,
           platformFee: platformFee / 100,
+          firstName: order.firstName || user?.firstName,
+          lastName: order.lastName || user?.lastName,
           ...(order.priceCategories && {
             priceCategories: JSON.stringify(order.priceCategories),
           }),
@@ -158,7 +159,7 @@ const checkoutStripe = async (
       stripeId = paymentIntent.id;
       result = {
         clientSecret: paymentIntent.client_secret!,
-        orderId: stripeId, // Temporary ID
+        orderId: stripeId,
       };
     } else {
       const session: Stripe.Checkout.Session =
@@ -203,6 +204,8 @@ const checkoutStripe = async (
             buyerId: order.buyerId,
             quantity: order.quantity.toString(),
             platformFee: platformFee / 100,
+            firstName: order.firstName || user?.firstName,
+            lastName: order.lastName || user?.lastName,
             ...(order.priceCategories && {
               priceCategories: JSON.stringify(order.priceCategories),
             }),
@@ -234,7 +237,6 @@ export const checkoutOrder = async (
   const event = await Event.findById(order.eventId).populate('organizer');
   if (!event) throw new Error('Event not found');
 
-  // Adjust query to handle guest checkouts
   const existingOrderConditions: any = {
     event: order.eventId,
     paymentStatus: 'completed',
@@ -242,12 +244,12 @@ export const checkoutOrder = async (
 
   if (order.buyerId === 'guest') {
     existingOrderConditions.$or = [
-      { buyerEmail: order.buyerEmail, buyer: null }, // Guest orders
+      { buyerEmail: order.buyerEmail, buyer: null },
     ];
   } else {
     existingOrderConditions.$or = [
-      { buyer: order.buyerId }, // Registered user orders
-      { buyerEmail: order.buyerEmail, buyer: null }, // Fallback for guests
+      { buyer: order.buyerId },
+      { buyerEmail: order.buyerEmail, buyer: null },
     ];
   }
 
@@ -267,7 +269,7 @@ export const checkoutOrder = async (
   }
 };
 
-// CREATE ORDER (used by webhooks or confirmed card payments)
+// CREATE ORDER
 export const createOrder = async (order: CreateOrderParams) => {
   try {
     await connectToDatabase();
@@ -289,6 +291,8 @@ export const createOrder = async (order: CreateOrderParams) => {
       stripeId: order.stripeId || undefined,
       reference: order.reference || undefined,
       paymentStatus: 'completed',
+      firstName: order.firstName || user?.firstName,
+      lastName: order.lastName || user?.lastName,
     });
 
     await sendTicketEmail({
@@ -300,6 +304,7 @@ export const createOrder = async (order: CreateOrderParams) => {
       totalAmount: order.totalAmount || newOrder.totalAmount,
       currency: order.currency,
       quantity: order.quantity,
+      firstName: newOrder.firstName,
     });
 
     return JSON.parse(JSON.stringify(newOrder));

@@ -69,6 +69,8 @@ const CheckoutFormContent = ({
         ...(event.isFree ? {} : { priceCategories }),
         buyerEmail: data.email,
         paymentMethod: data.paymentMethod,
+        firstName: data.firstName, 
+        lastName: data.lastName, 
       };
 
       const result: CheckoutOrderResponse = await checkoutOrder(orderParams);
@@ -99,12 +101,14 @@ const CheckoutFormContent = ({
               eventId: event._id,
               buyerId: userId || 'guest',
               stripeId: paymentIntent.id,
-              totalAmount: totalPrice.toString(), 
+              totalAmount: totalPrice.toString(),
               currency: event.currency,
               priceCategories: event.isFree ? undefined : priceCategories,
               quantity: quantity,
               buyerEmail: data.email,
               paymentMethod: data.paymentMethod,
+              firstName: data.firstName, 
+              lastName: data.lastName, 
             });
 
             if (!userId) {
@@ -117,7 +121,7 @@ const CheckoutFormContent = ({
         }
       } else {
         if ('url' in result && result.url) {
-          window.location.href = result.url; // Paystack or Stripe session redirect
+          window.location.href = result.url;
         } else {
           throw new Error('Unexpected response from payment provider');
         }
