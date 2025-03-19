@@ -535,7 +535,3 @@ export type CheckoutContextType = {
   resetCheckout: () => void;
   onResetCheckout: (callback: () => void) => void;
 };
-
-export interface CheckoutSuccessPageProps {
-  params: Promise<{ id: string }>;
-}
