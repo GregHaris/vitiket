@@ -209,6 +209,7 @@ export type CreateOrderParams = {
   };
   quantity: number;
   buyerEmail: string;
+  reference?: string;
   paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
   createdAt: Date;
 };
