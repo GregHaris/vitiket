@@ -40,7 +40,8 @@
       "@utils/*": [
         "./utils/*"
       ]
-    }
+    },
+    "resolveJsonModule": true
   },
   "include": [
     "next-env.d.ts",
