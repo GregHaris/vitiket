@@ -99,7 +99,7 @@ const CheckoutFormContent = ({
           if (paymentError) {
             setError(paymentError.message || 'Payment failed');
           } else if (paymentIntent?.status === 'succeeded') {
-            window.location.href = `/checkout-success?orderId=${result.orderId}`;
+            window.location.href = `/checkout-success/${result.orderId}`;
           }
         } else {
           throw new Error('Failed to get payment intent from server');
