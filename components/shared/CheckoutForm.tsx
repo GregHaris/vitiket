@@ -13,7 +13,6 @@ import Link from 'next/link';
 
 import { Button } from '@ui/button';
 import { checkoutOrder } from '@/lib/actions/order.actions';
-import { createOrder } from '@/lib/actions/order.actions';
 import { CheckoutDetailsProps, CheckoutOrderResponse } from '@/types';
 import { checkoutFormValues } from '@/lib/validator';
 import { Form } from '@ui/form';
@@ -30,7 +29,6 @@ const CheckoutFormContent = ({
   totalPrice,
   userId,
   isNigerianEvent,
-  onCloseDialog,
   form,
   onSignOut,
   priceCategories,
@@ -40,7 +38,7 @@ const CheckoutFormContent = ({
   totalPrice: number;
   userId: string | null;
   isNigerianEvent: boolean;
-  onCloseDialog: () => void;
+  onCloseDialog: (reset?: boolean) => void;
   form: ReturnType<typeof useForm<checkoutFormValues>>;
   onSignOut: () => Promise<void>;
   priceCategories?: { name: string; price: string; quantity: number }[];
@@ -91,22 +89,17 @@ const CheckoutFormContent = ({
               },
             });
 
+          if (paymentIntent?.status === 'succeeded') {
+            if (!userId) {
+              localStorage.setItem('guestCheckoutEmail', data.email);
+            }
+            window.location.href = `/checkout-success?orderId=${result.orderId}`;
+          }
+
           if (paymentError) {
             setError(paymentError.message || 'Payment failed');
           } else if (paymentIntent?.status === 'succeeded') {
-            await createOrder({
-              stripeId: paymentIntent.id,
-              eventId: order.eventId,
-              buyerId: order.buyerId === 'guest' ? undefined : order.buyerId,
-              totalAmount: totalPrice.toString(),
-              currency: order.currency,
-              quantity: order.quantity,
-              ...(event.isFree ? {} : { priceCategories }),
-              buyerEmail: data.email,
-              paymentMethod: 'card',
-              createdAt: new Date(),
-            });
-            onCloseDialog();
+            window.location.href = `/checkout-success?orderId=${result.orderId}`;
           }
         } else {
           throw new Error('Failed to get payment intent from server');
@@ -118,9 +111,15 @@ const CheckoutFormContent = ({
           throw new Error('Unexpected response from payment provider');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Checkout failed:', error);
-      setError('Checkout failed. Please try again.');
+      if (
+        error.message === 'You have already purchased a ticket for this event.'
+      ) {
+        setError(error.message);
+      } else {
+        setError('Checkout failed. Please try again.');
+      }
     }
   };
 
@@ -128,7 +127,6 @@ const CheckoutFormContent = ({
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Checkout</h1>
 
-      {/* User Authentication Message */}
       {userId ? (
         <div className="mb-6 text-sm text-gray-600 space-y-6">
           <p>
@@ -244,7 +242,7 @@ const CheckoutFormContent = ({
             <Button
               type="submit"
               className="w-full button"
-              disabled={form.formState.isSubmitting}
+              disabled={!stripe || form.formState.isSubmitting}
             >
               {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
             </Button>
@@ -271,7 +269,7 @@ export default function CheckoutForm({
   totalPrice: number;
   userId: string | null;
   isNigerianEvent: boolean;
-  onCloseDialog: () => void;
+  onCloseDialog: (reset?: boolean) => void;
   form: ReturnType<typeof useForm<checkoutFormValues>>;
   onSignOut: () => Promise<void>;
   priceCategories?: { name: string; price: string; quantity: number }[];
