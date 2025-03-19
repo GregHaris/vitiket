@@ -1,5 +1,4 @@
 import { Schema, model, models, Document } from 'mongoose';
-
 import { IEvent } from './event.model';
 
 export interface IOrder extends Document {
@@ -14,8 +13,10 @@ export interface IOrder extends Document {
     firstName: string;
     lastName: string;
     email: string;
-  };
+  } | null;
   buyerEmail: string;
+  firstName: string;
+  lastName: string;
   paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
   quantity: number;
   priceCategories?: { name: string; price: string; quantity: number }[];
@@ -64,6 +65,14 @@ const OrderSchema = new Schema(
       required: false,
     },
     buyerEmail: {
+      type: String,
+      required: true,
+    },
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
       type: String,
       required: true,
     },
