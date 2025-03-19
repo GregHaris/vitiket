@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 import { connectToDatabase } from '@/lib/database';
+import { sendTicketEmail } from '@/utils/email';
 import Order from '@/lib/database/models/order.model';
+import Event from '@/lib/database/models/event.model';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -39,27 +41,50 @@ export async function POST(req: NextRequest) {
 
     await connectToDatabase();
 
-    // Find and update existing order instead of creating a new one
-    const existingOrder = await Order.findOneAndUpdate(
-      { stripeId: id },
-      {
-        $set: {
-          totalAmount: amount_total ? (amount_total / 100).toString() : '0',
-          currency: currency?.toLowerCase() || 'usd',
-          paymentStatus: 'completed',
-        },
-      },
-      { new: true }
-    );
-
-    if (!existingOrder) {
-      console.error('Order not found for Stripe session:', id);
-      return NextResponse.json({ message: 'Order not found' }, { status: 404 });
+    const eventData = await Event.findById(metadata.eventId);
+    if (!eventData) {
+      console.error('Event not found for session:', id);
+      return NextResponse.json({ message: 'Event not found' }, { status: 404 });
     }
 
-    console.log('Order updated from Stripe webhook:', existingOrder);
+    let existingOrder = await Order.findOne({ stripeId: id });
+    if (!existingOrder) {
+      existingOrder = await Order.create({
+        event: metadata.eventId,
+        buyer: metadata.buyerId === 'guest' ? null : metadata.buyerId,
+        buyerEmail: session.customer_email,
+        totalAmount: amount_total ? (amount_total / 100).toString() : '0',
+        currency: currency?.toLowerCase() || 'usd',
+        paymentMethod: 'stripe', 
+        quantity: Number(metadata.quantity),
+        priceCategories: metadata.priceCategories
+          ? JSON.parse(metadata.priceCategories)
+          : undefined,
+        stripeId: id,
+        paymentStatus: 'completed',
+      });
+
+      await sendTicketEmail({
+        email: session.customer_email!,
+        eventTitle: eventData.title,
+        eventSubtitle: eventData.subtitle || '',
+        eventImage: eventData.imageUrl || '',
+        orderId: existingOrder._id.toString(),
+        totalAmount: existingOrder.totalAmount,
+        currency: currency?.toLowerCase() || 'usd',
+        quantity: Number(metadata.quantity),
+      });
+    } else {
+      existingOrder = await Order.findOneAndUpdate(
+        { stripeId: id },
+        { paymentStatus: 'completed' },
+        { new: true }
+      );
+    }
+
+    console.log('Order processed from Stripe webhook:', existingOrder);
     return NextResponse.json(
-      { message: 'Order updated', order: existingOrder },
+      { message: 'Order processed', order: existingOrder },
       { status: 200 }
     );
   }

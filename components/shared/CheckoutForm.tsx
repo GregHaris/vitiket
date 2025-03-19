@@ -12,7 +12,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { Button } from '@ui/button';
-import { checkoutOrder } from '@/lib/actions/order.actions';
+import { checkoutOrder, createOrder } from '@/lib/actions/order.actions';
 import { CheckoutDetailsProps, CheckoutOrderResponse } from '@/types';
 import { checkoutFormValues } from '@/lib/validator';
 import { Form } from '@ui/form';
@@ -58,7 +58,7 @@ const CheckoutFormContent = ({
     }
 
     try {
-      const order = {
+      const orderParams = {
         eventTitle: event.title,
         buyerId: userId || 'guest',
         eventId: event._id,
@@ -71,7 +71,7 @@ const CheckoutFormContent = ({
         paymentMethod: data.paymentMethod,
       };
 
-      const result: CheckoutOrderResponse = await checkoutOrder(order);
+      const result: CheckoutOrderResponse = await checkoutOrder(orderParams);
 
       if (data.paymentMethod === 'card' && !isNigerianEvent) {
         if ('clientSecret' in result && result.clientSecret) {
@@ -89,22 +89,35 @@ const CheckoutFormContent = ({
               },
             });
 
+          if (paymentError) {
+            setError(paymentError.message || 'Payment failed');
+            return;
+          }
+
           if (paymentIntent?.status === 'succeeded') {
+            const newOrder = await createOrder({
+              eventId: event._id,
+              buyerId: userId || 'guest',
+              stripeId: paymentIntent.id,
+              totalAmount: totalPrice.toString(), 
+              currency: event.currency,
+              priceCategories: event.isFree ? undefined : priceCategories,
+              quantity: quantity,
+              buyerEmail: data.email,
+              paymentMethod: data.paymentMethod,
+            });
+
             if (!userId) {
               localStorage.setItem('guestCheckoutEmail', data.email);
             }
-            window.location.href = `/events/${event._id}?success=${result.orderId}`;
-          }
-
-          if (paymentError) {
-            setError(paymentError.message || 'Payment failed');
+            window.location.href = `/events/${event._id}?success=${newOrder._id}`;
           }
         } else {
           throw new Error('Failed to get payment intent from server');
         }
       } else {
         if ('url' in result && result.url) {
-          window.location.href = result.url;
+          window.location.href = result.url; // Paystack or Stripe session redirect
         } else {
           throw new Error('Unexpected response from payment provider');
         }

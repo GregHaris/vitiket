@@ -30,7 +30,8 @@ const checkoutPaystack = async (
     const event = await Event.findById(order.eventId);
     if (!event) throw new Error('Event not found');
 
-    const user = await User.findById(order.buyerId);
+    const user =
+      order.buyerId === 'guest' ? null : await User.findById(order.buyerId);
 
     const organizer = await User.findById(event.organizer);
     if (!organizer || !organizer.subaccountCode)
@@ -49,26 +50,14 @@ const checkoutPaystack = async (
     const totalAmount = ticketAmount + platformFee;
 
     const reference = `txn_${Date.now()}_${order.eventId}`;
-    const newOrder: IOrder = await Order.create({
-      event: order.eventId,
-      buyer: order.buyerId === 'guest' ? null : order.buyerId,
-      buyerEmail: order.buyerEmail,
-      totalAmount: (totalAmount / 100).toString(),
-      currency: order.currency,
-      paymentMethod: 'paystack',
-      quantity: order.quantity,
-      reference,
-      ...(order.isFree ? {} : { priceCategories: order.priceCategories }),
-    });
 
+    // Don’t create order yet; wait for webhook confirmation
     const payload = {
       email: user?.email || order.buyerEmail,
       amount: totalAmount,
       currency: order.currency.toUpperCase(),
       reference,
-      callback_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${
-        order.eventId
-      }?success=${newOrder._id.toString()}`,
+      callback_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${reference}`,
       metadata: {
         eventId: order.eventId,
         buyerId: order.buyerId,
@@ -105,20 +94,9 @@ const checkoutPaystack = async (
         data.message || 'Failed to initialize Paystack transaction'
       );
 
-    await sendTicketEmail({
-      email: order.buyerEmail,
-      eventTitle: event.title,
-      eventSubtitle: event.subtitle,
-      eventImage: event.imageUrl,
-      orderId: newOrder._id.toString(),
-      totalAmount: newOrder.totalAmount,
-      currency: order.currency,
-      quantity: order.quantity,
-    });
-
     return {
       url: data.data.authorization_url,
-      orderId: newOrder._id.toString(),
+      orderId: reference, // Temporary ID
     };
   } catch (error) {
     console.error('Paystack checkout error:', error);
@@ -138,7 +116,9 @@ const checkoutStripe = async (
     const event = await Event.findById(order.eventId);
     if (!event) throw new Error('Event not found');
 
-    const user = await User.findById(order.buyerId);
+    // Skip User lookup for guest checkouts
+    const user =
+      order.buyerId === 'guest' ? null : await User.findById(order.buyerId);
 
     const organizer = await User.findById(event.organizer);
     if (!organizer || !organizer.stripeId)
@@ -156,17 +136,6 @@ const checkoutStripe = async (
 
     let stripeId: string;
     let result: CheckoutOrderResponse;
-
-    const newOrder: IOrder = await Order.create({
-      event: order.eventId,
-      buyer: order.buyerId === 'guest' ? null : order.buyerId,
-      buyerEmail: user?.email || order.buyerEmail,
-      totalAmount: (totalAmount / 100).toString(),
-      currency: order.currency,
-      paymentMethod: order.paymentMethod || 'stripe',
-      quantity: order.quantity,
-      ...(order.isFree ? {} : { priceCategories: order.priceCategories }),
-    });
 
     if (order.paymentMethod === 'card') {
       const paymentIntent = await stripe.paymentIntents.create({
@@ -187,10 +156,9 @@ const checkoutStripe = async (
       });
 
       stripeId = paymentIntent.id;
-      await Order.findByIdAndUpdate(newOrder._id, { stripeId });
       result = {
         clientSecret: paymentIntent.client_secret!,
-        orderId: newOrder._id.toString(),
+        orderId: stripeId, // Temporary ID
       };
     } else {
       const session: Stripe.Checkout.Session =
@@ -227,7 +195,7 @@ const checkoutStripe = async (
           mode: 'payment',
           success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${
             order.eventId
-          }?success=${newOrder._id.toString()}`,
+          }?success=${order.eventId}_${Date.now()}`,
           cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?canceled=true`,
           customer_email: user?.email || order.buyerEmail,
           metadata: {
@@ -246,20 +214,8 @@ const checkoutStripe = async (
         } as Stripe.Checkout.SessionCreateParams);
 
       stripeId = session.id;
-      await Order.findByIdAndUpdate(newOrder._id, { stripeId });
-      result = { url: session.url!, orderId: newOrder._id.toString() };
+      result = { url: session.url!, orderId: stripeId };
     }
-
-    await sendTicketEmail({
-      email: order.buyerEmail,
-      eventTitle: event.title,
-      eventSubtitle: event.subtitle,
-      eventImage: event.imageUrl,
-      orderId: newOrder._id.toString(),
-      totalAmount: newOrder.totalAmount,
-      currency: order.currency,
-      quantity: order.quantity,
-    });
 
     return result;
   } catch (error) {
@@ -278,13 +234,24 @@ export const checkoutOrder = async (
   const event = await Event.findById(order.eventId).populate('organizer');
   if (!event) throw new Error('Event not found');
 
-  const existingOrder = await Order.findOne({
+  // Adjust query to handle guest checkouts
+  const existingOrderConditions: any = {
     event: order.eventId,
-    $or: [
-      { buyer: order.buyerId },
-      { buyerEmail: order.buyerEmail, buyer: null },
-    ],
-  });
+    paymentStatus: 'completed',
+  };
+
+  if (order.buyerId === 'guest') {
+    existingOrderConditions.$or = [
+      { buyerEmail: order.buyerEmail, buyer: null }, // Guest orders
+    ];
+  } else {
+    existingOrderConditions.$or = [
+      { buyer: order.buyerId }, // Registered user orders
+      { buyerEmail: order.buyerEmail, buyer: null }, // Fallback for guests
+    ];
+  }
+
+  const existingOrder = await Order.findOne(existingOrderConditions);
   if (existingOrder) {
     throw new Error('You have already purchased a ticket for this event.');
   }
@@ -300,13 +267,17 @@ export const checkoutOrder = async (
   }
 };
 
-// CREATE ORDER
+// CREATE ORDER (used by webhooks or confirmed card payments)
 export const createOrder = async (order: CreateOrderParams) => {
   try {
     await connectToDatabase();
 
-    const user = await User.findById(order.buyerId);
+    const user =
+      order.buyerId === 'guest' ? null : await User.findById(order.buyerId);
     if (!user && order.buyerId !== 'guest') throw new Error('User not found');
+
+    const event = await Event.findById(order.eventId);
+    if (!event) throw new Error('Event not found');
 
     const newOrder = await Order.create({
       ...order,
@@ -316,6 +287,19 @@ export const createOrder = async (order: CreateOrderParams) => {
       paymentMethod: order.paymentMethod,
       quantity: order.quantity,
       stripeId: order.stripeId || undefined,
+      reference: order.reference || undefined,
+      paymentStatus: 'completed',
+    });
+
+    await sendTicketEmail({
+      email: order.buyerEmail,
+      eventTitle: event.title,
+      eventSubtitle: event.subtitle || '',
+      eventImage: event.imageUrl || '',
+      orderId: newOrder._id.toString(),
+      totalAmount: order.totalAmount || newOrder.totalAmount,
+      currency: order.currency,
+      quantity: order.quantity,
     });
 
     return JSON.parse(JSON.stringify(newOrder));
@@ -332,7 +316,11 @@ export const hasUserPurchasedEvent = async (
   try {
     await connectToDatabase();
 
-    const order = await Order.findOne({ buyer: userId, event: eventId });
+    const order = await Order.findOne({
+      buyer: userId,
+      event: eventId,
+      paymentStatus: 'completed',
+    });
 
     return !!order;
   } catch (error) {
@@ -347,7 +335,11 @@ export const hasUserPurchasedEventByEmail = async (
 ) => {
   try {
     await connectToDatabase();
-    const order = await Order.findOne({ buyerEmail: email, event: eventId });
+    const order = await Order.findOne({
+      buyerEmail: email,
+      event: eventId,
+      paymentStatus: 'completed',
+    });
     return !!order;
   } catch (error) {
     handleError(error);
@@ -367,6 +359,9 @@ export async function getOrdersByEvent({
     const eventObjectId = new ObjectId(eventId);
 
     const orders = await Order.aggregate([
+      {
+        $match: { paymentStatus: 'completed' },
+      },
       {
         $lookup: {
           from: 'users',
@@ -440,7 +435,7 @@ export async function getOrdersByUser({
     await connectToDatabase();
 
     const skipAmount = (Number(page) - 1) * limit;
-    const conditions = { buyer: userId };
+    const conditions = { buyer: userId, paymentStatus: 'completed' };
 
     const orders = await Order.distinct('event._id')
       .find(conditions)
