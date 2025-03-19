@@ -70,6 +70,7 @@ export default function PaymentMethodSelector({
                     }
                     onClick={() => handleStripeMethod('googlePay')}
                     className="w-full rounded-md h-[40px] cursor-pointer sm:w-auto"
+                    disabled={true}
                   >
                     Google Pay
                   </Button>
@@ -77,7 +78,8 @@ export default function PaymentMethodSelector({
                     type="button"
                     variant={field.value === 'applePay' ? 'default' : 'outline'}
                     onClick={() => handleStripeMethod('applePay')}
-                    className="w-full rounded-md h-[40px] cursor-pointer sm:w-auto"
+                      className="w-full rounded-md h-[40px] cursor-pointer sm:w-auto"
+                      disabled = {true}
                   >
                     Apple Pay
                   </Button>
