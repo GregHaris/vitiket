@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 
 import { connectToDatabase } from '@/lib/database';
-import { createOrder } from '@/lib/actions/order.actions';
+import Order from '@/lib/database/models/order.model';
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -35,54 +35,35 @@ export async function POST(req: NextRequest) {
   }
 
   const event = eventData.event;
-  console.log('Webhook event received:', event);
 
   if (event === 'charge.success') {
     const data = eventData.data;
-    const metadata = data.metadata;
-
-    if (!metadata?.eventId || !metadata?.buyerId) {
-      console.error('Missing metadata in Paystack webhook:', data);
-      return NextResponse.json(
-        { message: 'Missing metadata' },
-        { status: 400 }
-      );
-    }
+    const { reference, amount, currency } = data;
 
     await connectToDatabase();
 
-    const order = {
-      eventId: String(metadata.eventId),
-      buyerId: String(metadata.buyerId),
-      totalAmount: (data.amount / 100).toString(),
-      currency: data.currency?.toUpperCase() || 'NGN',
-      buyerEmail: data.customer?.email || '',
-      quantity: parseInt(metadata.quantity || '1', 10),
-      priceCategory: metadata.priceCategories
-        ? {
-            name: String(metadata.priceCategories.name),
-            price: String(metadata.priceCategories.price),
-          }
-        : undefined,
-      paymentMethod: 'paystack' as const,
-      createdAt: new Date(),
-    };
+    const existingOrder = await Order.findOneAndUpdate(
+      { reference },
+      {
+        $set: {
+          totalAmount: (amount / 100).toString(),
+          currency: currency?.toUpperCase() || 'NGN',
+          paymentStatus: 'completed',
+        },
+      },
+      { new: true }
+    );
 
-    try {
-      console.log('Creating order:', order);
-      const newOrder = await createOrder(order);
-      console.log('Order created from Paystack webhook:', newOrder);
-      return NextResponse.json(
-        { message: 'Order created', order: newOrder },
-        { status: 200 }
-      );
-    } catch (error) {
-      console.error('Failed to create order:', error);
-      return NextResponse.json(
-        { message: 'Order creation failed', error: (error as Error).message },
-        { status: 500 }
-      );
+    if (!existingOrder) {
+      console.error('Order not found for Paystack reference:', reference);
+      return NextResponse.json({ message: 'Order not found' }, { status: 404 });
     }
+
+    console.log('Order updated from Paystack webhook:', existingOrder);
+    return NextResponse.json(
+      { message: 'Order updated', order: existingOrder },
+      { status: 200 }
+    );
   }
 
   return NextResponse.json({ message: 'Event received' }, { status: 200 });

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 import { connectToDatabase } from '@/lib/database';
-import { createOrder } from '@/lib/actions/order.actions';
+import Order from '@/lib/database/models/order.model';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
 
   if (eventType === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session;
-    const { id, amount_total, metadata, currency, customer_email } = session;
+    const { id, amount_total, metadata, currency } = session;
 
     if (!metadata?.eventId || !metadata?.buyerId) {
       console.error('Missing metadata in Stripe webhook:', session);
@@ -39,32 +39,29 @@ export async function POST(req: NextRequest) {
 
     await connectToDatabase();
 
-    const order = {
-      stripeId: id,
-      eventId: metadata.eventId,
-      buyerId: metadata.buyerId,
-      totalAmount: amount_total ? (amount_total / 100).toString() : '0',
-      currency: currency?.toLowerCase() || 'ngn',
-      quantity: parseInt(metadata.quantity || '1', 10),
-      buyerEmail: metadata?.email || customer_email || '',
-      createdAt: new Date(),
-      paymentMethod: 'card' as const, 
-    };
+    // Find and update existing order instead of creating a new one
+    const existingOrder = await Order.findOneAndUpdate(
+      { stripeId: id },
+      {
+        $set: {
+          totalAmount: amount_total ? (amount_total / 100).toString() : '0',
+          currency: currency?.toLowerCase() || 'usd',
+          paymentStatus: 'completed',
+        },
+      },
+      { new: true }
+    );
 
-    try {
-      const newOrder = await createOrder(order);
-      console.log('Order created from Stripe webhook:', newOrder);
-      return NextResponse.json(
-        { message: 'Order created', order: newOrder },
-        { status: 200 }
-      );
-    } catch (error) {
-      console.error('Failed to create order:', error);
-      return NextResponse.json(
-        { message: 'Order creation failed', error: (error as Error).message },
-        { status: 500 }
-      );
+    if (!existingOrder) {
+      console.error('Order not found for Stripe session:', id);
+      return NextResponse.json({ message: 'Order not found' }, { status: 404 });
     }
+
+    console.log('Order updated from Stripe webhook:', existingOrder);
+    return NextResponse.json(
+      { message: 'Order updated', order: existingOrder },
+      { status: 200 }
+    );
   }
 
   return NextResponse.json({ message: 'Event received' }, { status: 200 });
