@@ -1,3 +1,5 @@
+'use server';
+
 import nodemailer from 'nodemailer';
 
 import { TicketEmailParams } from '@/types';
@@ -11,6 +13,7 @@ export async function sendTicketEmail({
   totalAmount,
   currency,
   quantity,
+  firstName,
 }: TicketEmailParams) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -23,7 +26,7 @@ export async function sendTicketEmail({
   const qrCodeUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/verify-ticket?orderId=${orderId}`;
   const ticketHtml = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-      <h2 style="color: #333;">Thank You for Your Purchase!</h2>
+      <h1 style="color: #333;">Hi ${firstName}, Thank You for Your Purchase!</h1>
       <p style="color: #666;">Here are your ticket details for <strong>${eventTitle}</strong>:</p>
       ${eventSubtitle ? `<p style="color: #666;">${eventSubtitle}</p>` : ''}
       <img src="${eventImage}" alt="${eventTitle}" style="max-width: 100%; height: auto; border-radius: 4px;" />
