@@ -66,9 +66,9 @@ const checkoutPaystack = async (
       amount: totalAmount,
       currency: order.currency.toUpperCase(),
       reference,
-      callback_url: `${
-        process.env.NEXT_PUBLIC_SERVER_URL
-      }/checkout-success/${newOrder._id.toString()}`,
+      callback_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${
+        order.eventId
+      }?success=${newOrder._id.toString()}`,
       metadata: {
         eventId: order.eventId,
         buyerId: order.buyerId,
@@ -225,9 +225,9 @@ const checkoutStripe = async (
                   quantity: 1,
                 }),
           mode: 'payment',
-          success_url: `${
-            process.env.NEXT_PUBLIC_SERVER_URL
-          }/checkout-success/${newOrder._id.toString()}`,
+          success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${
+            order.eventId
+          }?success=${newOrder._id.toString()}`,
           cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?canceled=true`,
           customer_email: user?.email || order.buyerEmail,
           metadata: {
