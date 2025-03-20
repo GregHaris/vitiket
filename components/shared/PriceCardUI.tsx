@@ -11,13 +11,22 @@ const PriceCard = ({
   onIncrease,
   currencySymbol = '',
 }: PriceCardUIProps) => {
+  
+  const formattedPrice =
+    typeof price === 'string' && price.toLowerCase() === 'free'
+      ? 'Free'
+      : Number(price).toLocaleString('en-NG', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        });
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
       <h3 className="text-xl font-bold mb-4 text-gray-500">{title}</h3>
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500 font-semibold">
           {currencySymbol}
-          {price}
+          {formattedPrice}
         </p>
         <div className="flex items-center gap-2">
           <button

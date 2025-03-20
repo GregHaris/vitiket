@@ -44,7 +44,7 @@ const PriceCards = ({ event, currencySymbol }: PriceCardsProps) => {
         return resetQuantities;
       });
     });
-    return unsubscribe; // Cleanup listener on unmount
+    return unsubscribe; 
   }, [onResetCheckout]);
 
   // Sync URL with quantities
