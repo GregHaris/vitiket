@@ -73,6 +73,7 @@ const CheckoutFormContent = ({
       };
 
       if (event.isFree) {
+        await checkoutOrder(orderParams);
         const newOrder = await createOrder({
           eventId: event._id,
           buyerId: userId || 'guest',
@@ -95,7 +96,9 @@ const CheckoutFormContent = ({
           return;
         }
 
-        const result: CheckoutOrderResponse = await checkoutOrder(orderParams);
+        const result = (await checkoutOrder(
+          orderParams
+        )) as CheckoutOrderResponse;
 
         if (data.paymentMethod === 'card') {
           if ('clientSecret' in result && result.clientSecret) {
