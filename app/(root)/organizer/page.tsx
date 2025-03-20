@@ -50,53 +50,36 @@ export default function OrganizerConfirmationPage() {
     router.push(`/organizer/setup?userId=${userId}&eventId=${eventId}`);
   };
 
-  const isNigerianEvent =
-    eventDetails?.currency.toUpperCase() === 'NGN' &&
-    eventDetails?.location?.toLowerCase().includes('nigeria');
-
   return (
     <div className="wrapper space-y-6">
       <h2 className="text-4xl font-bold text-center mb-10">
         Confirm Payment Details
       </h2>
-      {isNigerianEvent ? (
-        userDetails?.subaccountCode && (
-          <div className=" space-y-6">
-            <h3 className="text-2xl font-bold">Paystack Details</h3>
-            <p>
-              <strong>Business Name:</strong> {userDetails.businessName}
-            </p>
-            <p>
-              <strong>Bank Name:</strong> {userDetails.bankName}
-            </p>
-            <p>
-              <strong>Account Number:</strong>{' '}
-              {userDetails.bankDetails?.accountNumber}
-            </p>
-            <p>
-              <strong>Account Name:</strong>{' '}
-              {userDetails.bankDetails?.accountName}
-            </p>
-            <p>
-              <strong>Subaccount Code:</strong> {userDetails.subaccountCode}
-            </p>
-          </div>
-        )
-      ) : (
-        <div className="space-y-4">
-          {userDetails?.stripeId && (
-            <>
-              <h3 className="text-2xl font-bold">Stripe Details</h3>
-              <p>
-                <strong>Business Name:</strong> {userDetails.businessName}
-              </p>
-              <p>
-                Your Stripe account is connected{' '}
-                <strong>(ID: {userDetails.stripeId})</strong>.
-              </p>
-            </>
-          )}
+      {userDetails?.subaccountCode ? (
+        <div className="space-y-6">
+          <h3 className="text-2xl font-bold">Paystack Details</h3>
+          <p>
+            <strong>Business Name:</strong> {userDetails.businessName}
+          </p>
+          <p>
+            <strong>Bank Name:</strong> {userDetails.bankName}
+          </p>
+          <p>
+            <strong>Account Number:</strong>{' '}
+            {userDetails.bankDetails?.accountNumber}
+          </p>
+          <p>
+            <strong>Account Name:</strong>{' '}
+            {userDetails.bankDetails?.accountName}
+          </p>
+          <p>
+            <strong>Subaccount Code:</strong> {userDetails.subaccountCode}
+          </p>
         </div>
+      ) : (
+        <p className="text-sm text-gray-600">
+          No Paystack payment details found. Please update your details.
+        </p>
       )}
       <div className="flex gap-4">
         <button

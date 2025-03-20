@@ -58,10 +58,6 @@ export default async function SetupPage({
   const event = await Event.findById(eventId);
   if (!event) throw new Error('Event not found');
 
-  const isNigerianEvent =
-    event.currency.toUpperCase() === 'NGN' &&
-    event.location.toLowerCase().includes('nigeria');
-
   const banks = await fetchBanks();
   const existingDetails = await getUserPaymentDetails(userId);
 
@@ -72,7 +68,6 @@ export default async function SetupPage({
         existingDetails={existingDetails}
         eventId={eventId}
         userId={userId}
-        isNigerianEvent={isNigerianEvent}
       />
     </div>
   );
