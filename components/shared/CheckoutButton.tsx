@@ -61,8 +61,7 @@ export default function CheckoutButton({
     });
   }
 
-  const platformFee = ticketPrice * 0.05;
-  const totalPrice = ticketPrice + platformFee;
+  const totalPrice = ticketPrice;
 
   useEffect(() => {
     if (searchParams?.get('checkout') === 'true' && totalQuantity === 0) {
@@ -140,9 +139,7 @@ export default function CheckoutButton({
             <span>Checkout</span>
             <span>
               {currencySymbol}
-              {ticketPrice.toLocaleString()} + {currencySymbol}
-              {platformFee.toLocaleString()}{' '}
-              <span className="text-sm">(5% fee)</span>
+              {ticketPrice.toLocaleString()}{' '}
             </span>
           </Button>
         )}
