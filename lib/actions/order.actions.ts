@@ -35,7 +35,6 @@ const checkoutPaystack = async (
 
     const subaccountCode = organizer.subaccountCode;
 
-    // Calculate ticket amount with validation
     const ticketAmount = order.isFree
       ? 0
       : order.priceCategories!.reduce((sum, cat) => {
@@ -53,7 +52,6 @@ const checkoutPaystack = async (
 
     console.log('Paystack checkout initial:', { ticketAmount, totalAmount });
 
-    // Handle free events
     if (order.isFree) {
       if (totalAmount !== 0) {
         throw new Error('Free event should have a total amount of 0');
@@ -85,11 +83,12 @@ const checkoutPaystack = async (
         currency: 'NGN',
         quantity: order.quantity,
         firstName: newOrder.firstName,
+        priceCategories: order.priceCategories,
       });
 
       return {
-        orderId: reference,
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${reference}`,
+        orderId: newOrder._id.toString(),
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${newOrder._id}`,
       };
     }
 
@@ -125,12 +124,28 @@ const checkoutPaystack = async (
 
     const reference = `txn_${Date.now()}_${order.eventId}`;
 
+    // Create order before Paystack transaction (pending status)
+    const newOrder = await Order.create({
+      event: order.eventId,
+      buyer: order.buyerId === 'guest' ? null : order.buyerId,
+      buyerEmail: user?.email || order.buyerEmail,
+      totalAmount: (totalAmount / 100).toString(),
+      currency: 'NGN',
+      paymentMethod: 'paystack',
+      quantity: order.quantity,
+      priceCategories: order.priceCategories,
+      reference,
+      paymentStatus: 'pending',
+      firstName: order.firstName || user?.firstName,
+      lastName: order.lastName || user?.lastName,
+    });
+
     const payload = {
       email: user?.email || order.buyerEmail,
       amount: totalAmount,
       currency: 'NGN',
       reference,
-      callback_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${reference}`,
+      callback_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${newOrder._id}`,
       metadata: {
         eventId: order.eventId,
         buyerId: order.buyerId,
@@ -166,6 +181,7 @@ const checkoutPaystack = async (
 
     const data = await response.json();
     if (!response.ok || !data.status) {
+      await Order.deleteOne({ _id: newOrder._id });
       throw new Error(
         data.message || 'Failed to initialize Paystack transaction'
       );
@@ -173,7 +189,7 @@ const checkoutPaystack = async (
 
     return {
       url: data.data.authorization_url,
-      orderId: reference,
+      orderId: newOrder._id.toString(),
     };
   } catch (error) {
     console.error('Paystack checkout error:', error);
@@ -208,11 +224,6 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
     throw new Error('You have already purchased a ticket for this event.');
   }
 
-  if (order.isFree) {
-    const reference = `free_${Date.now()}_${order.eventId}`;
-    return { orderId: reference };
-  }
-
   return await checkoutPaystack(order);
 };
 
@@ -239,18 +250,6 @@ export const createOrder = async (order: CreateOrderParams) => {
       paymentStatus: 'completed',
       firstName: order.firstName || user?.firstName,
       lastName: order.lastName || user?.lastName,
-    });
-
-    await sendTicketEmail({
-      email: order.buyerEmail,
-      eventTitle: event.title,
-      eventSubtitle: event.subtitle || '',
-      eventImage: event.imageUrl || '',
-      orderId: newOrder._id.toString(),
-      totalAmount: order.totalAmount || newOrder.totalAmount,
-      currency: 'NGN',
-      quantity: order.quantity,
-      firstName: newOrder.firstName,
     });
 
     return JSON.parse(JSON.stringify(newOrder));

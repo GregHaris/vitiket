@@ -40,66 +40,42 @@ export async function POST(req: NextRequest) {
 
   if (event === 'charge.success') {
     const data = eventData.data;
-    const { reference, amount, metadata } = data;
-
-    if (!metadata?.eventId || !metadata?.buyerId) {
-      console.error('Missing metadata in Paystack webhook:', data);
-      return NextResponse.json(
-        { message: 'Missing metadata' },
-        { status: 400 }
-      );
-    }
+    const { reference, amount } = data;
 
     await connectToDatabase();
 
-    const eventDataDb = await Event.findById(metadata.eventId);
-    if (!eventDataDb) {
-      console.error('Event not found for reference:', reference);
-      return NextResponse.json({ message: 'Event not found' }, { status: 404 });
-    }
-
     let existingOrder = await Order.findOne({ reference });
     if (!existingOrder) {
-      existingOrder = await Order.create({
-        event: metadata.eventId,
-        buyer: metadata.buyerId === 'guest' ? null : metadata.buyerId,
-        buyerEmail: data.customer.email,
-        totalAmount: (amount / 100).toString(),
-        currency: 'NGN',
-        paymentMethod: 'paystack',
-        quantity: Number(metadata.quantity),
-        priceCategories: metadata.priceCategories
-          ? JSON.parse(metadata.priceCategories)
-          : undefined,
-        reference,
-        paymentStatus: 'completed',
-        firstName: metadata.firstName,
-        lastName: metadata.lastName,
-      });
-
-      await sendTicketEmail({
-        email: data.customer.email,
-        eventTitle: eventDataDb.title,
-        eventSubtitle: eventDataDb.subtitle || '',
-        eventImage: eventDataDb.imageUrl || '',
-        orderId: existingOrder._id.toString(),
-        totalAmount: existingOrder.totalAmount,
-        currency: 'NGN',
-        quantity: Number(metadata.quantity),
-        firstName: existingOrder.firstName,
-        priceCategories: existingOrder.priceCategories,
-      });
-    } else {
-      existingOrder = await Order.findOneAndUpdate(
-        { reference },
-        { paymentStatus: 'completed' },
-        { new: true }
-      );
+      console.error('Order not found for reference:', reference);
+      return NextResponse.json({ message: 'Order not found' }, { status: 404 });
     }
 
-    console.log('Order processed from Paystack webhook:', existingOrder);
+    existingOrder = await Order.findOneAndUpdate(
+      { reference },
+      {
+        totalAmount: (amount / 100).toString(),
+        paymentStatus: 'completed',
+      },
+      { new: true }
+    ).populate('event');
+
+    const eventDataDb = existingOrder.event;
+    await sendTicketEmail({
+      email: existingOrder.buyerEmail,
+      eventTitle: eventDataDb.title,
+      eventSubtitle: eventDataDb.subtitle || '',
+      eventImage: eventDataDb.imageUrl || '',
+      orderId: existingOrder._id.toString(),
+      totalAmount: existingOrder.totalAmount,
+      currency: 'NGN',
+      quantity: existingOrder.quantity,
+      firstName: existingOrder.firstName,
+      priceCategories: existingOrder.priceCategories,
+    });
+
+    console.log('Order updated from Paystack webhook:', existingOrder);
     return NextResponse.json(
-      { message: 'Order processed', order: existingOrder },
+      { message: 'Order updated', order: existingOrder },
       { status: 200 }
     );
   }
