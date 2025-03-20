@@ -477,7 +477,7 @@ export interface TicketEmailParams {
   eventImage: string;
   orderId: string;
   totalAmount: string;
-  currency: string;
+  currency: 'NGN';
   quantity: number;
 }
 
