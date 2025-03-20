@@ -247,13 +247,13 @@ export default function EventDetails({
                 <div className="flex gap-4 flex-nowrap justify-center">
                   <Link
                     href="/"
-                    className="w-full h-[40px] bg-primary-500 text-sm text-white py-2 rounded-lg hover:bg-primary-600 transition text-center"
+                    className="w-full h-[40px] bg-primary-500 p-regular-14 text-white py-2 rounded-md hover:bg-primary-600 transition text-center"
                   >
                     Continue Browsing
                   </Link>
                   <Button
                     onClick={handleBackToEvent}
-                    className="w-full h-[40px] bg-gray-200 text-gray-800 py-2 rounded-lg cursor-pointer hover:bg-gray-300 transition text-center p-regular-14"
+                    className="w-full h-[40px] bg-gray-200 text-gray-800 py-2 rounded-md cursor-pointer hover:bg-gray-300 transition p-regular-14"
                   >
                     Back to Event
                   </Button>
