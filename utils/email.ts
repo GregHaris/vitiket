@@ -11,10 +11,12 @@ export async function sendTicketEmail({
   eventImage,
   orderId,
   totalAmount,
-  currency,
   quantity,
   firstName,
-}: TicketEmailParams) {
+  priceCategories,
+}: TicketEmailParams & {
+  priceCategories?: { name: string; price: string; quantity: number }[];
+}) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -24,6 +26,23 @@ export async function sendTicketEmail({
   });
 
   const qrCodeUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/verify-ticket?orderId=${orderId}`;
+
+  // Build price categories HTML
+  const priceCategoriesHtml =
+    priceCategories && priceCategories.length > 0
+      ? priceCategories
+          .map(
+            (cat) => `
+          <p style="color: #666;">
+            ${cat.quantity} x ${cat.name} - ₦${(
+              Number(cat.price) * cat.quantity
+            ).toLocaleString()}
+          </p>
+        `
+          )
+          .join('')
+      : `<p style="color: #666;">${quantity} x Ticket</p>`;
+
   const ticketHtml = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
       <h1 style="color: #333;">Hi ${firstName}, Thank You for Your Purchase!</h1>
@@ -32,10 +51,16 @@ export async function sendTicketEmail({
       <img src="${eventImage}" alt="${eventTitle}" style="max-width: 100%; height: auto; border-radius: 4px;" />
       <h3 style="color: #333; margin-top: 20px;">Order Summary</h3>
       <p style="color: #666;">Order ID: ${orderId}</p>
-      <p style="color: #666;">Quantity: ${quantity}</p>
-      <p style="color: #666;">Total: ${currency} ${parseFloat(
-    totalAmount
-  ).toLocaleString()}</p>
+      <div style="margin-top: 10px;">
+        <h4 style="color: #333; font-weight: bold;">Tickets</h4>
+        ${priceCategoriesHtml}
+      </div>
+      <div style="margin-top: 10px;">
+        <h4 style="color: #333; font-weight: bold;">Total</h4>
+        <p style="color: #666; font-size: 18px; font-weight: bold;">₦${parseFloat(
+          totalAmount
+        ).toLocaleString()}</p>
+      </div>
       <h3 style="color: #333; margin-top: 20px;">Your Ticket</h3>
       <p style="color: #666;">Scan the QR code below to verify your ticket:</p>
       <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
