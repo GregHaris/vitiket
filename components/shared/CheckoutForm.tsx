@@ -6,7 +6,7 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe, StripeError } from '@stripe/stripe-js';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -26,6 +26,16 @@ import PaymentMethodSelector from './FormPaymentMethods';
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
+
+const isStripeError = (error: unknown): error is StripeError => {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    error instanceof Error &&
+    typeof error.message === 'string'
+  );
+};
 
 const CheckoutFormContent = ({
   event,
@@ -152,14 +162,21 @@ const CheckoutFormContent = ({
           }
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Checkout failed:', error);
-      if (
-        error.message === 'You have already purchased a ticket for this event.'
-      ) {
-        setError(error.message);
+      if (error instanceof Error) {
+        if (
+          error.message ===
+          'You have already purchased a ticket for this event.'
+        ) {
+          setError(error.message);
+        } else {
+          setError('Checkout failed. Please try again.');
+        }
+      } else if (isStripeError(error)) {
+        setError(error.message || 'Payment failed');
       } else {
-        setError('Checkout failed. Please try again.');
+        setError('An unexpected error occurred. Please try again.');
       }
     }
   };
@@ -276,13 +293,17 @@ const CheckoutFormContent = ({
                 {error && <p className="text-red-500 text-sm">{error}</p>}
               </div>
             )}
-          <Button
-            type="submit"
-            className="w-full button"
-            disabled={(!stripe && !event.isFree) || form.formState.isSubmitting}
-          >
-            {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
-          </Button>
+          {(event.isFree || !isNigerianEvent) && (
+            <Button
+              type="submit"
+              className="w-full button"
+              disabled={
+                (!stripe && !event.isFree) || form.formState.isSubmitting
+              }
+            >
+              {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
+            </Button>
+          )}
         </form>
       </Form>
     </div>
