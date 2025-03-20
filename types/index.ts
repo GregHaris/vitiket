@@ -194,16 +194,16 @@ export type CheckoutOrderParams = {
   quantity: number;
   priceCategories?: { name: string; price: string; quantity: number }[];
   buyerEmail: string;
-  firstName?: string; 
+  firstName?: string;
   lastName?: string;
-  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
+  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay' | 'none';
 };
 
 export type CreateOrderParams = {
   eventId: string;
   buyerId?: string;
   stripeId?: string;
-  firstName: string; 
+  firstName: string;
   lastName: string;
   totalAmount: string;
   currency: string;
@@ -211,7 +211,7 @@ export type CreateOrderParams = {
   quantity: number;
   buyerEmail: string;
   reference?: string;
-  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
+  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay' | 'none';
   createdAt?: Date;
 };
 

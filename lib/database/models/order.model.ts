@@ -17,7 +17,7 @@ export interface IOrder extends Document {
   buyerEmail: string;
   firstName: string;
   lastName: string;
-  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
+  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay' | 'none';
   quantity: number;
   priceCategories?: { name: string; price: string; quantity: number }[];
 }
@@ -31,7 +31,7 @@ export type IOrderItem = {
   buyer: string;
   buyerEmail: string;
   currency: string;
-  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay';
+  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay' | 'none';
   quantity: number;
 };
 
@@ -78,7 +78,7 @@ const OrderSchema = new Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ['paystack', 'card', 'googlePay', 'applePay'],
+      enum: ['paystack', 'card', 'googlePay', 'applePay', 'none'],
       required: true,
     },
     quantity: {
