@@ -47,6 +47,7 @@ export type CreateEventParams = {
     isFree?: boolean;
     url?: string;
     status?: 'draft' | 'published';
+    currency: 'NGN';
   };
   contactDetails: {
     email: string;
@@ -82,6 +83,7 @@ export type UpdateEventParams = {
     isFree?: boolean;
     url?: string;
     status?: 'draft' | 'published';
+    currency: 'NGN';
   };
   contactDetails: {
     email: string;
@@ -139,6 +141,7 @@ export type Event = {
   imageUrl: string;
   locationType: 'Virtual' | 'Physical' | 'Hybrid';
   location?: string;
+  currency: 'NGN';
   coordinates?: string;
   startDate: Date;
   endDate: Date;
@@ -202,7 +205,6 @@ export type CheckoutOrderParams = {
 export type CreateOrderParams = {
   eventId: string;
   buyerId?: string;
-  stripeId?: string;
   firstName: string;
   lastName: string;
   totalAmount: string;
@@ -399,7 +401,6 @@ export interface PaymentDetails {
   accountNumber?: string;
   accountName?: string;
   subaccountCode?: string;
-  stripeId?: string;
 }
 
 export interface PaymentDetailsUpdate {
@@ -410,22 +411,6 @@ export interface PaymentDetailsUpdate {
     accountNumber: string;
     accountName: string;
   };
-  stripeId?: string;
-}
-
-export interface PaymentDetailsFormActionsProps {
-  message: string;
-  existingDetails?: {
-    businessName?: string;
-    bankName?: string;
-    accountNumber?: string;
-    subaccountCode?: string;
-    accountName?: string;
-    stripeId?: string;
-  };
-  isNigerianEvent: boolean;
-  onReuse: (accountId: string) => void;
-  isSubmitting: boolean;
 }
 
 export interface PaystackFormProps {
@@ -450,13 +435,6 @@ export interface PaystackFormAccountNameDisplayProps {
   resolvedAccountName: string | null;
 }
 
-export interface PaymentDetailsStripeOnboardingProps {
-  userId: string;
-  existingStripeId?: string;
-  setMessage: (msg: string) => void;
-  onSubmitSuccess: () => Promise<void>;
-}
-
 export interface PaymentDetailsFormProps {
   banks: Bank[];
   existingDetails?: {
@@ -465,25 +443,9 @@ export interface PaymentDetailsFormProps {
     accountNumber?: string;
     subaccountCode?: string;
     accountName?: string;
-    stripeId?: string;
   };
   eventId: string;
   userId: string;
-  isNigerianEvent: boolean;
-}
-
-export interface PaymentMethodSelectorProps {
-  isNigerianEvent: boolean;
-  orderData: {
-    eventTitle: string;
-    buyerId: string;
-    eventId: string;
-    price: string;
-    isFree: boolean;
-    currency: string;
-    quantity: number;
-    buyerEmail: string;
-  };
 }
 
 export type VerificationResult = {
