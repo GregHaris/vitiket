@@ -17,7 +17,7 @@ export interface IEvent extends Document {
   updatedAt: Date;
   priceCategories?: { name: string; price: string }[];
   quantity?: number | null;
-  currency: 'NGN'; 
+  currency: 'NGN';
   isFree?: boolean;
   url?: string;
   type: { _id: string; name: string; color: string };
@@ -60,7 +60,7 @@ const EventSchema = new Schema(
       },
     ],
     quantity: { type: Number, default: null },
-    currency: { type: String, enum: ['NGN'], required: true }, 
+    currency: { type: String, enum: ['NGN'], required: true },
     url: { type: String },
     type: { type: Schema.Types.ObjectId, ref: 'Type' },
     category: { type: Schema.Types.ObjectId, ref: 'Category' },
