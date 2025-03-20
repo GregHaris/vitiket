@@ -1,7 +1,6 @@
 'use client';
 
 import { useFormContext } from 'react-hook-form';
-
 import { Button } from '@ui/button';
 import { checkoutFormValues } from '@/lib/validator';
 import { checkoutOrder } from '@/lib/actions/order.actions';
@@ -21,16 +20,37 @@ export default function PaymentMethodSelector({
   const { control, setValue } = useFormContext<checkoutFormValues>();
 
   const handlePaystackCheckout = async () => {
-    const orderWithPaystack = {
-      ...orderData,
-      paymentMethod: 'paystack' as const,
-    };
-    await checkoutOrder(orderWithPaystack);
+    try {
+      const orderWithPaystack = {
+        ...orderData,
+        paymentMethod: 'paystack' as const,
+      };
+      const response = await checkoutOrder(orderWithPaystack);
+      if ('url' in response && response.url) {
+        window.location.href = response.url;
+      } else {
+        throw new Error('No Paystack payment URL returned');
+      }
+    } catch (error) {
+      console.error('Paystack checkout failed:', error);
+      alert('Failed to initiate Paystack payment. Please try again.');
+    }
   };
 
   const handleStripeMethod = async (method: 'googlePay' | 'applePay') => {
-    const order = { ...orderData, paymentMethod: method };
-    await checkoutOrder(order);
+    try {
+      const order = { ...orderData, paymentMethod: method };
+      const response = await checkoutOrder(order);
+
+      if ('url' in response && response.url) {
+        window.location.href = response.url;
+      } else {
+        throw new Error('No Stripe payment URL returned');
+      }
+    } catch (error) {
+      console.error('Stripe method failed:', error);
+      alert(`Failed to initiate ${method} payment. Please try again.`);
+    }
   };
 
   return (
@@ -78,8 +98,8 @@ export default function PaymentMethodSelector({
                     type="button"
                     variant={field.value === 'applePay' ? 'default' : 'outline'}
                     onClick={() => handleStripeMethod('applePay')}
-                      className="w-full rounded-md h-[40px] cursor-pointer sm:w-auto"
-                      disabled = {true}
+                    className="w-full rounded-md h-[40px] cursor-pointer sm:w-auto"
+                    disabled={true}
                   >
                     Apple Pay
                   </Button>

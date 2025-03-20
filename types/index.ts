@@ -521,8 +521,8 @@ export interface TicketEmailParams {
 
 export type CheckoutOrderResponse =
   | { url: string; orderId: string; clientSecret?: never }
-  | { clientSecret: string; orderId: string; url?: never };
-
+  | { clientSecret: string; orderId: string; url?: never }
+  | { orderId: string; url?: never; clientSecret?: never };
 export interface EventDetailsClientProps {
   event: IEvent & {
     organizer: {
