@@ -1,4 +1,5 @@
 import { Document, Schema, model, models } from 'mongoose';
+
 export interface IUser extends Document {
   _id: string;
   clerkId: string;
@@ -14,7 +15,6 @@ export interface IUser extends Document {
     accountNumber: string;
     accountName: string;
   };
-  stripeId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -34,7 +34,6 @@ const UserSchema = new Schema(
       accountNumber: { type: String },
       accountName: { type: String },
     },
-    stripeId: { type: String, required: false },
   },
   { timestamps: true }
 );
