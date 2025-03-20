@@ -49,7 +49,7 @@ const checkoutPaystack = async (
           return sum + Math.round(price * 100) * quantity;
         }, 0);
 
-    let totalAmount = ticketAmount; // No platform fee added
+    let totalAmount = ticketAmount;
 
     console.log('Paystack checkout initial:', { ticketAmount, totalAmount });
 
@@ -59,12 +59,13 @@ const checkoutPaystack = async (
         throw new Error('Free event should have a total amount of 0');
       }
       const reference = `txn_${Date.now()}_${order.eventId}`;
+
       const newOrder = await Order.create({
         event: order.eventId,
         buyer: order.buyerId === 'guest' ? null : order.buyerId,
         buyerEmail: user?.email || order.buyerEmail,
         totalAmount: '0',
-        currency: 'NGN', // Hardcoded to NGN
+        currency: 'NGN',
         paymentMethod: 'none',
         quantity: order.quantity,
         priceCategories: order.priceCategories,
@@ -81,7 +82,7 @@ const checkoutPaystack = async (
         eventImage: event.imageUrl || '',
         orderId: newOrder._id.toString(),
         totalAmount: '0',
-        currency: 'NGN', // Hardcoded to NGN
+        currency: 'NGN',
         quantity: order.quantity,
         firstName: newOrder.firstName,
       });
@@ -101,7 +102,7 @@ const checkoutPaystack = async (
     let paystackFee =
       Math.round(totalAmount * paystackFeePercentage) + paystackFlatFee;
     if (totalAmount >= 250000) paystackFee = paystackFeeCap;
-    const minimumRequiredAmount = ticketAmount + paystackFee; // No platform fee in minimum
+    const minimumRequiredAmount = ticketAmount + paystackFee;
     totalAmount = Math.max(totalAmount, minimumRequiredAmount);
 
     paystackFee =
@@ -127,7 +128,7 @@ const checkoutPaystack = async (
     const payload = {
       email: user?.email || order.buyerEmail,
       amount: totalAmount,
-      currency: 'NGN', // Hardcoded to NGN
+      currency: 'NGN',
       reference,
       callback_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${reference}`,
       metadata: {
@@ -142,7 +143,7 @@ const checkoutPaystack = async (
       },
       split: {
         type: 'percentage',
-        currency: 'NGN', // Hardcoded to NGN
+        currency: 'NGN',
         subaccounts: [{ subaccount: subaccountCode, share: subaccountShare }],
         bearer_type: 'account',
         main_account_share: mainAccountMinimumShare,
@@ -212,7 +213,7 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
     return { orderId: reference };
   }
 
-  return await checkoutPaystack(order); // Always use Paystack for paid events
+  return await checkoutPaystack(order);
 };
 
 // CREATE ORDER
@@ -247,7 +248,7 @@ export const createOrder = async (order: CreateOrderParams) => {
       eventImage: event.imageUrl || '',
       orderId: newOrder._id.toString(),
       totalAmount: order.totalAmount || newOrder.totalAmount,
-      currency: 'NGN', // Hardcoded to NGN
+      currency: 'NGN',
       quantity: order.quantity,
       firstName: newOrder.firstName,
     });
