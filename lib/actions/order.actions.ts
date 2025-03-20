@@ -38,15 +38,98 @@ const checkoutPaystack = async (
 
     const subaccountCode = organizer.subaccountCode;
 
+    // Calculate ticket amount with validation
     const ticketAmount = order.isFree
       ? 0
-      : order.priceCategories!.reduce(
-          (sum, cat) =>
-            sum + Math.round(Number(cat.price) * 100) * cat.quantity,
-          0
-        );
-    const platformFee = Math.round(ticketAmount * 0.05);
-    const totalAmount = ticketAmount + platformFee;
+      : order.priceCategories!.reduce((sum, cat) => {
+          const price = Number(cat.price);
+          const quantity = cat.quantity;
+          if (isNaN(price) || price < 0 || quantity < 0) {
+            throw new Error(
+              `Invalid price or quantity in priceCategories: price=${cat.price}, quantity=${cat.quantity}`
+            );
+          }
+          return sum + Math.round(price * 100) * quantity;
+        }, 0);
+
+    const platformFeePercentage = 0.05; // 5%
+    const platformFee = Math.round(ticketAmount * platformFeePercentage);
+    let totalAmount = ticketAmount + platformFee;
+
+    console.log('Paystack checkout initial:', {
+      ticketAmount,
+      platformFee,
+      totalAmount,
+    });
+
+    // Handle free events
+    if (order.isFree) {
+      if (totalAmount !== 0) {
+        throw new Error('Free event should have a total amount of 0');
+      }
+      const reference = `txn_${Date.now()}_${order.eventId}`;
+      const newOrder = await Order.create({
+        event: order.eventId,
+        buyer: order.buyerId === 'guest' ? null : order.buyerId,
+        buyerEmail: user?.email || order.buyerEmail,
+        totalAmount: '0',
+        currency: order.currency.toUpperCase(),
+        paymentMethod: 'none',
+        quantity: order.quantity,
+        priceCategories: order.priceCategories,
+        reference,
+        paymentStatus: 'completed',
+        firstName: order.firstName || user?.firstName,
+        lastName: order.lastName || user?.lastName,
+      });
+
+      await sendTicketEmail({
+        email: user?.email || order.buyerEmail,
+        eventTitle: event.title,
+        eventSubtitle: event.subtitle || '',
+        eventImage: event.imageUrl || '',
+        orderId: newOrder._id.toString(),
+        totalAmount: '0',
+        currency: order.currency.toUpperCase(),
+        quantity: order.quantity,
+        firstName: newOrder.firstName,
+      });
+
+      return {
+        orderId: reference,
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${reference}`,
+      };
+    }
+
+    // Paystack fee constants (in kobo)
+    const paystackMinimumAmount = 100;
+    const paystackFeePercentage = 0.015;
+    const paystackFlatFee = 100;
+    const paystackFeeCap = 2000;
+
+    let paystackFee =
+      Math.round(totalAmount * paystackFeePercentage) + paystackFlatFee;
+    if (totalAmount >= 250000) paystackFee = paystackFeeCap;
+    const minimumRequiredAmount = ticketAmount + platformFee + paystackFee;
+    totalAmount = Math.max(totalAmount, minimumRequiredAmount);
+
+    paystackFee =
+      Math.round(totalAmount * paystackFeePercentage) + paystackFlatFee;
+    if (totalAmount >= 250000) paystackFee = paystackFeeCap;
+
+    if (totalAmount < paystackMinimumAmount + paystackFee) {
+      throw new Error(
+        `Total amount (${totalAmount / 100} ${
+          order.currency
+        }) is below the minimum required (${
+          (paystackMinimumAmount + paystackFee) / 100
+        } ${order.currency}) to cover Paystack fees.`
+      );
+    }
+
+    const mainAccountMinimumShare =
+      Math.ceil((paystackFee / totalAmount) * 100) || 1;
+    const subaccountShare = 100 - mainAccountMinimumShare;
 
     const reference = `txn_${Date.now()}_${order.eventId}`;
 
@@ -70,11 +153,13 @@ const checkoutPaystack = async (
       split: {
         type: 'percentage',
         currency: order.currency.toUpperCase(),
-        subaccounts: [{ subaccount: subaccountCode, share: 100 }],
+        subaccounts: [{ subaccount: subaccountCode, share: subaccountShare }],
         bearer_type: 'account',
-        main_account_share: 0,
+        main_account_share: mainAccountMinimumShare,
       },
     };
+
+    console.log('Paystack payload:', payload);
 
     const response = await fetch(
       'https://api.paystack.co/transaction/initialize',
@@ -89,10 +174,11 @@ const checkoutPaystack = async (
     );
 
     const data = await response.json();
-    if (!response.ok || !data.status)
+    if (!response.ok || !data.status) {
       throw new Error(
         data.message || 'Failed to initialize Paystack transaction'
       );
+    }
 
     return {
       url: data.data.authorization_url,
@@ -133,6 +219,41 @@ const checkoutStripe = async (
     const platformFee = Math.round(ticketAmount * 0.05);
     const totalAmount = ticketAmount + platformFee;
 
+    if (order.isFree) {
+      const stripeId = `free_${Date.now()}_${order.eventId}`;
+      const newOrder = await Order.create({
+        event: order.eventId,
+        buyer: order.buyerId === 'guest' ? null : order.buyerId,
+        buyerEmail: user?.email || order.buyerEmail,
+        totalAmount: '0',
+        currency: order.currency.toLowerCase(),
+        paymentMethod: 'none',
+        quantity: order.quantity,
+        priceCategories: order.priceCategories,
+        stripeId,
+        paymentStatus: 'completed',
+        firstName: order.firstName || user?.firstName,
+        lastName: order.lastName || user?.lastName,
+      });
+
+      await sendTicketEmail({
+        email: user?.email || order.buyerEmail,
+        eventTitle: event.title,
+        eventSubtitle: event.subtitle || '',
+        eventImage: event.imageUrl || '',
+        orderId: newOrder._id.toString(),
+        totalAmount: '0',
+        currency: order.currency.toLowerCase(),
+        quantity: order.quantity,
+        firstName: newOrder.firstName,
+      });
+
+      return {
+        orderId: stripeId,
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${stripeId}`,
+      };
+    }
+
     let stripeId: string;
     let result: CheckoutOrderResponse;
 
@@ -165,34 +286,23 @@ const checkoutStripe = async (
       const session: Stripe.Checkout.Session =
         await stripe.checkout.sessions.create({
           payment_method_types: ['card', 'google_pay', 'apple_pay'],
-          line_items: order.isFree
-            ? [
-                {
-                  price_data: {
-                    currency: order.currency.toLowerCase(),
-                    product_data: { name: `${event.title} - Free Ticket` },
-                    unit_amount: 0,
-                  },
-                  quantity: order.quantity,
-                },
-              ]
-            : order
-                .priceCategories!.map((cat) => ({
-                  price_data: {
-                    currency: order.currency.toLowerCase(),
-                    product_data: { name: `${event.title} - ${cat.name}` },
-                    unit_amount: Math.round(Number(cat.price) * 100),
-                  },
-                  quantity: cat.quantity,
-                }))
-                .concat({
-                  price_data: {
-                    currency: order.currency.toLowerCase(),
-                    product_data: { name: 'Platform Fee (5%)' },
-                    unit_amount: platformFee,
-                  },
-                  quantity: 1,
-                }),
+          line_items: order
+            .priceCategories!.map((cat) => ({
+              price_data: {
+                currency: order.currency.toLowerCase(),
+                product_data: { name: `${event.title} - ${cat.name}` },
+                unit_amount: Math.round(Number(cat.price) * 100),
+              },
+              quantity: cat.quantity,
+            }))
+            .concat({
+              price_data: {
+                currency: order.currency.toLowerCase(),
+                product_data: { name: 'Platform Fee (5%)' },
+                unit_amount: platformFee,
+              },
+              quantity: 1,
+            }),
           mode: 'payment',
           success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${
             order.eventId
@@ -256,6 +366,11 @@ export const checkoutOrder = async (
   const existingOrder = await Order.findOne(existingOrderConditions);
   if (existingOrder) {
     throw new Error('You have already purchased a ticket for this event.');
+  }
+
+  if (order.isFree) {
+    const reference = `free_${Date.now()}_${order.eventId}`;
+    return { orderId: reference };
   }
 
   const isNigerianEvent =
