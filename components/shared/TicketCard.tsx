@@ -10,9 +10,8 @@ import { TicketCardProps } from '@/types';
 export default function TicketCard({ order }: TicketCardProps) {
   const event = order.event;
   const currencySymbol =
-    currencySymbols[event.currency as keyof typeof currencySymbols] || '';
-  const ticketPrice = Number(order.totalAmount) / 1.05;
-  const platformFee = Number(order.totalAmount) - ticketPrice;
+    currencySymbols[event.currency as keyof typeof currencySymbols] || '₦';
+
   const verificationUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/verify-ticket?orderId=${order._id}`;
 
   return (
@@ -42,19 +41,6 @@ export default function TicketCard({ order }: TicketCardProps) {
           ) : (
             <p className="text-sm text-gray-600">{order.quantity} x Ticket</p>
           )}
-        </div>
-        <Separator className="bg-gray-300" />
-        <div>
-          <h4 className="font-bold text-gray-800">Subtotal</h4>
-          <p className="text-sm text-gray-600">
-            {currencySymbol}
-            {parseFloat(ticketPrice.toString()).toLocaleString()}
-          </p>
-          <h4 className="font-bold mt-2 text-gray-800">Platform Fee (5%)</h4>
-          <p className="text-sm text-gray-600">
-            {currencySymbol}
-            {parseFloat(platformFee.toString()).toLocaleString()}
-          </p>
         </div>
         <Separator className="bg-gray-300" />
         <div>
