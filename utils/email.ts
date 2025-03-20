@@ -49,14 +49,14 @@ export async function sendTicketEmail({
       <p style="color: #666;">Here are your ticket details for <strong>${eventTitle}</strong>:</p>
       ${eventSubtitle ? `<p style="color: #666;">${eventSubtitle}</p>` : ''}
       <img src="${eventImage}" alt="${eventTitle}" style="max-width: 100%; height: auto; border-radius: 4px;" />
-      <h3 style="color: #333; margin-top: 20px;">Order Summary</h3>
+      <h2 style="color: #333; margin-top: 20px;">Order Summary</h2>
       <p style="color: #666;">Order ID: ${orderId}</p>
       <div style="margin-top: 10px;">
-        <h4 style="color: #333; font-weight: bold;">Tickets</h4>
+        <h3 style="color: #333; font-weight: bold;">Tickets</h3>
         ${priceCategoriesHtml}
       </div>
       <div style="margin-top: 10px;">
-        <h4 style="color: #333; font-weight: bold;">Total</h4>
+        <h3 style="color: #333; font-weight: bold;">Total</h3>
         <p style="color: #666; font-size: 18px; font-weight: bold;">₦${parseFloat(
           totalAmount
         ).toLocaleString()}</p>
