@@ -54,7 +54,7 @@ export const eventDefaultValues = {
   categoryId: '',
   priceCategories: [],
   quantity: null,
-  currency: 'NGN',
+  currency: 'NGN' as const,
   isFree: false,
   url: '',
   contactDetails: {
@@ -68,12 +68,10 @@ export const eventDefaultValues = {
   },
 };
 
-export const currencies = ['NGN', 'USD', 'EUR'];
+export const currency = ['NGN'];
 
 export const currencySymbols = {
   NGN: '₦',
-  USD: '$',
-  EUR: '€',
 } as const;
 
 export const predefinedCategories = {
