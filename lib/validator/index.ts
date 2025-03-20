@@ -20,7 +20,7 @@ export const eventFormSchema = z
     endTime: z.date(),
     categoryId: z.string().min(1, { message: 'Category is required' }),
     typeId: z.string().min(1, { message: 'Type is required' }),
-    currency: z.string().min(1, { message: 'Currency is required' }),
+    currency: z.literal('NGN'),
     isFree: z.boolean().optional().default(false),
     url: z.string().optional(),
     contactDetails: z.object({
