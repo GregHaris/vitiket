@@ -17,7 +17,7 @@ export interface IEvent extends Document {
   updatedAt: Date;
   priceCategories?: { name: string; price: string }[];
   quantity?: number | null;
-  currency: string;
+  currency: 'NGN'; 
   isFree?: boolean;
   url?: string;
   type: { _id: string; name: string; color: string };
@@ -32,7 +32,7 @@ export interface IEvent extends Document {
     x?: string;
     linkedin?: string;
   };
-  status: 'draft' | 'published'; 
+  status: 'draft' | 'published';
 }
 
 const EventSchema = new Schema(
@@ -60,7 +60,7 @@ const EventSchema = new Schema(
       },
     ],
     quantity: { type: Number, default: null },
-    currency: { type: String, required: true },
+    currency: { type: String, enum: ['NGN'], required: true }, 
     url: { type: String },
     type: { type: Schema.Types.ObjectId, ref: 'Type' },
     category: { type: Schema.Types.ObjectId, ref: 'Category' },
@@ -77,7 +77,7 @@ const EventSchema = new Schema(
     status: {
       type: String,
       enum: ['draft', 'published'],
-      default: 'draft', 
+      default: 'draft',
     },
   },
   { timestamps: true }

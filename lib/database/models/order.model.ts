@@ -5,9 +5,8 @@ export interface IOrder extends Document {
   _id: string;
   createdAt: Date;
   event: IEvent;
-  stripeId?: string;
   totalAmount: string;
-  currency: string;
+  currency: 'NGN';
   buyer: {
     _id: string;
     firstName: string;
@@ -17,7 +16,7 @@ export interface IOrder extends Document {
   buyerEmail: string;
   firstName: string;
   lastName: string;
-  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay' | 'none';
+  paymentMethod: 'paystack' | 'none';
   quantity: number;
   priceCategories?: { name: string; price: string; quantity: number }[];
 }
@@ -30,8 +29,8 @@ export type IOrderItem = {
   eventId: string;
   buyer: string;
   buyerEmail: string;
-  currency: string;
-  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay' | 'none';
+  currency: 'NGN';
+  paymentMethod: 'paystack' | 'none'; 
   quantity: number;
 };
 
@@ -41,17 +40,13 @@ const OrderSchema = new Schema(
       type: Date,
       default: Date.now,
     },
-    stripeId: {
-      type: String,
-      unique: true,
-      required: false,
-    },
     totalAmount: {
       type: String,
       required: true,
     },
     currency: {
       type: String,
+      enum: ['NGN'], 
       required: true,
     },
     event: {
@@ -78,7 +73,7 @@ const OrderSchema = new Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ['paystack', 'card', 'googlePay', 'applePay', 'none'],
+      enum: ['paystack', 'none'],
       required: true,
     },
     quantity: {
