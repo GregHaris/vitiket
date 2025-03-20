@@ -18,7 +18,7 @@ import { useUploadThing } from '@/lib/uploadthing';
 
 import CategorySelector from './FormCategorySelector';
 import ContactDetails from './FormContactDetails';
-import Currency from './FormCurrencySelector';
+import Currency from './FormCurrencyInput';
 import DatePickerComponent from './FormDatePicker';
 import DescriptionEditor from './FormDescriptionEditor';
 import EventTypeSelector from './EventTypeSelector';
@@ -113,7 +113,7 @@ export default function EventForm({
           if (values.isFree) {
             router.push(`/events/${newEvent._id}`);
           } else {
-            const hasPaymentDetails = user.subaccountCode || user.stripeId;
+            const hasPaymentDetails = user.subaccountCode;
             if (hasPaymentDetails) {
               router.push(
                 `/organizer?userId=${userId}&eventId=${newEvent._id}`
@@ -151,7 +151,7 @@ export default function EventForm({
           if (values.isFree) {
             router.push(`/events/${updatedEvents._id}`);
           } else {
-            const hasPaymentDetails = user.subaccountCode || user.stripeId;
+            const hasPaymentDetails = user.subaccountCode;
             if (hasPaymentDetails) {
               router.push(
                 `/organizer?userId=${userId}&eventId=${updatedEvents._id}`
