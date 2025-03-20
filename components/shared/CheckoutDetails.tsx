@@ -31,9 +31,6 @@ export default function CheckoutDetails({
   const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const isNigerianEvent =
-    event.currency.toUpperCase() === 'NGN' &&
-    event.location?.toLowerCase().includes('nigeria');
 
   const form = useForm<checkoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -42,7 +39,7 @@ export default function CheckoutDetails({
       lastName: user?.lastName || '',
       email: user?.emailAddresses[0]?.emailAddress || '',
       confirmEmail: user?.emailAddresses[0]?.emailAddress || '',
-      paymentMethod: isNigerianEvent ? 'paystack' : 'card',
+      paymentMethod: 'paystack',
     },
   });
 
@@ -57,7 +54,7 @@ export default function CheckoutDetails({
             lastName: user.lastName || '',
             email: user.emailAddresses[0]?.emailAddress || '',
             confirmEmail: user.emailAddresses[0]?.emailAddress || '',
-            paymentMethod: isNigerianEvent ? 'paystack' : 'card',
+            paymentMethod: 'paystack',
           });
         } catch (error) {
           console.error('Failed to fetch MongoDB user ID:', error);
@@ -65,7 +62,7 @@ export default function CheckoutDetails({
       }
     };
     fetchMongoUserId();
-  }, [user, form, isNigerianEvent]);
+  }, [user, form]);
 
   const resetSearchParams = () => {
     const params = new URLSearchParams(searchParams?.toString());
@@ -113,7 +110,6 @@ export default function CheckoutDetails({
           quantity={quantity}
           totalPrice={totalPrice}
           userId={userId}
-          isNigerianEvent={isNigerianEvent as boolean}
           onCloseDialog={onCloseDialog}
           form={form}
           onSignOut={handleSignOut}
