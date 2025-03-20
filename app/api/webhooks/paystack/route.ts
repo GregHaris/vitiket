@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
   if (event === 'charge.success') {
     const data = eventData.data;
-    const { reference, amount, currency, metadata } = data;
+    const { reference, amount, metadata } = data;
 
     if (!metadata?.eventId || !metadata?.buyerId) {
       console.error('Missing metadata in Paystack webhook:', data);
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         buyer: metadata.buyerId === 'guest' ? null : metadata.buyerId,
         buyerEmail: data.customer.email,
         totalAmount: (amount / 100).toString(),
-        currency: currency?.toUpperCase() || 'NGN',
+        currency: 'NGN',
         paymentMethod: 'paystack',
         quantity: Number(metadata.quantity),
         priceCategories: metadata.priceCategories
@@ -73,8 +73,8 @@ export async function POST(req: NextRequest) {
           : undefined,
         reference,
         paymentStatus: 'completed',
-        firstName: metadata.firstName, 
-        lastName: metadata.lastName, 
+        firstName: metadata.firstName,
+        lastName: metadata.lastName,
       });
 
       await sendTicketEmail({
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
         eventImage: eventDataDb.imageUrl || '',
         orderId: existingOrder._id.toString(),
         totalAmount: existingOrder.totalAmount,
-        currency: currency?.toUpperCase() || 'NGN',
+        currency: 'NGN',
         quantity: Number(metadata.quantity),
         firstName: existingOrder.firstName,
       });
