@@ -253,7 +253,7 @@ export default function EventDetails({
                   </Link>
                   <Button
                     onClick={handleBackToEvent}
-                    className="w-full h-[40px] bg-gray-200 text-gray-800 py-2 rounded-md cursor-pointer hover:bg-gray-300 transition p-regular-14 focus-visible:ring-transparent focus-visible:ring-offset-0"
+                    className="w-full h-[40px] bg-gray-300 text-gray-800 py-2 rounded-md cursor-pointer hover:bg-gray-300 transition p-regular-14 focus-visible:ring-transparent focus-visible:ring-offset-0"
                   >
                     Back to Event
                   </Button>
