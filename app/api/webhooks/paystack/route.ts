@@ -87,6 +87,7 @@ export async function POST(req: NextRequest) {
         currency: 'NGN',
         quantity: Number(metadata.quantity),
         firstName: existingOrder.firstName,
+        priceCategories: existingOrder.priceCategories,
       });
     } else {
       existingOrder = await Order.findOneAndUpdate(
