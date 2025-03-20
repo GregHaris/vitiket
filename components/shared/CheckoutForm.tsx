@@ -12,9 +12,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { Button } from '@ui/button';
-import { checkoutOrder, createOrder } from '@/lib/actions/order.actions';
-import { CheckoutDetailsProps, CheckoutOrderResponse } from '@/types';
+import {
+  CheckoutDetailsProps,
+  CheckoutOrderParams,
+  CheckoutOrderResponse,
+} from '@/types';
 import { checkoutFormValues } from '@/lib/validator';
+import { checkoutOrder, createOrder } from '@/lib/actions/order.actions';
 import { Form } from '@ui/form';
 import UserInfoInput from './FormUserInfoInput';
 import PaymentMethodSelector from './FormPaymentMethods';
@@ -52,13 +56,8 @@ const CheckoutFormContent = ({
   };
 
   const onSubmit = async (data: checkoutFormValues) => {
-    if (!stripe || !elements) {
-      setError('Payment system not initialized. Please try again.');
-      return;
-    }
-
     try {
-      const orderParams = {
+      const orderParams: CheckoutOrderParams = {
         eventTitle: event.title,
         buyerId: userId || 'guest',
         eventId: event._id,
@@ -68,62 +67,86 @@ const CheckoutFormContent = ({
         quantity: quantity,
         ...(event.isFree ? {} : { priceCategories }),
         buyerEmail: data.email,
-        paymentMethod: data.paymentMethod,
-        firstName: data.firstName, 
-        lastName: data.lastName, 
+        paymentMethod: event.isFree ? 'none' : data.paymentMethod,
+        firstName: data.firstName,
+        lastName: data.lastName,
       };
 
-      const result: CheckoutOrderResponse = await checkoutOrder(orderParams);
+      if (event.isFree) {
+        const newOrder = await createOrder({
+          eventId: event._id,
+          buyerId: userId || 'guest',
+          totalAmount: '0',
+          currency: event.currency,
+          quantity: quantity,
+          buyerEmail: data.email,
+          paymentMethod: 'none',
+          firstName: data.firstName,
+          lastName: data.lastName,
+        });
 
-      if (data.paymentMethod === 'card' && !isNigerianEvent) {
-        if ('clientSecret' in result && result.clientSecret) {
-          const cardElement = elements.getElement(CardElement);
-          if (!cardElement) throw new Error('Card element not found');
-
-          const { error: paymentError, paymentIntent } =
-            await stripe.confirmCardPayment(result.clientSecret, {
-              payment_method: {
-                card: cardElement,
-                billing_details: {
-                  name: `${data.firstName} ${data.lastName}`,
-                  email: data.email,
-                },
-              },
-            });
-
-          if (paymentError) {
-            setError(paymentError.message || 'Payment failed');
-            return;
-          }
-
-          if (paymentIntent?.status === 'succeeded') {
-            const newOrder = await createOrder({
-              eventId: event._id,
-              buyerId: userId || 'guest',
-              stripeId: paymentIntent.id,
-              totalAmount: totalPrice.toString(),
-              currency: event.currency,
-              priceCategories: event.isFree ? undefined : priceCategories,
-              quantity: quantity,
-              buyerEmail: data.email,
-              paymentMethod: data.paymentMethod,
-              firstName: data.firstName, 
-              lastName: data.lastName, 
-            });
-
-            if (!userId) {
-              localStorage.setItem('guestCheckoutEmail', data.email);
-            }
-            window.location.href = `/events/${event._id}?success=${newOrder._id}`;
-          }
-        } else {
-          throw new Error('Failed to get payment intent from server');
+        if (!userId) {
+          localStorage.setItem('guestCheckoutEmail', data.email);
         }
-      } else {
-        if ('url' in result && result.url) {
-          window.location.href = result.url;
+        window.location.href = `/events/${event._id}?success=${newOrder._id}`;
+      } else if (!isNigerianEvent) {
+        if (!stripe || !elements) {
+          setError('Payment system not initialized. Please try again.');
+          return;
+        }
+
+        const result: CheckoutOrderResponse = await checkoutOrder(orderParams);
+
+        if (data.paymentMethod === 'card') {
+          if ('clientSecret' in result && result.clientSecret) {
+            const cardElement = elements.getElement(CardElement);
+            if (!cardElement) throw new Error('Card element not found');
+
+            const { error: paymentError, paymentIntent } =
+              await stripe.confirmCardPayment(result.clientSecret, {
+                payment_method: {
+                  card: cardElement,
+                  billing_details: {
+                    name: `${data.firstName} ${data.lastName}`,
+                    email: data.email,
+                  },
+                },
+              });
+
+            if (paymentError) {
+              setError(paymentError.message || 'Payment failed');
+              return;
+            }
+
+            if (paymentIntent?.status === 'succeeded') {
+              const newOrder = await createOrder({
+                eventId: event._id,
+                buyerId: userId || 'guest',
+                stripeId: paymentIntent.id,
+                totalAmount: totalPrice.toString(),
+                currency: event.currency,
+                priceCategories,
+                quantity: quantity,
+                buyerEmail: data.email,
+                paymentMethod: data.paymentMethod,
+                firstName: data.firstName,
+                lastName: data.lastName,
+              });
+
+              if (!userId) {
+                localStorage.setItem('guestCheckoutEmail', data.email);
+              }
+              window.location.href = `/events/${event._id}?success=${newOrder._id}`;
+            }
+          } else {
+            throw new Error('Failed to get payment intent from server');
+          }
         } else {
-          throw new Error('Unexpected response from payment provider');
+          if ('url' in result && result.url) {
+            window.location.href = result.url;
+          } else {
+            throw new Error('Unexpected response from payment provider');
+          }
         }
       }
     } catch (error: any) {
@@ -204,64 +227,59 @@ const CheckoutFormContent = ({
               required
             />
           )}
-          <PaymentMethodSelector
-            isNigerianEvent={isNigerianEvent}
-            orderData={{
-              eventTitle: event.title,
-              buyerId: userId || '',
-              eventId: event._id,
-              price: totalPrice.toString(),
-              isFree: event.isFree || false,
-              currency: event.currency,
-              quantity: quantity,
-              ...(event.isFree ? {} : { priceCategories }),
-              buyerEmail: form.getValues('email'),
-            }}
-          />
-          {!isNigerianEvent && form.watch('paymentMethod') === 'card' && (
-            <div className="space-y-4">
-              <label className="text-sm font-medium">Card Information</label>
-              <div className="border border-gray-300 rounded-md p-2">
-                <CardElement
-                  options={{
-                    style: {
-                      base: {
-                        fontSize: '14px',
-                        fontWeight: '400',
-                        '::placeholder': {
-                          color: '#aab7c4',
+          {!event.isFree && (
+            <PaymentMethodSelector
+              isNigerianEvent={isNigerianEvent}
+              orderData={{
+                eventTitle: event.title,
+                buyerId: userId || '',
+                eventId: event._id,
+                price: totalPrice.toString(),
+                isFree: event.isFree || false,
+                currency: event.currency,
+                quantity: quantity,
+                ...(event.isFree ? {} : { priceCategories }),
+                buyerEmail: form.getValues('email'),
+              }}
+            />
+          )}
+          {!event.isFree &&
+            !isNigerianEvent &&
+            form.watch('paymentMethod') === 'card' && (
+              <div className="space-y-4">
+                <label className="text-sm font-medium">Card Information</label>
+                <div className="border border-gray-300 rounded-md p-2">
+                  <CardElement
+                    options={{
+                      style: {
+                        base: {
+                          fontSize: '14px',
+                          fontWeight: '400',
+                          '::placeholder': {
+                            color: '#aab7c4',
+                          },
+                        },
+                        invalid: {
+                          color: '#9e2146',
                         },
                       },
-                      invalid: {
-                        color: '#9e2146',
+                      classes: {
+                        base: 'nested-input-field p-regular-14',
+                        focus: 'border-none',
                       },
-                    },
-                    classes: {
-                      base: 'nested-input-field p-regular-14',
-                      focus: 'border-none',
-                    },
-                  }}
-                />
+                    }}
+                  />
+                </div>
+                {error && <p className="text-red-500 text-sm">{error}</p>}
               </div>
-              {error && <p className="text-red-500 text-sm">{error}</p>}
-              <Button
-                type="submit"
-                className="w-full button"
-                disabled={!stripe || form.formState.isSubmitting}
-              >
-                {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
-              </Button>
-            </div>
-          )}
-          {(isNigerianEvent || form.watch('paymentMethod') !== 'card') && (
-            <Button
-              type="submit"
-              className="w-full button"
-              disabled={!stripe || form.formState.isSubmitting}
-            >
-              {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
-            </Button>
-          )}
+            )}
+          <Button
+            type="submit"
+            className="w-full button"
+            disabled={(!stripe && !event.isFree) || form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
+          </Button>
         </form>
       </Form>
     </div>
