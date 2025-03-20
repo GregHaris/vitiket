@@ -1,7 +1,6 @@
 'use server';
 
 import { ObjectId } from 'mongodb';
-import Stripe from 'stripe';
 
 import {
   CheckoutOrderParams,
@@ -16,8 +15,6 @@ import { sendTicketEmail } from '@/utils/email';
 import Event from '../database/models/event.model';
 import Order from '../database/models/order.model';
 import User from '../database/models/user.model';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 // PAYSTACK CHECKOUT
 const checkoutPaystack = async (
@@ -52,15 +49,9 @@ const checkoutPaystack = async (
           return sum + Math.round(price * 100) * quantity;
         }, 0);
 
-    const platformFeePercentage = 0.05; // 5%
-    const platformFee = Math.round(ticketAmount * platformFeePercentage);
-    let totalAmount = ticketAmount + platformFee;
+    let totalAmount = ticketAmount; // No platform fee added
 
-    console.log('Paystack checkout initial:', {
-      ticketAmount,
-      platformFee,
-      totalAmount,
-    });
+    console.log('Paystack checkout initial:', { ticketAmount, totalAmount });
 
     // Handle free events
     if (order.isFree) {
@@ -73,7 +64,7 @@ const checkoutPaystack = async (
         buyer: order.buyerId === 'guest' ? null : order.buyerId,
         buyerEmail: user?.email || order.buyerEmail,
         totalAmount: '0',
-        currency: order.currency.toUpperCase(),
+        currency: 'NGN', // Hardcoded to NGN
         paymentMethod: 'none',
         quantity: order.quantity,
         priceCategories: order.priceCategories,
@@ -90,7 +81,7 @@ const checkoutPaystack = async (
         eventImage: event.imageUrl || '',
         orderId: newOrder._id.toString(),
         totalAmount: '0',
-        currency: order.currency.toUpperCase(),
+        currency: 'NGN', // Hardcoded to NGN
         quantity: order.quantity,
         firstName: newOrder.firstName,
       });
@@ -110,7 +101,7 @@ const checkoutPaystack = async (
     let paystackFee =
       Math.round(totalAmount * paystackFeePercentage) + paystackFlatFee;
     if (totalAmount >= 250000) paystackFee = paystackFeeCap;
-    const minimumRequiredAmount = ticketAmount + platformFee + paystackFee;
+    const minimumRequiredAmount = ticketAmount + paystackFee; // No platform fee in minimum
     totalAmount = Math.max(totalAmount, minimumRequiredAmount);
 
     paystackFee =
@@ -119,11 +110,11 @@ const checkoutPaystack = async (
 
     if (totalAmount < paystackMinimumAmount + paystackFee) {
       throw new Error(
-        `Total amount (${totalAmount / 100} ${
-          order.currency
-        }) is below the minimum required (${
+        `Total amount (${
+          totalAmount / 100
+        } NGN) is below the minimum required (${
           (paystackMinimumAmount + paystackFee) / 100
-        } ${order.currency}) to cover Paystack fees.`
+        } NGN) to cover Paystack fees.`
       );
     }
 
@@ -136,14 +127,13 @@ const checkoutPaystack = async (
     const payload = {
       email: user?.email || order.buyerEmail,
       amount: totalAmount,
-      currency: order.currency.toUpperCase(),
+      currency: 'NGN', // Hardcoded to NGN
       reference,
       callback_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${reference}`,
       metadata: {
         eventId: order.eventId,
         buyerId: order.buyerId,
         quantity: order.quantity,
-        platformFee: platformFee / 100,
         firstName: order.firstName || user?.firstName,
         lastName: order.lastName || user?.lastName,
         ...(order.priceCategories && {
@@ -152,7 +142,7 @@ const checkoutPaystack = async (
       },
       split: {
         type: 'percentage',
-        currency: order.currency.toUpperCase(),
+        currency: 'NGN', // Hardcoded to NGN
         subaccounts: [{ subaccount: subaccountCode, share: subaccountShare }],
         bearer_type: 'account',
         main_account_share: mainAccountMinimumShare,
@@ -190,159 +180,8 @@ const checkoutPaystack = async (
   }
 };
 
-// STRIPE CHECKOUT
-const checkoutStripe = async (
-  order: CheckoutOrderParams & {
-    cardDetails?: { number: string; expiry: string; cvv: string };
-  }
-): Promise<CheckoutOrderResponse> => {
-  try {
-    await connectToDatabase();
-
-    const event = await Event.findById(order.eventId);
-    if (!event) throw new Error('Event not found');
-
-    const user =
-      order.buyerId === 'guest' ? null : await User.findById(order.buyerId);
-
-    const organizer = await User.findById(event.organizer);
-    if (!organizer || !organizer.stripeId)
-      throw new Error('Organizer or Stripe account not found');
-
-    const ticketAmount = order.isFree
-      ? 0
-      : order.priceCategories!.reduce(
-          (sum, cat) =>
-            sum + Math.round(Number(cat.price) * 100) * cat.quantity,
-          0
-        );
-    const platformFee = Math.round(ticketAmount * 0.05);
-    const totalAmount = ticketAmount + platformFee;
-
-    if (order.isFree) {
-      const stripeId = `free_${Date.now()}_${order.eventId}`;
-      const newOrder = await Order.create({
-        event: order.eventId,
-        buyer: order.buyerId === 'guest' ? null : order.buyerId,
-        buyerEmail: user?.email || order.buyerEmail,
-        totalAmount: '0',
-        currency: order.currency.toLowerCase(),
-        paymentMethod: 'none',
-        quantity: order.quantity,
-        priceCategories: order.priceCategories,
-        stripeId,
-        paymentStatus: 'completed',
-        firstName: order.firstName || user?.firstName,
-        lastName: order.lastName || user?.lastName,
-      });
-
-      await sendTicketEmail({
-        email: user?.email || order.buyerEmail,
-        eventTitle: event.title,
-        eventSubtitle: event.subtitle || '',
-        eventImage: event.imageUrl || '',
-        orderId: newOrder._id.toString(),
-        totalAmount: '0',
-        currency: order.currency.toLowerCase(),
-        quantity: order.quantity,
-        firstName: newOrder.firstName,
-      });
-
-      return {
-        orderId: stripeId,
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${stripeId}`,
-      };
-    }
-
-    let stripeId: string;
-    let result: CheckoutOrderResponse;
-
-    if (order.paymentMethod === 'card') {
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: totalAmount,
-        currency: order.currency.toLowerCase(),
-        payment_method_types: ['card'],
-        metadata: {
-          eventId: order.eventId,
-          buyerId: order.buyerId || null,
-          quantity: order.quantity,
-          platformFee: platformFee / 100,
-          firstName: order.firstName || user?.firstName,
-          lastName: order.lastName || user?.lastName,
-          ...(order.priceCategories && {
-            priceCategories: JSON.stringify(order.priceCategories),
-          }),
-        },
-        application_fee_amount: 0,
-        transfer_data: { destination: organizer.stripeId },
-      });
-
-      stripeId = paymentIntent.id;
-      result = {
-        clientSecret: paymentIntent.client_secret!,
-        orderId: stripeId,
-      };
-    } else {
-      const session: Stripe.Checkout.Session =
-        await stripe.checkout.sessions.create({
-          payment_method_types: ['card', 'google_pay', 'apple_pay'],
-          line_items: order
-            .priceCategories!.map((cat) => ({
-              price_data: {
-                currency: order.currency.toLowerCase(),
-                product_data: { name: `${event.title} - ${cat.name}` },
-                unit_amount: Math.round(Number(cat.price) * 100),
-              },
-              quantity: cat.quantity,
-            }))
-            .concat({
-              price_data: {
-                currency: order.currency.toLowerCase(),
-                product_data: { name: 'Platform Fee (5%)' },
-                unit_amount: platformFee,
-              },
-              quantity: 1,
-            }),
-          mode: 'payment',
-          success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${
-            order.eventId
-          }?success=${order.eventId}_${Date.now()}`,
-          cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?canceled=true`,
-          customer_email: user?.email || order.buyerEmail,
-          metadata: {
-            eventId: order.eventId,
-            buyerId: order.buyerId,
-            quantity: order.quantity.toString(),
-            platformFee: platformFee / 100,
-            firstName: order.firstName || user?.firstName,
-            lastName: order.lastName || user?.lastName,
-            ...(order.priceCategories && {
-              priceCategories: JSON.stringify(order.priceCategories),
-            }),
-          },
-          payment_intent_data: {
-            application_fee_amount: 0,
-            transfer_data: { destination: organizer.stripeId },
-          },
-        } as Stripe.Checkout.SessionCreateParams);
-
-      stripeId = session.id;
-      result = { url: session.url!, orderId: stripeId };
-    }
-
-    return result;
-  } catch (error) {
-    console.error('Stripe checkout error:', error);
-    throw error;
-  }
-};
-
 // CHECKOUT
-export const checkoutOrder = async (
-  order: CheckoutOrderParams & {
-    cardDetails?: { number: string; expiry: string; cvv: string };
-  }
-) => {
+export const checkoutOrder = async (order: CheckoutOrderParams) => {
   await connectToDatabase();
   const event = await Event.findById(order.eventId).populate('organizer');
   if (!event) throw new Error('Event not found');
@@ -373,15 +212,7 @@ export const checkoutOrder = async (
     return { orderId: reference };
   }
 
-  const isNigerianEvent =
-    order.currency.toUpperCase() === 'NGN' &&
-    event.location.toLowerCase().includes('nigeria');
-
-  if (isNigerianEvent) {
-    return await checkoutPaystack(order);
-  } else {
-    return await checkoutStripe(order);
-  }
+  return await checkoutPaystack(order); // Always use Paystack for paid events
 };
 
 // CREATE ORDER
@@ -403,7 +234,6 @@ export const createOrder = async (order: CreateOrderParams) => {
       buyerEmail: order.buyerEmail,
       paymentMethod: order.paymentMethod,
       quantity: order.quantity,
-      stripeId: order.stripeId || undefined,
       reference: order.reference || undefined,
       paymentStatus: 'completed',
       firstName: order.firstName || user?.firstName,
@@ -417,7 +247,7 @@ export const createOrder = async (order: CreateOrderParams) => {
       eventImage: event.imageUrl || '',
       orderId: newOrder._id.toString(),
       totalAmount: order.totalAmount || newOrder.totalAmount,
-      currency: order.currency,
+      currency: 'NGN', // Hardcoded to NGN
       quantity: order.quantity,
       firstName: newOrder.firstName,
     });
