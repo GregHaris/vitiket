@@ -38,19 +38,25 @@ export default function CheckoutButton({
 
   let totalQuantity = 0;
   let ticketPrice = 0;
-  let priceCategories:
-    | { name: string; price: string; quantity: number }[]
-    | undefined;
+  let priceCategories: { name: string; price: string; quantity: number }[] = [];
 
   if (event.isFree) {
-    totalQuantity = Number(searchParams?.get('free')) || 0;
+    const freeQuantity = Number(searchParams?.get('free')) || 0;
+    totalQuantity = freeQuantity;
+    ticketPrice = 0;
+    if (freeQuantity > 0) {
+      priceCategories.push({
+        name: 'Free',
+        price: '0',
+        quantity: freeQuantity,
+      });
+    }
   } else {
-    priceCategories = [];
     event.priceCategories?.forEach((category, index) => {
       const categoryId = `category-${index}`;
       const quantity = Number(searchParams?.get(categoryId)) || 0;
       if (quantity > 0) {
-        priceCategories?.push({
+        priceCategories.push({
           name: category.name,
           price: category.price,
           quantity,
@@ -75,7 +81,7 @@ export default function CheckoutButton({
     }
   }, [searchParams, totalQuantity]);
 
-  const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
+  const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '₦';
 
   const handleCheckout = () => setIsDialogOpen(true);
   const handleCloseDialog = (reset: boolean = false) => {

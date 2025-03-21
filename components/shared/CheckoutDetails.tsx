@@ -28,7 +28,7 @@ export default function CheckoutDetails({
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
+  const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '₦';
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 

@@ -35,12 +35,18 @@ export default function OrderSummary({
           {selectedTickets && selectedTickets.length > 0 ? (
             selectedTickets.map((cat, index) => (
               <p key={index} className="text-sm text-gray-600">
-                {cat.quantity} x {cat.name} - {currencySymbol}
-                {(Number(cat.price) * cat.quantity).toLocaleString()}
+                {cat.quantity} x {cat.name}
+                {cat.price !== '0' && (
+                  <>
+                    {' - '}
+                    {currencySymbol}
+                    {(Number(cat.price) * cat.quantity).toLocaleString()}
+                  </>
+                )}
               </p>
             ))
           ) : (
-            <p className="text-sm text-gray-600">{event.quantity} x Ticket</p>
+            <p className="text-sm text-gray-600">No tickets selected</p>
           )}
         </div>
         <Separator className="bg-gray-300" />
