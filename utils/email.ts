@@ -34,9 +34,12 @@ export async function sendTicketEmail({
           .map(
             (cat) => `
           <p style="color: #666;">
-            ${cat.quantity} x ${cat.name} - ₦${(
-              Number(cat.price) * cat.quantity
-            ).toLocaleString()}
+            ${cat.quantity} x ${cat.name}
+            ${
+              cat.price !== '0'
+                ? `- ₦${(Number(cat.price) * cat.quantity).toLocaleString()}`
+                : ''
+            }
           </p>
         `
           )
@@ -56,10 +59,9 @@ export async function sendTicketEmail({
         ${priceCategoriesHtml}
       </div>
       <div style="margin-top: 10px;">
-        <h3 style="color: #333; font-weight: bold;">Total</h3>
-        <p style="color: #666; font-size: 18px; font-weight: bold;">₦${parseFloat(
+        <h3 style="color: #333; font-weight: bold;">Total = <span style="color: #666; font-size: 18px; font-weight: bold;">₦${parseFloat(
           totalAmount
-        ).toLocaleString()}</p>
+        ).toLocaleString()}</span></h3>    
       </div>
       <h3 style="color: #333; margin-top: 20px;">Your Ticket</h3>
       <p style="color: #666;">Scan the QR code below to verify your ticket:</p>
