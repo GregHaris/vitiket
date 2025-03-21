@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "clean": "rm -rf .next node_modules && pnpm install"
+    "lint-staged": "lint-staged",
+    "clean": "rm -rf .next node_modules && pnpm install",
+    "prepare": "husky"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.12.4",
@@ -86,6 +88,8 @@
     "@types/react-dom": "^19.0.4",
     "eslint": "^9.21.0",
     "eslint-config-next": "15.1.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
     "react-icons": "^5.5.0",
     "typescript": "^5.8.2"
   },
