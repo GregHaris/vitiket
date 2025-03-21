@@ -23,17 +23,27 @@ const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
 
   // Determine the price display text
   let priceDisplay = '';
+  const currency = event.currency as CurrencyKey;
+  const currencySymbol = currencySymbols[currency] || '₦'; 
+
   if (event.isFree) {
     priceDisplay = 'Free';
   } else if (event.priceCategories?.length === 1) {
     const priceCategory = event.priceCategories[0];
-    const currency = event.currency as CurrencyKey;
-    priceDisplay = `${currencySymbols[currency] || ''}${priceCategory.price}`;
+    priceDisplay = `${currencySymbol}${Number(
+      priceCategory.price
+    ).toLocaleString('en-NG', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })}`;
   } else if (event.priceCategories && event.priceCategories.length > 1) {
-    const currency = event.currency as CurrencyKey;
-    priceDisplay = `From ${
-      currencySymbols[currency] || ''
-    }${lowestPrice?.toFixed(2)}`;
+    priceDisplay = `From ${currencySymbol}${Number(lowestPrice).toLocaleString(
+      'en-NG',
+      {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }
+    )}`;
   }
 
   return (
