@@ -13,9 +13,6 @@ import { handleError } from '@/lib/utils';
 import Event from '@/lib/database/models/event.model';
 import Order from '@/lib/database/models/order.model';
 import User from '@/lib/database/models/user.model';
-import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function createUser(user: CreateUserParams) {
   try {
@@ -123,7 +120,6 @@ export async function updateUserPaymentDetails(
         accountName: paymentDetails.accountName || '',
       };
     }
-    if (paymentDetails.stripeId) updateData.stripeId = paymentDetails.stripeId;
 
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true,
@@ -133,45 +129,5 @@ export async function updateUserPaymentDetails(
     return JSON.parse(JSON.stringify(updatedUser));
   } catch (error) {
     handleError(error);
-  }
-}
-
-// Update User info to create Stripe connected account
-export async function createStripeConnectedAccount(
-  userId: string,
-  email: string
-) {
-  try {
-    await connectToDatabase();
-
-    const account = await stripe.accounts.create({
-      type: 'express',
-      email,
-      capabilities: {
-        card_payments: { requested: true },
-        transfers: { requested: true },
-      },
-    });
-
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { stripeId: account.id },
-      { new: true }
-    );
-
-    if (!updatedUser) throw new Error('User not found');
-
-    // Generate an account link for embedded onboarding completion
-    const accountLink = await stripe.accountLinks.create({
-      account: account.id,
-      refresh_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/organizer/setup?refresh=true`,
-      return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/dashboard`,
-      type: 'account_onboarding',
-    });
-
-    return { stripeId: account.id, onboardingUrl: accountLink.url };
-  } catch (error) {
-    handleError(error);
-    throw error;
   }
 }
