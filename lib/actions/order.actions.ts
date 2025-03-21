@@ -1,6 +1,6 @@
-'use server';
+"use server";
 
-import { ObjectId } from 'mongodb';
+import { ObjectId } from "mongodb";
 
 import {
   CheckoutOrderParams,
@@ -8,33 +8,33 @@ import {
   CreateOrderParams,
   GetOrdersByEventParams,
   GetOrdersByUserParams,
-} from '@/types';
-import { connectToDatabase } from '../database';
-import { handleError } from '../utils';
-import { sendTicketEmail } from '@/utils/email';
-import Event from '../database/models/event.model';
-import Order from '../database/models/order.model';
-import User from '../database/models/user.model';
+} from "@/types";
+import { connectToDatabase } from "../database";
+import { handleError } from "../utils";
+import { sendTicketEmail } from "@/utils/email";
+import Event from "../database/models/event.model";
+import Order from "../database/models/order.model";
+import User from "../database/models/user.model";
 
 // PAYSTACK CHECKOUT
 const checkoutPaystack = async (
-  order: CheckoutOrderParams
+  order: CheckoutOrderParams,
 ): Promise<CheckoutOrderResponse> => {
   try {
     await connectToDatabase();
 
     const event = await Event.findById(order.eventId);
-    if (!event) throw new Error('Event not found');
+    if (!event) throw new Error("Event not found");
 
     const user =
-      order.buyerId === 'guest' ? null : await User.findById(order.buyerId);
+      order.buyerId === "guest" ? null : await User.findById(order.buyerId);
 
     const ticketAmount = order.priceCategories!.reduce((sum, cat) => {
       const price = Number(cat.price);
       const quantity = cat.quantity;
       if (isNaN(price) || price < 0 || quantity < 0) {
         throw new Error(
-          `Invalid price or quantity in priceCategories: price=${cat.price}, quantity=${cat.quantity}`
+          `Invalid price or quantity in priceCategories: price=${cat.price}, quantity=${cat.quantity}`,
         );
       }
       return sum + Math.round(price * 100) * quantity;
@@ -43,26 +43,26 @@ const checkoutPaystack = async (
     let totalAmount = ticketAmount;
 
     const isFreeEvent = order.priceCategories!.every(
-      (cat) => cat.price === '0'
+      (cat) => cat.price === "0",
     );
 
     if (isFreeEvent) {
       if (totalAmount !== 0) {
-        throw new Error('Free event should have a total amount of 0');
+        throw new Error("Free event should have a total amount of 0");
       }
       const reference = `txn_${Date.now()}_${order.eventId}`;
 
       const newOrder = await Order.create({
         event: order.eventId,
-        buyer: order.buyerId === 'guest' ? null : order.buyerId,
+        buyer: order.buyerId === "guest" ? null : order.buyerId,
         buyerEmail: user?.email || order.buyerEmail,
-        totalAmount: '0',
-        currency: 'NGN',
-        paymentMethod: 'none',
+        totalAmount: "0",
+        currency: "NGN",
+        paymentMethod: "none",
         quantity: order.quantity,
         priceCategories: order.priceCategories,
         reference,
-        paymentStatus: 'completed',
+        paymentStatus: "completed",
         firstName: order.firstName || user?.firstName,
         lastName: order.lastName || user?.lastName,
       });
@@ -70,11 +70,11 @@ const checkoutPaystack = async (
       await sendTicketEmail({
         email: user?.email || order.buyerEmail,
         eventTitle: event.title,
-        eventSubtitle: event.subtitle || '',
-        eventImage: event.imageUrl || '',
+        eventSubtitle: event.subtitle || "",
+        eventImage: event.imageUrl || "",
         orderId: newOrder._id.toString(),
-        totalAmount: '0',
-        currency: 'NGN',
+        totalAmount: "0",
+        currency: "NGN",
         quantity: order.quantity,
         firstName: newOrder.firstName,
         priceCategories: order.priceCategories,
@@ -88,7 +88,7 @@ const checkoutPaystack = async (
 
     const organizer = await User.findById(event.organizer);
     if (!organizer || !organizer.subaccountCode)
-      throw new Error('Organizer or subaccount not found');
+      throw new Error("Organizer or subaccount not found");
 
     const subaccountCode = organizer.subaccountCode;
 
@@ -114,7 +114,7 @@ const checkoutPaystack = async (
           totalAmount / 100
         } NGN) is below the minimum required (${
           (paystackMinimumAmount + paystackFee) / 100
-        } NGN) to cover Paystack fees.`
+        } NGN) to cover Paystack fees.`,
       );
     }
 
@@ -127,15 +127,15 @@ const checkoutPaystack = async (
     // Create order before Paystack transaction (pending status)
     const newOrder = await Order.create({
       event: order.eventId,
-      buyer: order.buyerId === 'guest' ? null : order.buyerId,
+      buyer: order.buyerId === "guest" ? null : order.buyerId,
       buyerEmail: user?.email || order.buyerEmail,
       totalAmount: (totalAmount / 100).toString(),
-      currency: 'NGN',
-      paymentMethod: 'paystack',
+      currency: "NGN",
+      paymentMethod: "paystack",
       quantity: order.quantity,
       priceCategories: order.priceCategories,
       reference,
-      paymentStatus: 'pending',
+      paymentStatus: "pending",
       firstName: order.firstName || user?.firstName,
       lastName: order.lastName || user?.lastName,
     });
@@ -143,7 +143,7 @@ const checkoutPaystack = async (
     const payload = {
       email: user?.email || order.buyerEmail,
       amount: totalAmount,
-      currency: 'NGN',
+      currency: "NGN",
       reference,
       callback_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${newOrder._id}`,
       metadata: {
@@ -157,33 +157,33 @@ const checkoutPaystack = async (
         }),
       },
       split: {
-        type: 'percentage',
-        currency: 'NGN',
+        type: "percentage",
+        currency: "NGN",
         subaccounts: [{ subaccount: subaccountCode, share: subaccountShare }],
-        bearer_type: 'account',
+        bearer_type: "account",
         main_account_share: mainAccountMinimumShare,
       },
     };
 
-    console.log('Paystack payload:', payload);
+    console.log("Paystack payload:", payload);
 
     const response = await fetch(
-      'https://api.paystack.co/transaction/initialize',
+      "https://api.paystack.co/transaction/initialize",
       {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-      }
+      },
     );
 
     const data = await response.json();
     if (!response.ok || !data.status) {
       await Order.deleteOne({ _id: newOrder._id });
       throw new Error(
-        data.message || 'Failed to initialize Paystack transaction'
+        data.message || "Failed to initialize Paystack transaction",
       );
     }
 
@@ -192,36 +192,42 @@ const checkoutPaystack = async (
       orderId: newOrder._id.toString(),
     };
   } catch (error) {
-    console.error('Paystack checkout error:', error);
+    console.error("Paystack checkout error:", error);
     throw error;
   }
+};
+
+type ExistingOrderConditions = {
+  event: string;
+  paymentStatus: string;
+  $or?: Array<{ buyerEmail: string; buyer: null } | { buyer: string }>;
 };
 
 // CHECKOUT
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
   await connectToDatabase();
-  const event = await Event.findById(order.eventId).populate('organizer');
-  if (!event) throw new Error('Event not found');
+  const event = await Event.findById(order.eventId).populate("organizer");
+  if (!event) throw new Error("Event not found");
 
-  const existingOrderConditions: any = {
+  const existingOrderConditions: ExistingOrderConditions = {
     event: order.eventId,
-    paymentStatus: 'completed',
+    paymentStatus: "completed",
   };
 
-  if (order.buyerId === 'guest') {
+  if (order.buyerId === "guest") {
     existingOrderConditions.$or = [
       { buyerEmail: order.buyerEmail, buyer: null },
     ];
   } else {
     existingOrderConditions.$or = [
-      { buyer: order.buyerId },
+      { buyer: order.buyerId as string },
       { buyerEmail: order.buyerEmail, buyer: null },
     ];
   }
 
   const existingOrder = await Order.findOne(existingOrderConditions);
   if (existingOrder) {
-    throw new Error('You have already purchased a ticket for this event.');
+    throw new Error("You have already purchased a ticket for this event.");
   }
 
   return await checkoutPaystack(order);
@@ -233,24 +239,24 @@ export const createOrder = async (order: CreateOrderParams) => {
     await connectToDatabase();
 
     const user =
-      order.buyerId === 'guest' ? null : await User.findById(order.buyerId);
-    if (!user && order.buyerId !== 'guest') throw new Error('User not found');
+      order.buyerId === "guest" ? null : await User.findById(order.buyerId);
+    if (!user && order.buyerId !== "guest") throw new Error("User not found");
 
     const event = await Event.findById(order.eventId);
-    if (!event) throw new Error('Event not found');
+    if (!event) throw new Error("Event not found");
 
     const newOrder = await Order.create({
       ...order,
       event: order.eventId,
-      buyer: order.buyerId === 'guest' ? null : order.buyerId,
+      buyer: order.buyerId === "guest" ? null : order.buyerId,
       buyerEmail: order.buyerEmail,
       paymentMethod: order.paymentMethod,
       quantity: order.quantity,
       reference: order.reference || undefined,
-      paymentStatus: 'completed',
+      paymentStatus: "completed",
       firstName: order.firstName || user?.firstName,
       lastName: order.lastName || user?.lastName,
-      priceCategories: order.priceCategories, 
+      priceCategories: order.priceCategories,
     });
 
     return JSON.parse(JSON.stringify(newOrder));
@@ -262,7 +268,7 @@ export const createOrder = async (order: CreateOrderParams) => {
 
 export const hasUserPurchasedEvent = async (
   userId: string,
-  eventId: string
+  eventId: string,
 ) => {
   try {
     await connectToDatabase();
@@ -270,7 +276,7 @@ export const hasUserPurchasedEvent = async (
     const order = await Order.findOne({
       buyer: userId,
       event: eventId,
-      paymentStatus: 'completed',
+      paymentStatus: "completed",
     });
 
     return !!order;
@@ -282,14 +288,14 @@ export const hasUserPurchasedEvent = async (
 
 export const hasUserPurchasedEventByEmail = async (
   email: string,
-  eventId: string
+  eventId: string,
 ) => {
   try {
     await connectToDatabase();
     const order = await Order.findOne({
       buyerEmail: email,
       event: eventId,
-      paymentStatus: 'completed',
+      paymentStatus: "completed",
     });
     return !!order;
   } catch (error) {
@@ -306,50 +312,50 @@ export async function getOrdersByEvent({
   try {
     await connectToDatabase();
 
-    if (!eventId) throw new Error('Event ID is required');
+    if (!eventId) throw new Error("Event ID is required");
     const eventObjectId = new ObjectId(eventId);
 
     const orders = await Order.aggregate([
       {
-        $match: { paymentStatus: 'completed' },
+        $match: { paymentStatus: "completed" },
       },
       {
         $lookup: {
-          from: 'users',
-          localField: 'buyer',
-          foreignField: '_id',
-          as: 'buyer',
+          from: "users",
+          localField: "buyer",
+          foreignField: "_id",
+          as: "buyer",
         },
       },
       {
         $unwind: {
-          path: '$buyer',
+          path: "$buyer",
           preserveNullAndEmptyArrays: true,
         },
       },
       {
         $lookup: {
-          from: 'events',
-          localField: 'event',
-          foreignField: '_id',
-          as: 'event',
+          from: "events",
+          localField: "event",
+          foreignField: "_id",
+          as: "event",
         },
       },
       {
-        $unwind: '$event',
+        $unwind: "$event",
       },
       {
         $project: {
           _id: 1,
           totalAmount: 1,
           createdAt: 1,
-          eventTitle: '$event.title',
-          eventId: '$event._id',
+          eventTitle: "$event.title",
+          eventId: "$event._id",
           buyer: {
             $cond: {
-              if: { $eq: ['$buyer', null] },
-              then: 'Guest',
-              else: { $concat: ['$buyer.firstName', ' ', '$buyer.lastName'] },
+              if: { $eq: ["$buyer", null] },
+              then: "Guest",
+              else: { $concat: ["$buyer.firstName", " ", "$buyer.lastName"] },
             },
           },
           buyerEmail: 1,
@@ -361,8 +367,8 @@ export async function getOrdersByEvent({
             { eventId: eventObjectId },
             {
               $or: [
-                { buyer: { $regex: RegExp(searchString, 'i') } },
-                { buyerEmail: { $regex: RegExp(searchString, 'i') } },
+                { buyer: { $regex: RegExp(searchString, "i") } },
+                { buyerEmail: { $regex: RegExp(searchString, "i") } },
               ],
             },
           ],
@@ -386,33 +392,32 @@ export async function getOrdersByUser({
     await connectToDatabase();
 
     const skipAmount = (Number(page) - 1) * limit;
-    const conditions = { buyer: userId, paymentStatus: 'completed' };
+    const conditions = { buyer: userId, paymentStatus: "completed" };
 
-    const orders = await Order.distinct('event._id')
+    const orders = await Order.distinct("event._id")
       .find(conditions)
-      .sort({ createdAt: 'desc' })
+      .sort({ createdAt: "desc" })
       .skip(skipAmount)
       .limit(limit)
       .populate({
-        path: 'event',
+        path: "event",
         model: Event,
         select:
-          '_id title subtitle imageUrl currency startDate location organizer',
+          "_id title subtitle imageUrl currency startDate location organizer",
         populate: {
-          path: 'organizer',
+          path: "organizer",
           model: User,
-          select: '_id firstName lastName',
+          select: "_id firstName lastName",
         },
       })
       .populate({
-        path: 'buyer',
+        path: "buyer",
         model: User,
-        select: '_id firstName lastName email',
+        select: "_id firstName lastName email",
       });
 
-    const ordersCount = await Order.distinct('event._id').countDocuments(
-      conditions
-    );
+    const ordersCount =
+      await Order.distinct("event._id").countDocuments(conditions);
 
     return {
       data: JSON.parse(JSON.stringify(orders)),

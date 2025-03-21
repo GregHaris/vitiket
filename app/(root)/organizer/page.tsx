@@ -1,33 +1,27 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-import { getUserById } from '@/lib/actions/user.actions';
-import { getEventById, updateEventStatus } from '@/lib/actions/event.actions';
-import { IEvent } from '@/lib/database/models/event.model';
-import { IUser } from '@/lib/database/models/user.model';
+import { getUserById } from "@/lib/actions/user.actions";
+import { updateEventStatus } from "@/lib/actions/event.actions";
+import { IUser } from "@/lib/database/models/user.model";
 
 export default function OrganizerConfirmationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const userId = searchParams.get('userId');
-  const eventId = searchParams.get('eventId');
+  const userId = searchParams.get("userId");
+  const eventId = searchParams.get("eventId");
   const [userDetails, setUserDetails] = useState<IUser | null>(null);
-  const [eventDetails, setEventDetails] = useState<IEvent | null>(null);
 
   useEffect(() => {
     async function fetchDetails() {
       if (userId && eventId) {
         try {
-          const [user, event] = await Promise.all([
-            getUserById(userId),
-            getEventById(eventId),
-          ]);
+          const user = await getUserById(userId);
           setUserDetails(user);
-          setEventDetails(event);
         } catch (error) {
-          console.error('Error fetching details:', error);
+          console.error("Error fetching details:", error);
         }
       }
     }
@@ -39,7 +33,7 @@ export default function OrganizerConfirmationPage() {
     await updateEventStatus({
       userId,
       eventId,
-      status: 'published',
+      status: "published",
       path: `/events/${eventId}`,
     });
     router.push(`/events/${eventId}`);
@@ -65,11 +59,11 @@ export default function OrganizerConfirmationPage() {
             <strong>Bank Name:</strong> {userDetails.bankName}
           </p>
           <p>
-            <strong>Account Number:</strong>{' '}
+            <strong>Account Number:</strong>{" "}
             {userDetails.bankDetails?.accountNumber}
           </p>
           <p>
-            <strong>Account Name:</strong>{' '}
+            <strong>Account Name:</strong>{" "}
             {userDetails.bankDetails?.accountName}
           </p>
           <p>

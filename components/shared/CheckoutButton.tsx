@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
-import { Button } from '@ui/button';
-import { CheckoutButtonProps, CurrencyKey } from '@/types';
-import { currencySymbols } from '@/constants';
-import { Dialog, DialogContent, DialogDescription } from '@ui/dialog';
-import { hasUserPurchasedEventByEmail } from '@/lib/actions/order.actions';
-import { useCheckout } from '@shared/CheckoutContext';
-import CheckoutDetails from '@shared/CheckoutDetails';
+import { Button } from "@ui/button";
+import { CheckoutButtonProps, CurrencyKey } from "@/types";
+import { currencySymbols } from "@/constants";
+import { Dialog, DialogContent, DialogDescription } from "@ui/dialog";
+import { hasUserPurchasedEventByEmail } from "@/lib/actions/order.actions";
+import { useCheckout } from "@shared/CheckoutContext";
+import CheckoutDetails from "@shared/CheckoutDetails";
 
 export default function CheckoutButton({
   event,
@@ -22,12 +22,12 @@ export default function CheckoutButton({
   const [guestPurchased, setGuestPurchased] = useState(false);
 
   useEffect(() => {
-    if (searchParams?.get('checkout') === 'true') setIsDialogOpen(true);
+    if (searchParams?.get("checkout") === "true") setIsDialogOpen(true);
   }, [searchParams]);
 
   useEffect(() => {
     const checkGuestPurchase = async () => {
-      const email = localStorage.getItem('guestCheckoutEmail');
+      const email = localStorage.getItem("guestCheckoutEmail");
       if (email) {
         const purchased = await hasUserPurchasedEventByEmail(email, event._id);
         setGuestPurchased(purchased);
@@ -38,16 +38,17 @@ export default function CheckoutButton({
 
   let totalQuantity = 0;
   let ticketPrice = 0;
-  let priceCategories: { name: string; price: string; quantity: number }[] = [];
+  const priceCategories: { name: string; price: string; quantity: number }[] =
+    [];
 
   if (event.isFree) {
-    const freeQuantity = Number(searchParams?.get('free')) || 0;
+    const freeQuantity = Number(searchParams?.get("free")) || 0;
     totalQuantity = freeQuantity;
     ticketPrice = 0;
     if (freeQuantity > 0) {
       priceCategories.push({
-        name: 'Free',
-        price: '0',
+        name: "Free",
+        price: "0",
         quantity: freeQuantity,
       });
     }
@@ -70,27 +71,27 @@ export default function CheckoutButton({
   const totalPrice = ticketPrice;
 
   useEffect(() => {
-    if (searchParams?.get('checkout') === 'true' && totalQuantity === 0) {
+    if (searchParams?.get("checkout") === "true" && totalQuantity === 0) {
       const params = new URLSearchParams(searchParams.toString());
-      params.delete('checkout');
+      params.delete("checkout");
       window.history.replaceState(
         {},
-        '',
-        `${window.location.pathname}?${params.toString()}`
+        "",
+        `${window.location.pathname}?${params.toString()}`,
       );
     }
   }, [searchParams, totalQuantity]);
 
-  const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '₦';
+  const currencySymbol = currencySymbols[event.currency as CurrencyKey] || "₦";
 
   const handleCheckout = () => setIsDialogOpen(true);
   const handleCloseDialog = (reset: boolean = false) => {
     if (reset) {
       resetCheckout();
       const params = new URLSearchParams(searchParams?.toString());
-      params.delete('checkout');
+      params.delete("checkout");
       if (event.isFree) {
-        params.delete('free');
+        params.delete("free");
       } else {
         event.priceCategories?.forEach((_, index) => {
           params.delete(`category-${index}`);
@@ -98,8 +99,8 @@ export default function CheckoutButton({
       }
       window.history.replaceState(
         {},
-        '',
-        `${window.location.pathname}?${params.toString()}`
+        "",
+        `${window.location.pathname}?${params.toString()}`,
       );
     }
     setIsDialogOpen(false);
@@ -113,11 +114,11 @@ export default function CheckoutButton({
         {totalQuantity === 0 ? (
           <Button
             className="button w-full md:w-[300px] cursor-pointer font-bold transition-all duration-100"
-            size={'lg'}
+            size={"lg"}
             onClick={() =>
               document
-                .getElementById('price-section')
-                ?.scrollIntoView({ behavior: 'smooth' })
+                .getElementById("price-section")
+                ?.scrollIntoView({ behavior: "smooth" })
             }
           >
             Get Tickets
@@ -139,13 +140,13 @@ export default function CheckoutButton({
         ) : (
           <Button
             className="button w-full md:w-[300px] font-bold transition-all duration-300"
-            size={'lg'}
+            size={"lg"}
             onClick={handleCheckout}
           >
             <span>Checkout</span>
             <span>
               {currencySymbol}
-              {ticketPrice.toLocaleString()}{' '}
+              {ticketPrice.toLocaleString()}{" "}
             </span>
           </Button>
         )}

@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
-import { VerificationResult } from '@/types';
+import { VerificationResult } from "@/types";
 
 export default function VerifyTicket() {
   const searchParams = useSearchParams();
-  const orderId = searchParams.get('orderId');
+  const orderId = searchParams.get("orderId");
   const [result, setResult] = useState<VerificationResult>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ export default function VerifyTicket() {
   useEffect(() => {
     const verifyTicket = async () => {
       if (!orderId) {
-        setError('No order ID provided');
+        setError("No order ID provided");
         setLoading(false);
         return;
       }
@@ -28,10 +28,10 @@ export default function VerifyTicket() {
         if (response.ok) {
           setResult(data);
         } else {
-          setError(data.error || 'Failed to verify ticket');
+          setError(data.error || "Failed to verify ticket");
         }
-      } catch (err) {
-        setError('An error occurred while verifying the ticket');
+      } catch {
+        setError("An error occurred while verifying the ticket");
       } finally {
         setLoading(false);
       }
