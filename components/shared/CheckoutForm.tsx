@@ -13,6 +13,7 @@ import {
 import { checkoutFormValues } from '@/lib/validator';
 import { checkoutOrder, createOrder } from '@/lib/actions/order.actions';
 import { Form } from '@ui/form';
+import { sendTicketEmail } from '@/utils/email';
 import UserInfoInput from './FormUserInfoInput';
 
 export default function CheckoutForm({
@@ -51,7 +52,7 @@ export default function CheckoutForm({
         isFree: event.isFree || false,
         currency: event.currency,
         quantity: quantity,
-        ...(event.isFree ? {} : { priceCategories }),
+        priceCategories: priceCategories || [],
         buyerEmail: data.email,
         paymentMethod: event.isFree ? 'none' : 'paystack',
         firstName: data.firstName,
@@ -59,13 +60,15 @@ export default function CheckoutForm({
       };
 
       if (event.isFree) {
-        await checkoutOrder(orderParams);
         const newOrder = await createOrder({
           eventId: event._id,
           buyerId: userId || 'guest',
           totalAmount: '0',
           currency: 'NGN',
           quantity: quantity,
+          priceCategories: priceCategories || [
+            { name: 'Free', price: '0', quantity: quantity },
+          ],
           buyerEmail: data.email,
           paymentMethod: 'none',
           firstName: data.firstName,
@@ -76,8 +79,24 @@ export default function CheckoutForm({
           localStorage.setItem('guestCheckoutEmail', data.email);
         }
 
+        await sendTicketEmail({
+          email: data.email,
+          eventTitle: event.title,
+          eventSubtitle: event.subtitle || '',
+          eventImage: event.imageUrl || '',
+          orderId: newOrder._id.toString(),
+          totalAmount: '0',
+          currency: 'NGN',
+          quantity: quantity,
+          firstName: data.firstName,
+          priceCategories: priceCategories || [
+            { name: 'Free', price: '0', quantity: quantity },
+          ],
+        });
+
         setIsSuccess(true);
         setTimeout(() => {
+          onCloseDialog(false);
           window.location.href = `/events/${event._id}?success=${newOrder._id}`;
         }, 2000);
       } else {
