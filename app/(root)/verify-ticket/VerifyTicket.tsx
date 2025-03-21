@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-
 import { VerificationResult } from "@/types";
 
 export default function VerifyTicket() {
