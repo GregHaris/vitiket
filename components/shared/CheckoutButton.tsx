@@ -138,7 +138,7 @@ export default function CheckoutButton({
           </div>
         ) : (
           <Button
-            className="rounded-md min-h-[56px] cursor-pointer text-primary-50 w-full md:w-[300px] font-bold transition-all duration-300 py-2"
+            className="button w-full md:w-[300px] font-bold transition-all duration-300"
             size={'lg'}
             onClick={handleCheckout}
           >
