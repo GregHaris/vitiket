@@ -5,9 +5,9 @@ import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { X } from 'lucide-react';
 import Image from 'next/image';
-import { useUploadThing } from '@/lib/uploadthing';
 
 import { Button } from '@ui/button';
+import { useUploadThing } from '@/lib/uploadthing';
 
 type FileUploaderProps = {
   imageUrl: string;
@@ -75,7 +75,15 @@ export default function FileUploader({
         {isDragActive ? (
           <p>Drop the file here ...</p>
         ) : (
-          <p>Drag & drop a file here, or click to select a file</p>
+          <div className="flex flex-col items-center justify-between gap-4">
+            <p>Drag & drop a file here, or click to select a file</p>
+            <Image
+              src="/assets/icons/upload.svg"
+              width={100}
+              height={100}
+              alt="Upload"
+            />
+          </div>
         )}
       </div>
       {file && (
