@@ -29,30 +29,24 @@ const checkoutPaystack = async (
     const user =
       order.buyerId === 'guest' ? null : await User.findById(order.buyerId);
 
-    const organizer = await User.findById(event.organizer);
-    if (!organizer || !organizer.subaccountCode)
-      throw new Error('Organizer or subaccount not found');
-
-    const subaccountCode = organizer.subaccountCode;
-
-    const ticketAmount = order.isFree
-      ? 0
-      : order.priceCategories!.reduce((sum, cat) => {
-          const price = Number(cat.price);
-          const quantity = cat.quantity;
-          if (isNaN(price) || price < 0 || quantity < 0) {
-            throw new Error(
-              `Invalid price or quantity in priceCategories: price=${cat.price}, quantity=${cat.quantity}`
-            );
-          }
-          return sum + Math.round(price * 100) * quantity;
-        }, 0);
+    const ticketAmount = order.priceCategories!.reduce((sum, cat) => {
+      const price = Number(cat.price);
+      const quantity = cat.quantity;
+      if (isNaN(price) || price < 0 || quantity < 0) {
+        throw new Error(
+          `Invalid price or quantity in priceCategories: price=${cat.price}, quantity=${cat.quantity}`
+        );
+      }
+      return sum + Math.round(price * 100) * quantity;
+    }, 0);
 
     let totalAmount = ticketAmount;
 
-    console.log('Paystack checkout initial:', { ticketAmount, totalAmount });
+    const isFreeEvent = order.priceCategories!.every(
+      (cat) => cat.price === '0'
+    );
 
-    if (order.isFree) {
+    if (isFreeEvent) {
       if (totalAmount !== 0) {
         throw new Error('Free event should have a total amount of 0');
       }
@@ -91,6 +85,12 @@ const checkoutPaystack = async (
         url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${newOrder._id}`,
       };
     }
+
+    const organizer = await User.findById(event.organizer);
+    if (!organizer || !organizer.subaccountCode)
+      throw new Error('Organizer or subaccount not found');
+
+    const subaccountCode = organizer.subaccountCode;
 
     // Paystack fee constants (in kobo)
     const paystackMinimumAmount = 100;
@@ -250,6 +250,7 @@ export const createOrder = async (order: CreateOrderParams) => {
       paymentStatus: 'completed',
       firstName: order.firstName || user?.firstName,
       lastName: order.lastName || user?.lastName,
+      priceCategories: order.priceCategories, 
     });
 
     return JSON.parse(JSON.stringify(newOrder));
