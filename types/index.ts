@@ -1,11 +1,11 @@
-import { ReactNode } from 'react';
-import { UseFormHandleSubmit, UseFormReturn } from 'react-hook-form';
-import { z } from 'zod';
+import { ReactNode } from "react";
+import { UseFormHandleSubmit, UseFormReturn } from "react-hook-form";
+import { z } from "zod";
 
-import { currencySymbols } from '@/constants';
-import { eventFormValues, paymentDetailsSchema } from '@/lib/validator';
-import { IEvent } from '@/lib/database/models/event.model';
-import { IOrder } from '@/lib/database/models/order.model';
+import { currencySymbols } from "@/constants";
+import { eventFormValues, paymentDetailsSchema } from "@/lib/validator";
+import { IEvent } from "@/lib/database/models/event.model";
+import { IOrder } from "@/lib/database/models/order.model";
 
 // ====== USER PARAMS
 export type CreateUserParams = {
@@ -32,7 +32,7 @@ export type CreateEventParams = {
     title: string;
     subtitle?: string;
     description: string;
-    locationType: 'Virtual' | 'Physical' | 'Hybrid';
+    locationType: "Virtual" | "Physical" | "Hybrid";
     location?: string;
     coordinates?: string;
     imageUrl: string;
@@ -46,8 +46,8 @@ export type CreateEventParams = {
     quantity?: number | null;
     isFree?: boolean;
     url?: string;
-    status?: 'draft' | 'published';
-    currency: 'NGN';
+    status?: "draft" | "published";
+    currency: "NGN";
   };
   contactDetails: {
     email: string;
@@ -69,7 +69,7 @@ export type UpdateEventParams = {
     subtitle?: string;
     imageUrl: string;
     description: string;
-    locationType: 'Virtual' | 'Physical' | 'Hybrid';
+    locationType: "Virtual" | "Physical" | "Hybrid";
     location?: string;
     coordinates?: string;
     startDate: Date;
@@ -82,8 +82,8 @@ export type UpdateEventParams = {
     quantity?: number | null;
     isFree?: boolean;
     url?: string;
-    status?: 'draft' | 'published';
-    currency: 'NGN';
+    status?: "draft" | "published";
+    currency: "NGN";
   };
   contactDetails: {
     email: string;
@@ -139,9 +139,9 @@ export type Event = {
   quantity?: number | null;
   isFree?: boolean;
   imageUrl: string;
-  locationType: 'Virtual' | 'Physical' | 'Hybrid';
+  locationType: "Virtual" | "Physical" | "Hybrid";
   location?: string;
-  currency: 'NGN';
+  currency: "NGN";
   coordinates?: string;
   startDate: Date;
   endDate: Date;
@@ -164,7 +164,7 @@ export type Event = {
     name: string;
     color: string;
   };
-  status: 'draft' | 'published';
+  status: "draft" | "published";
   contactDetails: {
     email: string;
     phoneNumber?: string;
@@ -199,7 +199,7 @@ export type CheckoutOrderParams = {
   buyerEmail: string;
   firstName?: string;
   lastName?: string;
-  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay' | 'none';
+  paymentMethod: "paystack" | "card" | "googlePay" | "applePay" | "none";
 };
 
 export type CreateOrderParams = {
@@ -213,7 +213,7 @@ export type CreateOrderParams = {
   quantity: number;
   buyerEmail: string;
   reference?: string;
-  paymentMethod: 'paystack' | 'card' | 'googlePay' | 'applePay' | 'none';
+  paymentMethod: "paystack" | "card" | "googlePay" | "applePay" | "none";
   createdAt?: Date;
 };
 
@@ -247,7 +247,7 @@ export type SearchParamProps = {
 
 export type EventFormProps = {
   userId: string;
-  type: 'Create' | 'Update';
+  type: "Create" | "Update";
   event?: IEvent;
   eventId?: string;
 };
@@ -275,19 +275,19 @@ export type FormSectionProps = {
 };
 
 export type DatePickerProps = {
-  name: 'startDate' | 'endDate';
+  name: "startDate" | "endDate";
   label: string;
   placeholder: string;
 };
 
 export type TimePickerProps = {
-  name: 'startTime' | 'endTime';
+  name: "startTime" | "endTime";
   label: string;
   placeholder: string;
 };
 
 export type UrlProps = {
-  name: 'url';
+  name: "url";
   label: string;
   placeholder?: string;
 };
@@ -381,7 +381,7 @@ export interface CheckoutDetailsProps {
 }
 
 export type UserInfoInputProps = {
-  name: 'email' | 'confirmEmail' | 'firstName' | 'lastName';
+  name: "email" | "confirmEmail" | "firstName" | "lastName";
   placeholder: string;
   label: string;
   required?: boolean;
@@ -477,7 +477,7 @@ export interface TicketEmailParams {
   eventImage: string;
   orderId: string;
   totalAmount: string;
-  currency: 'NGN';
+  currency: "NGN";
   quantity: number;
 }
 
@@ -499,4 +499,10 @@ export interface EventDetailsClientProps {
 export type CheckoutContextType = {
   resetCheckout: () => void;
   onResetCheckout: (callback: () => void) => void;
+};
+
+export type ExistingOrderConditions = {
+  event: string;
+  paymentStatus: string;
+  $or?: Array<{ buyerEmail: string; buyer: null } | { buyer: string }>;
 };
