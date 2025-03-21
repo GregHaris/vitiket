@@ -6,6 +6,7 @@ import {
   CheckoutOrderParams,
   CheckoutOrderResponse,
   CreateOrderParams,
+  ExistingOrderConditions,
   GetOrdersByEventParams,
   GetOrdersByUserParams,
 } from "@/types";
@@ -195,12 +196,6 @@ const checkoutPaystack = async (
     console.error("Paystack checkout error:", error);
     throw error;
   }
-};
-
-type ExistingOrderConditions = {
-  event: string;
-  paymentStatus: string;
-  $or?: Array<{ buyerEmail: string; buyer: null } | { buyer: string }>;
 };
 
 // CHECKOUT
