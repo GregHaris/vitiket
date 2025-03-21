@@ -241,6 +241,25 @@ export default function EventForm({
                         )}
                       </>
                     )}
+                    {isFree && (
+                      <>
+                        {locationType === 'Virtual' && (
+                          <Url
+                            name="url"
+                            label="Event URL"
+                            placeholder="https://example.com"
+                          />
+                        )}
+
+                        {locationType === 'Hybrid' && (
+                          <Url
+                            name="url"
+                            label="Virtual Event URL"
+                            placeholder="https://example.com"
+                          />
+                        )}
+                      </>
+                    )}
                     <Currency />
                     <EventTypeSelector />
                     <CategorySelector />
