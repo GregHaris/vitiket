@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   APIProvider,
@@ -8,46 +8,49 @@ import {
   useMap,
   useAdvancedMarkerRef,
   useMapsLibrary,
-} from '@vis.gl/react-google-maps';
-import { FC, memo, useEffect, useMemo, useState } from 'react';
+} from "@vis.gl/react-google-maps";
+import { FC, memo, useEffect, useMemo, useState } from "react";
 
-import { EventMapProps } from '@/types';
-import CustomTooltip from './ToolTip';
-import Image from 'next/image';
+import { EventMapProps } from "@/types";
+import CustomTooltip from "./ToolTip";
+import Image from "next/image";
 
 const containerStyle = {
-  width: '100%',
-  height: '400px',
+  width: "100%",
+  height: "400px",
 };
 
 const EventMap: FC<EventMapProps> = memo(({ coordinates, destinationInfo }) => {
+  const safeCoordinates = coordinates || "0,0";
+  const safeDestinationInfo = destinationInfo || "";
+
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
       <EventMapContent
-        coordinates={coordinates}
-        destinationInfo={destinationInfo}
+        coordinates={safeCoordinates}
+        destinationInfo={safeDestinationInfo}
       />
     </APIProvider>
   );
 });
 
 interface MapContentProps {
-  destinationInfo: EventMapProps['destinationInfo'];
-  coordinates: EventMapProps['coordinates'];
+  destinationInfo: string;
+  coordinates: string;
 }
 
 const EventMapContent: FC<MapContentProps> = memo(
   ({ coordinates, destinationInfo }) => {
-    const [lat, lng] = coordinates.split(',').map(Number);
+    const [lat, lng] = coordinates.split(",").map(Number);
     const center = useMemo(() => ({ lat, lng }), [lat, lng]);
 
-    const [address, locationMapId] = destinationInfo.split(', ||');
+    const [address, locationMapId] = destinationInfo.split(", ||");
 
     const [isMarkerHovered, setIsMarkerHovered] = useState(false);
     const [markerRef, marker] = useAdvancedMarkerRef();
 
     const map = useMap();
-    const places = useMapsLibrary('places');
+    const places = useMapsLibrary("places");
 
     const [placesService, setPlacesService] =
       useState<google.maps.places.PlacesService | null>(null);
@@ -66,7 +69,7 @@ const EventMapContent: FC<MapContentProps> = memo(
 
       const request = {
         placeId: locationMapId.trim(),
-        fields: ['name', 'formatted_address', 'geometry', 'place_id'],
+        fields: ["name", "formatted_address", "geometry", "place_id"],
       };
 
       placesService.getDetails(request, (place, status) => {
@@ -103,7 +106,7 @@ const EventMapContent: FC<MapContentProps> = memo(
                   className="flex flex-col justify-start items-center text-sm text-blue-400 hover:underline"
                 >
                   <Image
-                    src={'/assets/icons/directions.svg'}
+                    src={"/assets/icons/directions.svg"}
                     alt="directions-icon"
                     width={24}
                     height={24}
@@ -129,25 +132,25 @@ const EventMapContent: FC<MapContentProps> = memo(
             onMouseLeave={() => setIsMarkerHovered(false)}
           >
             <Pin
-              background={'#EA4335'}
-              glyphColor={'#FFF'}
-              borderColor={'#EA4335'}
+              background={"#EA4335"}
+              glyphColor={"#FFF"}
+              borderColor={"#EA4335"}
             />
           </AdvancedMarker>
         </Map>
 
         <div
           className={`bg-primary text-white py-1 px-2 rounded-sm shadow-lg text-[12px] transition-opacity ${
-            isMarkerHovered ? 'opacity-100' : 'opacity-0'
+            isMarkerHovered ? "opacity-100" : "opacity-0"
           }`}
           style={{
-            position: 'absolute',
-            top: '55%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            pointerEvents: 'none',
-            whiteSpace: 'nowrap',
-            minWidth: 'max-content',
+            position: "absolute",
+            top: "55%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            pointerEvents: "none",
+            whiteSpace: "nowrap",
+            minWidth: "max-content",
             zIndex: 10,
           }}
         >
@@ -161,10 +164,10 @@ const EventMapContent: FC<MapContentProps> = memo(
       prevProps.coordinates === nextProps.coordinates &&
       prevProps.destinationInfo === nextProps.destinationInfo
     );
-  }
+  },
 );
 
-EventMap.displayName = 'EventMap';
-EventMapContent.displayName = 'EventMapContent';
+EventMap.displayName = "EventMap";
+EventMapContent.displayName = "EventMapContent";
 
 export default EventMap;
