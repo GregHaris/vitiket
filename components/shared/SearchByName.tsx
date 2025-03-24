@@ -1,37 +1,37 @@
-'use client';
+"use client";
 
-import { Suspense, useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import Image from "next/image";
 
-import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
-import { Input } from '@ui/input';
+import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
+import { Input } from "@ui/input";
 
 export const NameSearch = ({
-  placeholder = 'Search events..',
+  placeholder = "Search events..",
 }: {
   placeholder?: string;
 }) => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const searchParams = useSearchParams();
   const router = useRouter();
 
   // update the URL based on the search query with a debounce delay
   useEffect(() => {
-    let newUrl = '';
+    let newUrl = "";
 
     // Update the URL with the search query or remove the query parameter if empty
     const delayDebounceFn = setTimeout(() => {
       if (query) {
         newUrl = formUrlQuery({
-          params: searchParams?.toString() || '',
-          key: 'query',
+          params: searchParams?.toString() || "",
+          key: "query",
           value: query,
         });
       } else {
         newUrl = removeKeysFromQuery({
-          params: searchParams?.toString() || '',
-          keysToRemove: ['query'],
+          params: searchParams?.toString() || "",
+          keysToRemove: ["query"],
         });
       }
 
@@ -42,7 +42,7 @@ export const NameSearch = ({
   }, [query, router, searchParams]);
 
   return (
-    <div className="flex items-center flex-1 border-r border-gray-300">
+    <div className="flex items-center flex-1 bg-grey-50 rounded-md">
       <Image
         src="/assets/icons/search.svg"
         alt="search"
