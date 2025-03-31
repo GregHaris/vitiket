@@ -107,6 +107,9 @@ importers:
       '@uploadthing/react':
         specifier: ^7.3.0
         version: 7.3.0(next@15.2.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(uploadthing@7.6.0(next@15.2.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(tailwindcss@4.0.15))
+      '@vercel/analytics':
+        specifier: ^1.5.0
+        version: 1.5.0(next@15.2.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
       '@vis.gl/react-google-maps':
         specifier: ^1.5.2
         version: 1.5.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1362,6 +1365,32 @@ packages:
 
   '@uploadthing/shared@7.1.7':
     resolution: {integrity: sha512-VDvGmyHhdwaivC+eee77yZnOVvz59mOmLVbcuYFo4SkoNvPuc3AyPORqJJMBveQivTvELdrQcjlx6IPv98JkSA==}
+
+  '@vercel/analytics@1.5.0':
+    resolution: {integrity: sha512-MYsBzfPki4gthY5HnYN7jgInhAZ7Ac1cYDoRWFomwGHWEX7odTEzbtg9kf/QSo7XEsEAqlQugA6gJ2WS2DEa3g==}
+    peerDependencies:
+      '@remix-run/react': ^2
+      '@sveltejs/kit': ^1 || ^2
+      next: '>= 13'
+      react: ^18 || ^19 || ^19.0.0-rc
+      svelte: '>= 4'
+      vue: ^3
+      vue-router: ^4
+    peerDependenciesMeta:
+      '@remix-run/react':
+        optional: true
+      '@sveltejs/kit':
+        optional: true
+      next:
+        optional: true
+      react:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+      vue-router:
+        optional: true
 
   '@vis.gl/react-google-maps@1.5.2':
     resolution: {integrity: sha512-0Ypmde7M73GgV4TgcaUTNKXsbcXWToPVuawMNrVg7htXmhpEfLARHwhtmP6N1da3od195ZKC8ShXzC6Vm+zYHQ==}
@@ -4571,6 +4600,11 @@ snapshots:
       '@uploadthing/mime-types': 0.3.4
       effect: 3.12.0
       sqids: 0.3.0
+
+  '@vercel/analytics@1.5.0(next@15.2.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)':
+    optionalDependencies:
+      next: 15.2.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
 
   '@vis.gl/react-google-maps@1.5.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
