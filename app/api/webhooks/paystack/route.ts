@@ -7,6 +7,9 @@ import { sendTicketEmail } from "@/utils/email";
 import { connectToDatabase } from "@/lib/database";
 import Order from "@/lib/database/models/order.model";
 
+import "@/lib/database/models/event.model";
+import "@/lib/database/models/user.model";
+
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const signature = req.headers.get("x-paystack-signature") as string;
