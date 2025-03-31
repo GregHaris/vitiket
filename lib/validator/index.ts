@@ -1,33 +1,33 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const eventFormSchema = z
   .object({
     title: z
       .string()
-      .min(3, { message: 'Title must be at least 3 characters' }),
+      .min(3, { message: "Title must be at least 3 characters" }),
     subtitle: z.string().optional(),
     description: z
       .string()
-      .min(10, { message: 'Description must be at least 10 characters' })
-      .max(2000, { message: 'Description must be less than 1500 characters' }),
+      .min(10, { message: "Description must be at least 10 characters" })
+      .max(2000, { message: "Description must be less than 1500 characters" }),
     location: z.string().optional(),
-    locationType: z.enum(['Virtual', 'Physical', 'Hybrid']),
+    locationType: z.enum(["Virtual", "Physical", "Hybrid"]),
     coordinates: z.string().optional(),
-    imageUrl: z.string().min(1, { message: 'Image URL is required' }),
+    imageUrl: z.string().min(1, { message: "Image URL is required" }),
     startDate: z.date(),
     endDate: z.date(),
     startTime: z.date(),
     endTime: z.date(),
-    categoryId: z.string().min(1, { message: 'Category is required' }),
-    typeId: z.string().min(1, { message: 'Type is required' }),
-    currency: z.literal('NGN'),
+    categoryId: z.string().min(1, { message: "Category is required" }),
+    typeId: z.string().min(1, { message: "Type is required" }),
+    currency: z.literal("NGN"),
     isFree: z.boolean().optional().default(false),
     url: z.string().optional(),
     contactDetails: z.object({
       email: z
         .string()
-        .min(1, { message: 'Email is required' })
-        .email({ message: 'Invalid email address' }),
+        .min(1, { message: "Email is required" })
+        .email({ message: "Invalid email address" }),
       phoneNumber: z
         .string()
         .optional()
@@ -36,9 +36,9 @@ export const eventFormSchema = z
             ctx.addIssue({
               code: z.ZodIssueCode.too_small,
               minimum: 10,
-              type: 'string',
+              type: "string",
               inclusive: true,
-              message: 'Phone number must be at least 10 characters',
+              message: "Phone number must be at least 10 characters",
             });
           }
         }),
@@ -56,23 +56,47 @@ export const eventFormSchema = z
     priceCategories: z
       .array(
         z.object({
-          name: z.string().min(1, { message: 'Category name is required' }),
-          price: z.string().min(1, { message: 'Price is required' }),
+          name: z.string().min(1, { message: "Category name is required" }),
+          price: z
+            .string()
+            .min(1, { message: "Price is required" })
+            .refine(
+              (val) => {
+                const num = Number(val);
+                return !isNaN(num) && num >= 500;
+              },
+              { message: "Price must be at least 500 NGN" },
+            ),
           quantity: z
             .number()
             .nullable()
             .optional()
             .transform((val) =>
-              val === null || val === undefined ? null : val
+              val === null || val === undefined ? null : val,
             ),
-        })
+        }),
       )
       .optional(),
   })
   .refine(
     (data) => {
+      if (
+        !data.isFree &&
+        (!data.priceCategories || data.priceCategories.length === 0)
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "At least one price category is required for paid events",
+      path: ["priceCategories"],
+    },
+  )
+  .refine(
+    (data) => {
       // Validate URL for Virtual or Hybrid events
-      if (data.locationType === 'Virtual' || data.locationType === 'Hybrid') {
+      if (data.locationType === "Virtual" || data.locationType === "Hybrid") {
         if (!data.url) {
           return false;
         }
@@ -81,9 +105,9 @@ export const eventFormSchema = z
       return true;
     },
     {
-      message: 'URL is required and must be a valid URL',
-      path: ['url'],
-    }
+      message: "URL is required and must be a valid URL",
+      path: ["url"],
+    },
   )
   .refine(
     (data) => {
@@ -94,9 +118,9 @@ export const eventFormSchema = z
       return true;
     },
     {
-      message: 'Invalid website URL',
-      path: ['contactDetails', 'website'],
-    }
+      message: "Invalid website URL",
+      path: ["contactDetails", "website"],
+    },
   )
   .refine(
     (data) => {
@@ -104,20 +128,20 @@ export const eventFormSchema = z
       const startDate = new Date(
         data.startDate.getFullYear(),
         data.startDate.getMonth(),
-        data.startDate.getDate()
+        data.startDate.getDate(),
       );
       const endDate = new Date(
         data.endDate.getFullYear(),
         data.endDate.getMonth(),
-        data.endDate.getDate()
+        data.endDate.getDate(),
       );
 
       return endDate >= startDate;
     },
     {
-      message: 'End date must be after or equal to start date',
-      path: ['endDate'],
-    }
+      message: "End date must be after or equal to start date",
+      path: ["endDate"],
+    },
   )
   .refine(
     (data) => {
@@ -125,12 +149,12 @@ export const eventFormSchema = z
       const startDate = new Date(
         data.startDate.getFullYear(),
         data.startDate.getMonth(),
-        data.startDate.getDate()
+        data.startDate.getDate(),
       );
       const endDate = new Date(
         data.endDate.getFullYear(),
         data.endDate.getMonth(),
-        data.endDate.getDate()
+        data.endDate.getDate(),
       );
 
       if (startDate.getTime() === endDate.getTime()) {
@@ -139,14 +163,14 @@ export const eventFormSchema = z
           0,
           0,
           data.startTime.getHours(),
-          data.startTime.getMinutes()
+          data.startTime.getMinutes(),
         );
         const endTime = new Date(
           0,
           0,
           0,
           data.endTime.getHours(),
-          data.endTime.getMinutes()
+          data.endTime.getMinutes(),
         );
 
         return endTime >= startTime;
@@ -155,30 +179,30 @@ export const eventFormSchema = z
       return true;
     },
     {
-      message: 'End time must be after start time on the same day',
-      path: ['endTime'],
-    }
+      message: "End time must be after start time on the same day",
+      path: ["endTime"],
+    },
   );
 
 export type eventFormValues = z.infer<typeof eventFormSchema>;
 
 export const checkoutFormSchema = z
   .object({
-    firstName: z.string().min(1, 'First name is required'),
-    lastName: z.string().min(1, 'Last name is required'),
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
     email: z
       .string()
-      .nonempty({ message: 'Email is required' })
-      .email('Invalid email address'),
+      .nonempty({ message: "Email is required" })
+      .email("Invalid email address"),
     confirmEmail: z
       .string()
-      .nonempty({ message: 'Confirm email is required' })
-      .email('Invalid email address'),
-    paymentMethod: z.enum(['paystack', 'none']),
+      .nonempty({ message: "Confirm email is required" })
+      .email("Invalid email address"),
+    paymentMethod: z.enum(["paystack", "none"]),
   })
   .refine((data) => data.email === data.confirmEmail, {
-    message: 'Emails do not match',
-    path: ['confirmEmail'],
+    message: "Emails do not match",
+    path: ["confirmEmail"],
   });
 
 export type checkoutFormValues = z.infer<typeof checkoutFormSchema>;
@@ -186,13 +210,13 @@ export type checkoutFormValues = z.infer<typeof checkoutFormSchema>;
 export const paymentDetailsSchema = z.object({
   businessName: z
     .string()
-    .min(3, { message: 'Business name must be at least 3 characters' }),
-  bankName: z.string().min(1, { message: 'Bank name is required' }),
-  accountName: z.string().min(1, { message: 'Account name is required' }),
+    .min(3, { message: "Business name must be at least 3 characters" }),
+  bankName: z.string().min(1, { message: "Bank name is required" }),
+  accountName: z.string().min(1, { message: "Account name is required" }),
   accountNumber: z
     .string()
-    .min(10, { message: 'Account number must be at least 10 characters' })
-    .max(10, { message: 'Account number must be 10 characters' }),
+    .min(10, { message: "Account number must be at least 10 characters" })
+    .max(10, { message: "Account number must be 10 characters" }),
 });
 
 export type PaymentDetailsValues = z.infer<typeof paymentDetailsSchema>;
