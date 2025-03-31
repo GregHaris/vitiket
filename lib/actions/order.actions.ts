@@ -35,24 +35,19 @@ const checkoutPaystack = async (
       const quantity = cat.quantity;
       if (isNaN(price) || price < 0 || quantity < 0) {
         throw new Error(
-          `Invalid price or quantity in priceCategories: price=${cat.price}, quantity=${cat.quantity}`,
+          `Invalid price or quantity: price=${cat.price}, quantity=${cat.quantity}`,
         );
       }
       return sum + Math.round(price * 100) * quantity;
     }, 0);
 
-    let totalAmount = ticketAmount;
+    const totalAmount = ticketAmount;
 
     const isFreeEvent = order.priceCategories!.every(
       (cat) => cat.price === "0",
     );
-
     if (isFreeEvent) {
-      if (totalAmount !== 0) {
-        throw new Error("Free event should have a total amount of 0");
-      }
       const reference = `txn_${Date.now()}_${order.eventId}`;
-
       const newOrder = await Order.create({
         event: order.eventId,
         buyer: order.buyerId === "guest" ? null : order.buyerId,
@@ -94,38 +89,29 @@ const checkoutPaystack = async (
     const subaccountCode = organizer.subaccountCode;
 
     // Paystack fee constants (in kobo)
-    const paystackMinimumAmount = 100;
     const paystackFeePercentage = 0.015;
     const paystackFlatFee = 100;
     const paystackFeeCap = 2000;
 
+    // Calculate Paystack fee
     let paystackFee =
       Math.round(totalAmount * paystackFeePercentage) + paystackFlatFee;
     if (totalAmount >= 250000) paystackFee = paystackFeeCap;
-    const minimumRequiredAmount = ticketAmount + paystackFee;
-    totalAmount = Math.max(totalAmount, minimumRequiredAmount);
 
-    paystackFee =
-      Math.round(totalAmount * paystackFeePercentage) + paystackFlatFee;
-    if (totalAmount >= 250000) paystackFee = paystackFeeCap;
-
-    if (totalAmount < paystackMinimumAmount + paystackFee) {
+    // Minimum amount check
+    if (totalAmount < 100 + paystackFee) {
       throw new Error(
-        `Total amount (${
-          totalAmount / 100
-        } NGN) is below the minimum required (${
-          (paystackMinimumAmount + paystackFee) / 100
-        } NGN) to cover Paystack fees.`,
+        `Total amount (${totalAmount / 100} NGN) is below the minimum required (${(100 + paystackFee) / 100} NGN) to cover Paystack fees.`,
       );
     }
 
+    // Calculate split
     const mainAccountMinimumShare =
-      Math.ceil((paystackFee / totalAmount) * 100) || 1;
+      Math.ceil((paystackFee / totalAmount) * 100) + 1;
     const subaccountShare = 100 - mainAccountMinimumShare;
 
     const reference = `txn_${Date.now()}_${order.eventId}`;
 
-    // Create order before Paystack transaction (pending status)
     const newOrder = await Order.create({
       event: order.eventId,
       buyer: order.buyerId === "guest" ? null : order.buyerId,
