@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import Link from 'next/link';
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import Link from "next/link";
 
-import { Button } from '@ui/button';
+import { Button } from "@ui/button";
 import {
   CheckoutDetailsProps,
   CheckoutOrderParams,
   CheckoutOrderResponse,
-} from '@/types';
-import { checkoutFormValues } from '@/lib/validator';
-import { checkoutOrder, createOrder } from '@/lib/actions/order.actions';
-import { Form } from '@ui/form';
-import { sendTicketEmail } from '@/utils/email';
-import UserInfoInput from './FormUserInfoInput';
+} from "@/types";
+import { checkoutFormValues } from "@/lib/validator";
+import { checkoutOrder, createOrder } from "@/lib/actions/order.actions";
+import { Form } from "@ui/form";
+import { sendTicketEmail } from "@/utils/email";
+import UserInfoInput from "./FormUserInfoInput";
 
 export default function CheckoutForm({
   event,
@@ -26,7 +26,7 @@ export default function CheckoutForm({
   onSignOut,
   priceCategories,
 }: {
-  event: CheckoutDetailsProps['event'];
+  event: CheckoutDetailsProps["event"];
   quantity: number;
   totalPrice: number;
   userId: string | null;
@@ -46,7 +46,7 @@ export default function CheckoutForm({
     try {
       const orderParams: CheckoutOrderParams = {
         eventTitle: event.title,
-        buyerId: userId || 'guest',
+        buyerId: userId || "guest",
         eventId: event._id,
         price: totalPrice.toString(),
         isFree: event.isFree || false,
@@ -54,43 +54,46 @@ export default function CheckoutForm({
         quantity: quantity,
         priceCategories: priceCategories || [],
         buyerEmail: data.email,
-        paymentMethod: event.isFree ? 'none' : 'paystack',
+        paymentMethod: event.isFree ? "none" : "paystack",
         firstName: data.firstName,
         lastName: data.lastName,
       };
 
       if (event.isFree) {
+        const reference = `free_${Date.now()}_${event._id}`;
+
         const newOrder = await createOrder({
           eventId: event._id,
-          buyerId: userId || 'guest',
-          totalAmount: '0',
-          currency: 'NGN',
+          buyerId: userId || "guest",
+          totalAmount: "0",
+          currency: "NGN",
           quantity: quantity,
           priceCategories: priceCategories || [
-            { name: 'Free', price: '0', quantity: quantity },
+            { name: "Free", price: "0", quantity: quantity },
           ],
           buyerEmail: data.email,
-          paymentMethod: 'none',
+          paymentMethod: "none",
           firstName: data.firstName,
           lastName: data.lastName,
+          reference,
         });
 
         if (!userId) {
-          localStorage.setItem('guestCheckoutEmail', data.email);
+          localStorage.setItem("guestCheckoutEmail", data.email);
         }
 
         await sendTicketEmail({
           email: data.email,
           eventTitle: event.title,
-          eventSubtitle: event.subtitle || '',
-          eventImage: event.imageUrl || '',
+          eventSubtitle: event.subtitle || "",
+          eventImage: event.imageUrl || "",
           orderId: newOrder._id.toString(),
-          totalAmount: '0',
-          currency: 'NGN',
+          totalAmount: "0",
+          currency: "NGN",
           quantity: quantity,
           firstName: data.firstName,
           priceCategories: priceCategories || [
-            { name: 'Free', price: '0', quantity: quantity },
+            { name: "Free", price: "0", quantity: quantity },
           ],
         });
 
@@ -101,28 +104,32 @@ export default function CheckoutForm({
         }, 2000);
       } else {
         const result = (await checkoutOrder(
-          orderParams
+          orderParams,
         )) as CheckoutOrderResponse;
 
-        if ('url' in result && result.url) {
+        if ("url" in result && result.url) {
           window.location.href = result.url;
         } else {
-          throw new Error('Unexpected response from payment provider');
+          throw new Error("Unexpected response from payment provider");
         }
       }
     } catch (error: unknown) {
-      console.error('Checkout failed:', error);
+      console.error("Checkout failed:", error);
       if (error instanceof Error) {
         if (
           error.message ===
-          'You have already purchased a ticket for this event.'
+          "You have already purchased a ticket for this event."
         ) {
           setError(error.message);
+        } else if (error.message.includes("E11000")) {
+          setError(
+            "Duplicate order error. Please try again or contact support.",
+          );
         } else {
-          setError('Checkout failed. Please try again.');
+          setError("Checkout failed. Please try again.");
         }
       } else {
-        setError('An unexpected error occurred. Please try again.');
+        setError("An unexpected error occurred. Please try again.");
       }
     }
   };
@@ -144,7 +151,7 @@ export default function CheckoutForm({
           {userId ? (
             <div className="mb-6 text-sm text-gray-600 space-y-6">
               <p>
-                Logged in as <strong>{form.getValues('email')}</strong>.{' '}
+                Logged in as <strong>{form.getValues("email")}</strong>.{" "}
                 <button
                   onClick={handleSignOut}
                   className="cursor-pointer text-blue-600 hover:underline"
@@ -159,12 +166,12 @@ export default function CheckoutForm({
               <p>
                 <Link
                   href={`/sign-in?redirect_url=${encodeURIComponent(
-                    window.location.href + '&checkout=true'
+                    window.location.href + "&checkout=true",
                   )}`}
                   className="cursor-pointer text-blue-600 hover:underline"
                 >
                   Sign in
-                </Link>{' '}
+                </Link>{" "}
                 for a faster checkout experience.
               </p>
             </div>
@@ -203,7 +210,7 @@ export default function CheckoutForm({
                 className="w-full button"
                 disabled={form.formState.isSubmitting}
               >
-                {form.formState.isSubmitting ? 'Processing...' : 'Checkout'}
+                {form.formState.isSubmitting ? "Processing..." : "Checkout"}
               </Button>
             </form>
           </Form>
