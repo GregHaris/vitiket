@@ -27,15 +27,25 @@ export async function sendTicketEmail({
     },
   });
 
-  const qrCodeUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/verify-ticket?orderId=${orderId}`;
+  // Verify the transporter connection
+  try {
+    await transporter.verify();
+    console.log("SMTP connection verified successfully");
+  } catch (error) {
+    console.error("SMTP connection failed:", error);
+    throw error;
+  }
 
-  // Build price categories HTML
+  const ticketUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/verify-ticket?orderId=${orderId}`;
+  const dashboardUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/dashboard`;
+
+  // Build price categories HTML and plain text
   const priceCategoriesHtml =
     priceCategories && priceCategories.length > 0
       ? priceCategories
           .map(
             (cat) => `
-          <p style="color: #666;">
+          <p style="color: #666; margin: 0;">
             ${cat.quantity} x ${cat.name}
             ${
               cat.price !== "0"
@@ -46,40 +56,153 @@ export async function sendTicketEmail({
         `,
           )
           .join("")
-      : `<p style="color: #666;">${quantity} x Ticket</p>`;
+      : `<p style="color: #666; margin: 0;">${quantity} x Ticket</p>`;
 
-  const ticketHtml = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-      <h1 style="color: #333;">Hi ${firstName}, Thank You for Your Purchase!</h1>
-      <p style="color: #666;">Here are your ticket details for <strong>${eventTitle}</strong>:</p>
-      ${eventSubtitle ? `<p style="color: #666;">${eventSubtitle}</p>` : ""}
-      <img src="${eventImage}" alt="${eventTitle}" style="max-width: 100%; height: auto; border-radius: 4px;" />
-      <h2 style="color: #333; margin-top: 20px;">Order Summary</h2>
-      <p style="color: #666;">Order ID: ${orderId}</p>
-      <div style="margin-top: 10px;">
-        <h3 style="color: #333; font-weight: bold;">Tickets</h3>
-        ${priceCategoriesHtml}
-      </div>
-      <div style="margin-top: 10px;">
-        <h3 style="color: #333; font-weight: bold;">Total = <span style="color: #666; font-size: 18px; font-weight: bold;">₦${parseFloat(
-          totalAmount,
-        ).toLocaleString()}</span></h3>    
-      </div>
-      <h3 style="color: #333; margin-top: 20px;">Your Ticket</h3>
-      <p style="color: #666;">Scan the QR code below to verify your ticket:</p>
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
-        qrCodeUrl,
-      )}" alt="QR Code" />
-      <p style="color: #666; font-size: 12px; margin-top: 10px;">Keep this email safe or download your ticket for easy access.</p>
+  const priceCategoriesText =
+    priceCategories && priceCategories.length > 0
+      ? priceCategories
+          .map(
+            (cat) =>
+              `${cat.quantity} x ${cat.name}${
+                cat.price !== "0"
+                  ? ` - ₦${(Number(cat.price) * cat.quantity).toLocaleString()}`
+                  : ""
+              }`,
+          )
+          .join("\n")
+      : `${quantity} x Ticket`;
+
+  // Define the signature with the logo
+  const signatureHtml = `
+    <div style="margin-top: 20px; font-family: Arial, sans-serif; color: #666; text-align: center;">
+      <img src="${process.env.NEXT_PUBLIC_LOGO_URL}" alt="Vitiket Logo" style="width: 150px; height: auto; margin-bottom: 10px;" />
+      <p style="margin: 0;">Best regards,</p>
+      <p style="margin: 0;">Greg Haris</p>
+      <p style="margin: 0;">Vitiket Support Team</p>
+      <p style="margin: 0;"><a href="mailto:support@vitiket.com" style="color: #1a73e8; text-decoration: none;">support@vitiket.com</a></p>
     </div>
+  `;
+
+  const signatureText = `
+Best regards,
+Greg Haris
+Vitiket Support Team
+support@vitiket.com
+  `;
+
+  // HTML version of the email
+  const ticketHtml = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f5f5f5; padding: 20px;">
+      <!-- Header -->
+      <div style="text-align: center; padding: 10px 0;">
+        <img src="${process.env.NEXT_PUBLIC_LOGO_URL}" alt="Vitiket Logo" style="width: 150px; height: auto;" />
+      </div>
+
+      <!-- Main Content -->
+      <div style="background-color: #fff; border-radius: 8px; padding: 20px; border: 1px solid #ddd;">
+        <h1 style="color: #333; font-size: 24px; margin: 0 0 10px;">${firstName}, you've got tickets!</h1>
+        <p style="color: #666; font-size: 14px; margin: 0 0 20px;">
+          View and save your tickets before the event.
+        </p>
+        <div style="text-align: center; margin-bottom: 20px;">
+          <a href="${ticketUrl}" style="display: inline-block; padding: 10px 20px; background-color: #ff4d4d; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold;">Go to My Tickets</a>
+        </div>
+        <p style="color: #666; font-size: 12px; margin: 0 0 20px; text-align: center;">
+          Access your tickets in your Vitiket account under the Tickets section, or download a printable PDF.
+        </p>
+
+        <!-- Event Details with Image -->
+        <div style="background-color: #e6f7fa; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+          <img src="${eventImage}" alt="${eventTitle}" style="max-width: 100%; height: auto; border-radius: 4px; margin-bottom: 10px;" />
+          <h2 style="color: #333; font-size: 18px; margin: 0 0 5px;">${eventTitle}</h2>
+          ${eventSubtitle ? `<p style="color: #666; font-size: 14px; margin: 0 0 10px;">${eventSubtitle}</p>` : ""}
+          <p style="color: #666; font-size: 14px; margin: 0;">
+            ${priceCategoriesHtml}
+          </p>
+          <p style="color: #666; font-size: 14px; margin: 5px 0 0;">
+            Order total: ₦${parseFloat(totalAmount).toLocaleString()}
+          </p>
+        </div>
+
+        <!-- Contact Organizer -->
+        <p style="color: #333; font-size: 14px; margin: 0 0 20px;">
+          Questions about this event? <a href="mailto:support@vitiket.com" style="color: #1a73e8; text-decoration: none;">Contact the organizer</a>
+        </p>
+
+        <!-- Order Summary -->
+        <h2 style="color: #333; font-size: 18px; margin: 0 0 10px;">Order Summary</h2>
+        <p style="color: #666; font-size: 14px; margin: 0 0 5px;">Order #${orderId}</p>
+        <p style="color: #666; font-size: 14px; margin: 0 0 5px;">
+          ${firstName}
+        </p>
+        <p style="color: #666; font-size: 14px; margin: 0 0 5px;">
+          ${priceCategoriesHtml}
+        </p>
+        <p style="color: #666; font-size: 14px; margin: 0 0 20px;">
+          Total: ₦${parseFloat(totalAmount).toLocaleString()}
+        </p>
+        <p style="color: #666; font-size: 12px; margin: 0 0 20px;">
+          View and manage your order in your <a href="${dashboardUrl}" style="color: #1a73e8; text-decoration: none;">Vitiket dashboard</a>.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div style="text-align: center; padding: 20px 0; font-size: 12px; color: #666;">
+        ${signatureHtml}
+        <p style="margin: 10px 0 0;">
+          This order is subject to Vitiket's <a href="${process.env.NEXT_PUBLIC_SERVER_URL}/terms" style="color: #1a73e8; text-decoration: none;">Terms of Service</a> and <a href="${process.env.NEXT_PUBLIC_SERVER_URL}/privacy" style="color: #1a73e8; text-decoration: none;">Privacy Policy</a>.
+        </p>
+        <p style="margin: 5px 0 0;">
+          Vitiket, All rights reserved.
+        </p>
+      </div>
+    </div>
+  `;
+
+  // Plain text version of the email
+  const ticketText = `
+${firstName}, you've got tickets!
+
+View and save your tickets before the event.
+Go to My Tickets: ${ticketUrl}
+
+Access your tickets in your Vitiket dashboard under the Tickets section, or download a printable PDF.
+
+${eventTitle}
+${eventSubtitle ? eventSubtitle : ""}
+${priceCategoriesText}
+Order total: ₦${parseFloat(totalAmount).toLocaleString()}
+
+Questions about this event? Contact the organizer at support@vitiket.com
+
+Order Summary
+Order #${orderId}
+
+${firstName}
+${priceCategoriesText}
+Total: ₦${parseFloat(totalAmount).toLocaleString()}
+
+View and manage your order in your Vitiket account: ${dashboardUrl}
+
+${signatureText}
+
+This order is subject to Vitiket's Terms of Service (${process.env.NEXT_PUBLIC_SERVER_URL}/terms) and Privacy Policy (${process.env.NEXT_PUBLIC_SERVER_URL}/privacy).
+Vitiket, All rights reserved.
   `;
 
   const mailOptions = {
     from: `"Vitiket" <support@vitiket.com>`,
     to: email,
-    subject: `Your Ticket for ${eventTitle}`,
+    subject: `Your Tickets for ${eventTitle}`,
+    text: ticketText,
     html: ticketHtml,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully:", info.messageId);
+  } catch (error) {
+    console.error("Failed to send email:", error);
+    throw error;
+  }
 }
