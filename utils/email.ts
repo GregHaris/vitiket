@@ -25,15 +25,25 @@ export async function sendTicketEmail({
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
   });
 
-  // Verify the transporter connection
-  try {
-    await transporter.verify();
-    console.log("SMTP connection verified successfully");
-  } catch (error) {
-    console.error("SMTP connection failed:", error);
-    throw error;
+  // Verify the transporter connection with retry logic
+  const maxRetries = 3;
+  let attempt = 0;
+  while (attempt < maxRetries) {
+    try {
+      await transporter.verify();
+      console.log("SMTP connection verified successfully");
+      break;
+    } catch (error) {
+      attempt++;
+      console.error(`SMTP connection attempt ${attempt} failed:`, error);
+      if (attempt === maxRetries) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
   }
 
   const ticketUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/verify-ticket?orderId=${orderId}`;
