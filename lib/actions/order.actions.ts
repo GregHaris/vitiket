@@ -12,7 +12,6 @@ import {
 } from "@/types";
 import { connectToDatabase } from "../database";
 import { handleError } from "../utils";
-import { sendTicketEmail } from "@/utils/email";
 import Event from "../database/models/event.model";
 import Order from "../database/models/order.model";
 import User from "../database/models/user.model";
@@ -43,69 +42,26 @@ const checkoutPaystack = async (
 
     const totalAmount = ticketAmount;
 
-    const isFreeEvent = order.priceCategories!.every(
-      (cat) => cat.price === "0",
-    );
-    if (isFreeEvent) {
-      const reference = `txn_${Date.now()}_${order.eventId}`;
-      const newOrder = await Order.create({
-        event: order.eventId,
-        buyer: order.buyerId === "guest" ? null : order.buyerId,
-        buyerEmail: user?.email || order.buyerEmail,
-        totalAmount: "0",
-        currency: "NGN",
-        paymentMethod: "none",
-        quantity: order.quantity,
-        priceCategories: order.priceCategories,
-        reference,
-        paymentStatus: "completed",
-        firstName: order.firstName || user?.firstName,
-        lastName: order.lastName || user?.lastName,
-      });
-
-      await sendTicketEmail({
-        email: user?.email || order.buyerEmail,
-        eventTitle: event.title,
-        eventSubtitle: event.subtitle || "",
-        eventImage: event.imageUrl || "",
-        orderId: newOrder._id.toString(),
-        totalAmount: "0",
-        currency: "NGN",
-        quantity: order.quantity,
-        firstName: newOrder.firstName,
-        priceCategories: order.priceCategories,
-      });
-
-      return {
-        orderId: newOrder._id.toString(),
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${newOrder._id}`,
-      };
-    }
-
     const organizer = await User.findById(event.organizer);
     if (!organizer || !organizer.subaccountCode)
       throw new Error("Organizer or subaccount not found");
 
     const subaccountCode = organizer.subaccountCode;
 
-    // Paystack fee constants (in kobo)
     const paystackFeePercentage = 0.015;
     const paystackFlatFee = 100;
     const paystackFeeCap = 2000;
 
-    // Calculate Paystack fee
     let paystackFee =
       Math.round(totalAmount * paystackFeePercentage) + paystackFlatFee;
     if (totalAmount >= 250000) paystackFee = paystackFeeCap;
 
-    // Minimum amount check
     if (totalAmount < 100 + paystackFee) {
       throw new Error(
         `Total amount (${totalAmount / 100} NGN) is below the minimum required (${(100 + paystackFee) / 100} NGN) to cover Paystack fees.`,
       );
     }
 
-    // Calculate split
     const mainAccountMinimumShare =
       Math.ceil((paystackFee / totalAmount) * 100) + 1;
     const subaccountShare = 100 - mainAccountMinimumShare;
@@ -152,8 +108,6 @@ const checkoutPaystack = async (
       },
     };
 
-    console.log("Paystack payload:", payload);
-
     const response = await fetch(
       "https://api.paystack.co/transaction/initialize",
       {
@@ -179,10 +133,82 @@ const checkoutPaystack = async (
       orderId: newOrder._id.toString(),
     };
   } catch (error) {
-    console.error("Paystack checkout error:", error);
     throw error;
   }
 };
+
+// CHECKOUT FREE EVENTS
+export async function checkoutFreeEvent(order: CheckoutOrderParams) {
+  try {
+    await connectToDatabase();
+
+    const event = await Event.findById(order.eventId);
+    if (!event) throw new Error("Event not found");
+    if (!event.isFree) throw new Error("This is not a free event");
+
+    const user =
+      order.buyerId && order.buyerId !== "guest"
+        ? await User.findById(order.buyerId)
+        : null;
+
+    const existingOrderConditions = {
+      event: order.eventId,
+      paymentStatus: "completed",
+      $or: [
+        { buyer: order.buyerId === "guest" ? null : order.buyerId },
+        { buyerEmail: order.buyerEmail },
+      ],
+    };
+    const existingOrder = await Order.findOne(existingOrderConditions);
+    if (existingOrder)
+      throw new Error("You have already registered for this event");
+
+    const reference = `free_${Date.now()}_${order.eventId}`;
+    const newOrder = await Order.create({
+      event: order.eventId,
+      buyer: order.buyerId === "guest" ? null : order.buyerId,
+      buyerEmail: user?.email || order.buyerEmail,
+      totalAmount: "0",
+      currency: "NGN",
+      paymentMethod: "none",
+      quantity: order.quantity,
+      priceCategories: order.priceCategories || [
+        { name: "Free", price: "0", quantity: order.quantity },
+      ],
+      reference,
+      paymentStatus: "completed",
+      firstName: order.firstName || user?.firstName,
+      lastName: order.lastName || user?.lastName,
+    });
+
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/send-email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: newOrder.buyerEmail,
+        eventTitle: event.title,
+        eventSubtitle: event.subtitle || "",
+        eventImage: event.imageUrl || "",
+        orderId: newOrder._id.toString(),
+        totalAmount: "0",
+        currency: "NGN",
+        quantity: newOrder.quantity,
+        firstName: newOrder.firstName,
+        priceCategories: newOrder.priceCategories,
+      }),
+    }).catch(() => {});
+
+    return {
+      success: true,
+      orderId: newOrder._id.toString(),
+      redirectUrl: `${process.env.NEXT_PUBLIC_SERVER_URL}/events/${order.eventId}?success=${newOrder._id}`,
+    };
+  } catch (error) {
+    throw error instanceof Error
+      ? error
+      : new Error("An unexpected error occurred");
+  }
+}
 
 // CHECKOUT
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
