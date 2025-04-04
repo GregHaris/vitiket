@@ -5,15 +5,10 @@ import { useState } from "react";
 import Link from "next/link";
 
 import { Button } from "@ui/button";
-import {
-  CheckoutDetailsProps,
-  CheckoutOrderParams,
-  CheckoutOrderResponse,
-} from "@/types";
+import { CheckoutDetailsProps, CheckoutOrderParams } from "@/types";
 import { checkoutFormValues } from "@/lib/validator";
-import { checkoutOrder, createOrder } from "@/lib/actions/order.actions";
+import { checkoutFreeEvent, checkoutOrder } from "@/lib/actions/order.actions";
 import { Form } from "@ui/form";
-import { sendTicketEmail } from "@/utils/email";
 import UserInfoInput from "./FormUserInfoInput";
 
 export default function CheckoutForm({
@@ -60,53 +55,14 @@ export default function CheckoutForm({
       };
 
       if (event.isFree) {
-        const reference = `free_${Date.now()}_${event._id}`;
-
-        const newOrder = await createOrder({
-          eventId: event._id,
-          buyerId: userId || "guest",
-          totalAmount: "0",
-          currency: "NGN",
-          quantity: quantity,
-          priceCategories: priceCategories || [
-            { name: "Free", price: "0", quantity: quantity },
-          ],
-          buyerEmail: data.email,
-          paymentMethod: "none",
-          firstName: data.firstName,
-          lastName: data.lastName,
-          reference,
-        });
-
-        if (!userId) {
-          localStorage.setItem("guestCheckoutEmail", data.email);
-        }
-
-        await sendTicketEmail({
-          email: data.email,
-          eventTitle: event.title,
-          eventSubtitle: event.subtitle || "",
-          eventImage: event.imageUrl || "",
-          orderId: newOrder._id.toString(),
-          totalAmount: "0",
-          currency: "NGN",
-          quantity: quantity,
-          firstName: data.firstName,
-          priceCategories: priceCategories || [
-            { name: "Free", price: "0", quantity: quantity },
-          ],
-        });
-
+        const result = await checkoutFreeEvent(orderParams);
         setIsSuccess(true);
         setTimeout(() => {
           onCloseDialog(false);
-          window.location.href = `/events/${event._id}?success=${newOrder._id}`;
+          window.location.href = result.redirectUrl;
         }, 2000);
       } else {
-        const result = (await checkoutOrder(
-          orderParams,
-        )) as CheckoutOrderResponse;
-
+        const result = await checkoutOrder(orderParams);
         if ("url" in result && result.url) {
           window.location.href = result.url;
         } else {
@@ -117,14 +73,10 @@ export default function CheckoutForm({
       console.error("Checkout failed:", error);
       if (error instanceof Error) {
         if (
-          error.message ===
-          "You have already purchased a ticket for this event."
+          error.message === "You have already registered for this event" ||
+          error.message === "You have already purchased a ticket for this event"
         ) {
           setError(error.message);
-        } else if (error.message.includes("E11000")) {
-          setError(
-            "Duplicate order error. Please try again or contact support.",
-          );
         } else {
           setError("Checkout failed. Please try again.");
         }
