@@ -103,7 +103,8 @@
     ],
     "onlyBuiltDependencies": [
       "@clerk/shared",
-      "core-js"
+      "core-js",
+      "sharp"
     ]
   }
 }
