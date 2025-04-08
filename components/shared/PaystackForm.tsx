@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { z } from 'zod';
+import { useEffect, useState } from "react";
+import { useFormContext } from "react-hook-form";
+import { z } from "zod";
 
-import { Button } from '@ui/button';
-import { paymentDetailsSchema } from '@/lib/validator';
-import { PaystackFormProps } from '@/types';
-import AccountNameDisplay from './PaystackFormAccountNameDisplay';
-import AccountNumberInput from './PaystackFormAccountNumberInput';
-import BankSelector from './PaystackFormBankSelector';
-import BusinessNameInput from './PaystackFormBusinessNameInput';
+import { Button } from "@ui/button";
+import { paymentDetailsSchema } from "@/lib/validator";
+import { PaystackFormProps } from "@/types";
+import AccountNameDisplay from "./PaystackFormAccountNameDisplay";
+import AccountNumberInput from "./PaystackFormAccountNumberInput";
+import BankSelector from "./PaystackFormBankSelector";
+import BusinessNameInput from "./PaystackFormBusinessNameInput";
 
 export default function PaystackForm({
   banks,
@@ -18,16 +18,17 @@ export default function PaystackForm({
   handleSubmit,
   existingDetails,
   onSubmitSuccess,
-}: PaystackFormProps) {
+  submitButtonText = "Submit",
+}: PaystackFormProps & { submitButtonText?: string }) {
   const { watch, setValue, setError, clearErrors, formState } =
     useFormContext<z.infer<typeof paymentDetailsSchema>>();
   const [resolvedAccountName, setResolvedAccountName] = useState<string | null>(
-    null
+    null,
   );
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
 
-  const accountNumber = watch('accountNumber');
-  const bankName = watch('bankName');
+  const accountNumber = watch("accountNumber");
+  const bankName = watch("bankName");
 
   // Watch all form fields to compare with existingDetails
   const formValues = watch();
@@ -35,10 +36,10 @@ export default function PaystackForm({
   // Check if form values match existingDetails
   const hasChanges =
     !existingDetails?.subaccountCode ||
-    formValues.businessName !== (existingDetails?.businessName || '') ||
-    formValues.bankName !== (existingDetails?.bankName || '') ||
-    formValues.accountNumber !== (existingDetails?.accountNumber || '') ||
-    formValues.accountName !== (existingDetails?.accountName || '');
+    formValues.businessName !== (existingDetails?.businessName || "") ||
+    formValues.bankName !== (existingDetails?.bankName || "") ||
+    formValues.accountNumber !== (existingDetails?.accountNumber || "") ||
+    formValues.accountName !== (existingDetails?.accountName || "");
 
   useEffect(() => {
     const resolveAccountName = async () => {
@@ -46,31 +47,31 @@ export default function PaystackForm({
         try {
           const bank = banks.find((b) => b.name === bankName);
           if (!bank) {
-            setError('bankName', { message: 'Invalid bank selected' });
+            setError("bankName", { message: "Invalid bank selected" });
             return;
           }
 
           const res = await fetch(
-            `/api/paystack/verify-account?account_number=${accountNumber}&bank_code=${bank.code}`
+            `/api/paystack/verify-account?account_number=${accountNumber}&bank_code=${bank.code}`,
           );
           const data = await res.json();
 
           if (res.ok && data.accountName) {
             setResolvedAccountName(data.accountName);
-            setValue('accountName', data.accountName);
-            clearErrors('accountNumber');
+            setValue("accountName", data.accountName);
+            clearErrors("accountNumber");
           } else {
             setResolvedAccountName(null);
-            setError('accountNumber', { message: 'Invalid account details' });
+            setError("accountNumber", { message: "Invalid account details" });
           }
         } catch (error) {
-          console.error('Error verifying account:', error);
+          console.error("Error verifying account:", error);
           setResolvedAccountName(null);
-          setError('accountNumber', { message: 'Failed to verify account' });
+          setError("accountNumber", { message: "Failed to verify account" });
         }
       } else {
         setResolvedAccountName(null);
-        clearErrors('accountNumber');
+        clearErrors("accountNumber");
       }
     };
 
@@ -79,11 +80,11 @@ export default function PaystackForm({
 
   const onSubmit = async (data: z.infer<typeof paymentDetailsSchema>) => {
     try {
-      const res = await fetch('/api/paystack/create-subaccount', {
-        method: 'POST',
+      const res = await fetch("/api/paystack/create-subaccount", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': userId,
+          "Content-Type": "application/json",
+          "x-user-id": userId,
         },
         body: JSON.stringify({
           businessName: data.businessName,
@@ -94,20 +95,20 @@ export default function PaystackForm({
 
       const result = await res.json();
       if (!res.ok) {
-        console.error('API error:', result);
-        setMessage(result.message || 'Failed to save/update payment details.');
+        console.error("API error:", result);
+        setMessage(result.message || "Failed to save/update payment details.");
         return;
       }
 
       setMessage(
         existingDetails?.subaccountCode
-          ? 'A new Paystack subaccount has been created with your updated details.'
-          : result.message || 'Payment details saved successfully.'
+          ? "A new Paystack subaccount has been created with your updated details."
+          : result.message || "Payment details saved successfully.",
       );
       await onSubmitSuccess();
     } catch (error) {
-      console.error('Submission error:', error);
-      setMessage('An error occurred. Please try again.');
+      console.error("Submission error:", error);
+      setMessage("An error occurred. Please try again.");
     }
   };
 
@@ -132,11 +133,7 @@ export default function PaystackForm({
           }
           className="button hover:bg-primary-600 bg-primary px-4 py-2"
         >
-          {formState.isSubmitting
-            ? 'Submitting...'
-            : existingDetails?.subaccountCode
-            ? 'Update Details'
-            : 'Save Details'}
+          {formState.isSubmitting ? "Submitting..." : submitButtonText}
         </Button>
         {existingDetails?.subaccountCode && (
           <Button
