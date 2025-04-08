@@ -444,7 +444,7 @@ export interface PaymentDetailsFormProps {
     subaccountCode?: string;
     accountName?: string;
   };
-  eventId: string;
+  eventId?: string;
   userId: string;
 }
 
