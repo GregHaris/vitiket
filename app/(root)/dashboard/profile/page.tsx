@@ -1,11 +1,13 @@
 "use server";
 
+import { getOrganizedEventsCount } from "@/lib/actions/event.actions";
 import { getUserById } from "@/lib/actions/user.actions";
 import getUserId from "@/utils/userId";
 
 export default async function ProfilePage() {
   const userId = await getUserId();
   const user = await getUserById(userId);
+  const organizedEventsCount = await getOrganizedEventsCount(userId);
 
   return (
     <>
@@ -26,6 +28,9 @@ export default async function ProfilePage() {
           </p>
           <p>
             <strong>Email:</strong> {user.email}
+          </p>
+          <p>
+            <strong>Organized Events:</strong> {organizedEventsCount}
           </p>
         </div>
         <div className="mt-6">
