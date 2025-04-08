@@ -1,6 +1,5 @@
 "use server";
 
-import { Button } from "@ui/button";
 import { getUserById } from "@/lib/actions/user.actions";
 import getUserId from "@/utils/userId";
 
@@ -28,9 +27,13 @@ export default async function ProfilePage() {
           <p>
             <strong>Email:</strong> {user.email}
           </p>
-          <Button asChild size="lg" className="button self-start">
-            <a href="/dashboard/profile/edit">Edit Profile</a>
-          </Button>
+        </div>
+        <div className="mt-6">
+          <p className="text-sm text-muted-foreground">
+            To manage your profile details (e.g., update your name or email),
+            click and use the <span className="font-semibold">User Image</span>{" "}
+            in the top-right corner of the header.
+          </p>
         </div>
       </section>
     </>
