@@ -22,7 +22,7 @@ export type UpdateUserParams = {
   firstName: string;
   lastName: string;
   username: string;
-  image: string;
+  image?: string;
 };
 
 // ====== EVENT PARAMS
