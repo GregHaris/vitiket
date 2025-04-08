@@ -1,14 +1,14 @@
-'use server';
+"use server";
 
-import { Query } from 'mongoose';
-import { revalidatePath } from 'next/cache';
+import { Query } from "mongoose";
+import { revalidatePath } from "next/cache";
 
-import { connectToDatabase } from '@/lib/database';
-import { handleError } from '@/lib/utils';
-import Event, { IEvent } from '@/lib/database/models/event.model';
-import Category from '@/lib/database/models/category.model';
-import Type from '../database/models/type.model';
-import User from '@/lib/database/models/user.model';
+import { connectToDatabase } from "@/lib/database";
+import { handleError } from "@/lib/utils";
+import Event, { IEvent } from "@/lib/database/models/event.model";
+import Category from "@/lib/database/models/category.model";
+import Type from "../database/models/type.model";
+import User from "@/lib/database/models/user.model";
 
 import {
   CreateEventParams,
@@ -17,23 +17,23 @@ import {
   GetAllEventsParams,
   GetEventsByUserParams,
   GetRelatedEventsByCategoryParams,
-} from '@/types';
+} from "@/types";
 
 const getCategoryByName = async (name: string) => {
-  return Category.findOne({ name: { $regex: name, $options: 'i' } });
+  return Category.findOne({ name: { $regex: name, $options: "i" } });
 };
 
 const populateEvent = async <T extends IEvent | IEvent[] | null>(
-  query: Query<T, IEvent>
+  query: Query<T, IEvent>,
 ) => {
   return query
     .populate({
-      path: 'organizer',
+      path: "organizer",
       model: User,
-      select: '_id firstName lastName businessName',
+      select: "_id firstName lastName businessName",
     })
-    .populate({ path: 'category', model: Category, select: '_id name color' })
-    .populate({ path: 'type', model: Type, select: '_id name color' });
+    .populate({ path: "category", model: Category, select: "_id name color" })
+    .populate({ path: "type", model: Type, select: "_id name color" });
 };
 
 // CREATE
@@ -47,7 +47,7 @@ export async function createEvent({
     await connectToDatabase();
 
     const organizer = await User.findById(userId);
-    if (!organizer) throw new Error('Organizer not found');
+    if (!organizer) throw new Error("Organizer not found");
 
     const newEvent = await Event.create({
       ...event,
@@ -55,7 +55,7 @@ export async function createEvent({
       type: event.typeId,
       organizer: userId,
       contactDetails,
-      status: event.isFree ? 'published' : 'draft',
+      status: event.isFree ? "published" : "draft",
     });
     revalidatePath(path);
 
@@ -72,7 +72,7 @@ export async function getEventById(eventId: string) {
 
     const event = await populateEvent(Event.findById(eventId));
 
-    if (!event) throw new Error('Event not found');
+    if (!event) throw new Error("Event not found");
 
     return JSON.parse(JSON.stringify(event));
   } catch (error) {
@@ -92,7 +92,7 @@ export async function updateEvent({
 
     const eventToUpdate = await Event.findById(event._id);
     if (!eventToUpdate || eventToUpdate.organizer.toHexString() !== userId) {
-      throw new Error('Unauthorized or event not found');
+      throw new Error("Unauthorized or event not found");
     }
 
     const updatedEvent = await Event.findByIdAndUpdate(
@@ -104,7 +104,7 @@ export async function updateEvent({
         contactDetails,
         status: event.status || eventToUpdate.status,
       },
-      { new: true }
+      { new: true },
     );
     revalidatePath(path);
     return JSON.parse(JSON.stringify(updatedEvent));
@@ -122,7 +122,7 @@ export async function updateEventStatus({
 }: {
   userId: string;
   eventId: string;
-  status: 'draft' | 'published';
+  status: "draft" | "published";
   path: string;
 }) {
   try {
@@ -130,13 +130,13 @@ export async function updateEventStatus({
 
     const eventToUpdate = await Event.findById(eventId);
     if (!eventToUpdate || eventToUpdate.organizer.toHexString() !== userId) {
-      throw new Error('Unauthorized or event not found');
+      throw new Error("Unauthorized or event not found");
     }
 
     const updatedEvent = await Event.findByIdAndUpdate(
       eventId,
       { status },
-      { new: true }
+      { new: true },
     );
     revalidatePath(path);
 
@@ -170,17 +170,17 @@ export async function getAllEvents({
     await connectToDatabase();
 
     const titleCondition = query
-      ? { title: { $regex: query, $options: 'i' } }
+      ? { title: { $regex: query, $options: "i" } }
       : {};
     const categoryCondition = category
       ? await getCategoryByName(category)
       : null;
     const locationCondition = location
-      ? { location: { $regex: location, $options: 'i' } }
+      ? { location: { $regex: location, $options: "i" } }
       : {};
     const conditions = {
       $and: [
-        { status: 'published' },
+        { status: "published" },
         categoryCondition ? { category: categoryCondition._id } : {},
         titleCondition,
         locationCondition,
@@ -189,7 +189,7 @@ export async function getAllEvents({
 
     const skipAmount = (Number(page) - 1) * limit;
     const eventsQuery = Event.find(conditions)
-      .sort({ createdAt: 'desc' })
+      .sort({ createdAt: "desc" })
       .skip(skipAmount)
       .limit(limit);
 
@@ -214,11 +214,11 @@ export async function getEventsByUser({
   try {
     await connectToDatabase();
 
-    const conditions = { organizer: userId }; 
+    const conditions = { organizer: userId };
     const skipAmount = (page - 1) * limit;
 
     const eventsQuery = Event.find(conditions)
-      .sort({ createdAt: 'desc' })
+      .sort({ createdAt: "desc" })
       .skip(skipAmount)
       .limit(limit);
 
@@ -247,14 +247,14 @@ export async function getRelatedEventsByCategory({
     const skipAmount = (Number(page) - 1) * limit;
     const conditions = {
       $and: [
-        { status: 'published' }, 
+        { status: "published" },
         { category: categoryId },
         { _id: { $ne: eventId } },
       ],
     };
 
     const eventsQuery = Event.find(conditions)
-      .sort({ createdAt: 'desc' })
+      .sort({ createdAt: "desc" })
       .skip(skipAmount)
       .limit(limit);
 
@@ -267,5 +267,20 @@ export async function getRelatedEventsByCategory({
     };
   } catch (error) {
     handleError(error);
+  }
+}
+
+// GET TOTAL NUMBER OF ORGANIZED EVENTS
+export async function getOrganizedEventsCount(userId: string): Promise<number> {
+  try {
+    await connectToDatabase();
+
+    const conditions = { organizer: userId };
+    const eventsCount = await Event.countDocuments(conditions);
+
+    return eventsCount;
+  } catch (error) {
+    handleError(error);
+    return 0;
   }
 }
