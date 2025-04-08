@@ -39,7 +39,7 @@ export default async function BankDetailsPage() {
               </p>
             </div>
             <Button asChild size="lg" className="button self-start">
-              <a href="/dashboard/bank-details/edit">Update Bank Details</a>
+              <a href="/dashboard/bank-details/setup">Update Bank Details</a>
             </Button>
           </div>
         ) : (
@@ -49,7 +49,7 @@ export default async function BankDetailsPage() {
               Add bank details to start receiving payment for organized events
             </p>
             <Button asChild size="lg" className="button">
-              <a href="/dashboard/bank-details/add">Add Bank Details</a>
+              <a href="/dashboard/bank-details/setup">Add Bank Details</a>
             </Button>
           </div>
         )}
