@@ -506,3 +506,12 @@ export type ExistingOrderConditions = {
   paymentStatus: string;
   $or?: Array<{ buyerEmail: string; buyer: null } | { buyer: string }>;
 };
+
+export interface ProfileUpdateFormProps {
+  userId: string;
+  existingDetails: {
+    firstName: string;
+    lastName: string;
+    username: string;
+  };
+}
