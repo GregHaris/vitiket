@@ -30,6 +30,7 @@ export async function sendTicketEmail({
 
   const ticketUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/verify-ticket?orderId=${orderId}`;
   const dashboardUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/dashboard`;
+  const homepageUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/`;
 
   const priceCategoriesHtml =
     priceCategories && priceCategories.length > 0
@@ -52,7 +53,7 @@ export async function sendTicketEmail({
   const emailContent = `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f5f5f5; padding: 20px;">
     <div style="text-align: center; padding: 10px 0;">
-      <h1 style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 48px; font-weight: normal; line-height: 48px; color: #3870af; margin-bottom: 30px; background: none; text-align: center;">Vitiket</h1>
+      <a href=${homepageUrl} style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 48px; font-weight: normal; line-height: 48px; color: #3870af; margin-bottom: 30px; background: none; text-align: center; text-decoration: none;">Vitiket</a>
     </div>
     <div style="background-color: #fff; border-radius: 8px; padding: 20px; border: 1px solid #ddd;">
       <h1 style="color: #333; font-size: 24px; margin: 0 0 10px;">Hi ${firstName}, you've got tickets!</h1>
@@ -96,7 +97,7 @@ export async function sendTicketEmail({
     </div>
     <div style="text-align: center; padding: 20px 0; font-size: 12px; color: #666;">
       <div style="margin-top: 20px; font-family: Arial, sans-serif; color: #666; text-align: center;">
-        <h1 style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 48px; font-weight: normal; line-height: 48px; color: #3870af; margin-bottom: 30px; background: none; text-align: center;">Vitiket</h1>
+         <a href=${homepageUrl} style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 48px; font-weight: normal; line-height: 48px; color: #3870af; margin-bottom: 30px; background: none; text-align: center; text-decoration: none;">Vitiket</a>
         <p style="margin: 0;">Vitiket Support Team</p>
         <p style="margin: 0;"><a href="mailto:support@vitiket.com" style="color: #1a73e8; text-decoration: none;">support@vitiket.com</a></p>
       </div>
