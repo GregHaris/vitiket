@@ -1,35 +1,35 @@
-'use client';
+"use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { getUserById } from '@/lib/actions/user.actions';
-import { IUser } from '@/lib/database/models/user.model';
-import { PaymentDetailsFormProps } from '@/types';
-import { paymentDetailsSchema } from '@/lib/validator';
-import { updateEventStatus } from '@/lib/actions/event.actions';
-import PaystackForm from './PaystackForm';
+import { getUserById } from "@/lib/actions/user.actions";
+import { IUser } from "@/lib/database/models/user.model";
+import { PaymentDetailsFormProps } from "@/types";
+import { paymentDetailsSchema } from "@/lib/validator";
+import { updateEventStatus } from "@/lib/actions/event.actions";
+import PaystackForm from "./PaystackForm";
 
-const onSubmitSuccess = async (
+const onSubmitSuccessForEvent = async (
   userId: string,
   eventId: string,
   router: ReturnType<typeof useRouter>,
-  setMessage: Dispatch<SetStateAction<string>>
+  setMessage: Dispatch<SetStateAction<string>>,
 ) => {
   try {
     await updateEventStatus({
       userId,
       eventId,
-      status: 'published',
+      status: "published",
       path: `/events/${eventId}`,
     });
     router.push(`/events/${eventId}`);
   } catch (error) {
-    console.error('Error finalizing event:', error);
-    setMessage('Error publishing event.');
+    console.error("Error finalizing event:", error);
+    setMessage("Error publishing event.");
   }
 };
 
@@ -39,7 +39,7 @@ export default function PaymentDetailsForm({
   eventId,
   userId,
 }: PaymentDetailsFormProps) {
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
   const router = useRouter();
 
   const [fetchedDetails, setFetchedDetails] = useState<{
@@ -53,10 +53,10 @@ export default function PaymentDetailsForm({
   const form = useForm<z.infer<typeof paymentDetailsSchema>>({
     resolver: zodResolver(paymentDetailsSchema),
     defaultValues: {
-      businessName: initialExistingDetails?.businessName || '',
-      bankName: initialExistingDetails?.bankName || '',
-      accountNumber: initialExistingDetails?.accountNumber || '',
-      accountName: initialExistingDetails?.accountName || '',
+      businessName: initialExistingDetails?.businessName || "",
+      bankName: initialExistingDetails?.bankName || "",
+      accountNumber: initialExistingDetails?.accountNumber || "",
+      accountName: initialExistingDetails?.accountName || "",
     },
   });
 
@@ -66,10 +66,10 @@ export default function PaymentDetailsForm({
         try {
           const user: IUser = await getUserById(userId);
           const mappedDetails = {
-            businessName: user.businessName || '',
-            bankName: user.bankName || '',
-            accountNumber: user.bankDetails?.accountNumber || '',
-            accountName: user.bankDetails?.accountName || '',
+            businessName: user.businessName || "",
+            bankName: user.bankName || "",
+            accountNumber: user.bankDetails?.accountNumber || "",
+            accountName: user.bankDetails?.accountName || "",
             subaccountCode: user.subaccountCode,
           };
           setFetchedDetails(mappedDetails);
@@ -81,8 +81,8 @@ export default function PaymentDetailsForm({
             accountName: mappedDetails.accountName,
           });
         } catch (error) {
-          console.error('Error fetching user details:', error);
-          setMessage('Failed to load user details.');
+          console.error("Error fetching user details:", error);
+          setMessage("Failed to load user details.");
         }
       }
     }
@@ -91,10 +91,18 @@ export default function PaymentDetailsForm({
 
   const effectiveDetails = fetchedDetails || initialExistingDetails;
 
+  const handleSuccess = async (): Promise<void> => {
+    if (eventId) {
+      await onSubmitSuccessForEvent(userId, eventId, router, setMessage);
+    } else {
+      router.push("/dashboard/bank-details");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">
-        {effectiveDetails ? 'Your Payment Details' : 'Add Payment Details'}
+        {effectiveDetails ? "Update Payment Details" : "Add Payment Details"}
       </h2>
       <FormProvider {...form}>
         <PaystackForm
@@ -102,9 +110,8 @@ export default function PaymentDetailsForm({
           userId={userId}
           handleSubmit={form.handleSubmit}
           existingDetails={effectiveDetails}
-          onSubmitSuccess={() =>
-            onSubmitSuccess(userId, eventId, router, setMessage)
-          }
+          onSubmitSuccess={handleSuccess}
+          submitButtonText={effectiveDetails ? "Update" : "Add"}
         />
         {message && <p className="text-sm text-muted-foreground">{message}</p>}
       </FormProvider>
