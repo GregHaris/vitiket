@@ -1,5 +1,5 @@
-import EventForm from "@/app/(root)/events/[id]/_components/_components/EventForm";
-import EventFormHeading from "@/app/(root)/events/[id]/_components/_components/EventFormHeading";
+import EventForm from "./_components/EventForm";
+import EventFormHeading from "./_components/EventFormHeading";
 import getUserId from "@/utils/userId";
 
 const CreateEvent = async () => {
