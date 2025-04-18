@@ -5,7 +5,7 @@ import {
 import { hasUserPurchasedEvent } from "@/lib/actions/order.actions";
 import { SearchParamProps } from "@/types";
 import Collection from "@shared/Collection";
-import EventDetails from "../../create/_components/EventDetails";
+import EventDetails from "./_components/EventDetails";
 import getUserId from "@/utils/userId";
 
 export default async function EventDetailsPage(props: SearchParamProps) {
