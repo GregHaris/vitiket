@@ -1,6 +1,6 @@
-import EventForm from '@shared/EventForm';
-import EventFormHeading from '@shared/EventFormHeading';
-import getUserId from '@/utils/userId';
+import EventForm from "@/app/(root)/events/[id]/_components/_components/EventForm";
+import EventFormHeading from "@/app/(root)/events/[id]/_components/_components/EventFormHeading";
+import getUserId from "@/utils/userId";
 
 const CreateEvent = async () => {
   const userId = await getUserId();

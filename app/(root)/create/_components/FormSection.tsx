@@ -1,4 +1,4 @@
-import { FormSectionProps } from '@/types';
+import { FormSectionProps } from "@/types";
 
 export default function FormSection({
   title,

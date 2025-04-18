@@ -1,8 +1,8 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext } from "react-hook-form";
 
-import { eventFormValues } from '@/lib/validator';
-import { FormField, FormItem, FormLabel } from '@ui/form';
-import { Input } from '@ui/input';
+import { eventFormValues } from "@/lib/validator";
+import { FormField, FormItem, FormLabel } from "@ui/form";
+import { Input } from "@ui/input";
 
 export default function Currency() {
   const { control } = useFormContext<eventFormValues>();
@@ -16,7 +16,7 @@ export default function Currency() {
             Currency <span className="text-red-400">*</span>
           </FormLabel>
           <Input
-            value={(field.value = 'NGN')}
+            value={(field.value = "NGN")}
             disabled
             className="input-field p-regular-14"
           />

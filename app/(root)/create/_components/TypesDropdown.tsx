@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { getAllTypes } from '@/lib/actions/type.actions';
+import { getAllTypes } from "@/lib/actions/type.actions";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { DropdownProps } from '@/types';
+} from "@/components/ui/select";
+import { DropdownProps } from "@/types";
 
 const TypesDropdown = ({ value, onChange }: DropdownProps) => {
   const [types, setTypes] = useState<{ _id: string; name: string }[]>([]);

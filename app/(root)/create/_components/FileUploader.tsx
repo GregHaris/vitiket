@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { generateClientDropzoneAccept } from 'uploadthing/client';
-import { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { X } from 'lucide-react';
-import Image from 'next/image';
+import { generateClientDropzoneAccept } from "uploadthing/client";
+import { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { X } from "lucide-react";
+import Image from "next/image";
 
-import { Button } from '@ui/button';
-import { useUploadThing } from '@/lib/uploadthing';
+import { Button } from "@ui/button";
+import { useUploadThing } from "@/lib/uploadthing";
 
 type FileUploaderProps = {
   imageUrl: string;
@@ -21,7 +21,7 @@ export default function FileUploader({
   setFiles,
 }: FileUploaderProps) {
   const [file, setFileState] = useState<File | null>(null);
-  const { startUpload } = useUploadThing('imageUploader');
+  const { startUpload } = useUploadThing("imageUploader");
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -29,7 +29,7 @@ export default function FileUploader({
 
       // Check if the file size exceeds 4MB
       if (newFile.size > 4 * 1024 * 1024) {
-        alert('File size must not exceed 4MB.');
+        alert("File size must not exceed 4MB.");
         return;
       }
 
@@ -42,19 +42,19 @@ export default function FileUploader({
         onFieldChange(res[0].ufsUrl);
       }
     },
-    [setFiles, onFieldChange, startUpload]
+    [setFiles, onFieldChange, startUpload],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: generateClientDropzoneAccept(['image/*']),
+    accept: generateClientDropzoneAccept(["image/*"]),
     maxFiles: 1,
   });
 
   const removeFile = () => {
     setFileState(null);
     setFiles([]);
-    onFieldChange('');
+    onFieldChange("");
   };
 
   const formatFileSize = (size: number) => {
@@ -68,7 +68,7 @@ export default function FileUploader({
       <div
         {...getRootProps()}
         className={`p-8 border-2 border-dashed rounded-lg text-center cursor-pointer ${
-          isDragActive ? 'border-primary bg-primary/10' : 'border-gray-300'
+          isDragActive ? "border-primary bg-primary/10" : "border-gray-300"
         }`}
       >
         <input {...getInputProps()} />

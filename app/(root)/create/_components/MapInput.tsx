@@ -6,15 +6,15 @@ import {
   useMapsLibrary,
   useAdvancedMarkerRef,
   useMap,
-} from '@vis.gl/react-google-maps';
-import { useState, useEffect, useRef, FC, memo } from 'react';
-import { MapInputProps } from '@/types';
+} from "@vis.gl/react-google-maps";
+import { useState, useEffect, useRef, FC, memo } from "react";
+import { MapInputProps } from "@/types";
 
 const containerStyle = {
-  width: '100%',
-  height: '400px',
-  maxWidth: '100%',
-  maxHeight: '100%',
+  width: "100%",
+  height: "400px",
+  maxWidth: "100%",
+  maxHeight: "100%",
 };
 
 const defaultCenter = {
@@ -31,8 +31,8 @@ const MapInput: FC<MapInputProps> = ({ value, onChange }) => {
 };
 
 interface MapContentProps {
-  value: MapInputProps['value'];
-  onChange: MapInputProps['onChange'];
+  value: MapInputProps["value"];
+  onChange: MapInputProps["onChange"];
 }
 
 const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
@@ -44,8 +44,8 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
 
   const [markerRef, marker] = useAdvancedMarkerRef();
   const map = useMap();
-  const places = useMapsLibrary('places');
-  const core = useMapsLibrary('core');
+  const places = useMapsLibrary("places");
+  const core = useMapsLibrary("core");
   const [placesService, setPlacesService] =
     useState<google.maps.places.PlacesService | null>(null);
 
@@ -61,7 +61,7 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
   useEffect(() => {
     if (!core || !value?.coordinates) return;
 
-    const [lat, lng] = value.coordinates.split(',').map(Number);
+    const [lat, lng] = value.coordinates.split(",").map(Number);
     if (!isNaN(lat) && !isNaN(lng)) {
       setSelectedPlace({
         geometry: {
@@ -79,7 +79,7 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
 
     const request = {
       placeId: selectedPlace.place_id,
-      fields: ['name', 'formatted_address', 'geometry', 'place_id'],
+      fields: ["name", "formatted_address", "geometry", "place_id"],
     };
 
     placesService.getDetails(request, (place, status) => {
@@ -90,8 +90,8 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
         if (location) {
           const lat = location.lat();
           const lng = location.lng();
-          const address = place.formatted_address || '';
-          const placeId = place.place_id || '';
+          const address = place.formatted_address || "";
+          const placeId = place.place_id || "";
 
           if (marker) {
             marker.position = { lat, lng };
@@ -133,9 +133,9 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
             onMouseLeave={() => setIsMarkerHovered(false)}
           >
             <Pin
-              background={'#EA4335'}
-              glyphColor={'#FFF'}
-              borderColor={'#EA4335'}
+              background={"#EA4335"}
+              glyphColor={"#FFF"}
+              borderColor={"#EA4335"}
             />
           </AdvancedMarker>
         </Map>
@@ -144,16 +144,16 @@ const MapContent: FC<MapContentProps> = ({ value, onChange }) => {
       {/* Custom Event location name overlay */}
       <div
         className={`bg-primary text-white py-1 px-2 rounded-sm shadow-lg text-[12px] transition-opacity ${
-          isMarkerHovered ? 'opacity-100' : 'opacity-0'
+          isMarkerHovered ? "opacity-100" : "opacity-0"
         }`}
         style={{
-          position: 'absolute',
-          top: '60%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          pointerEvents: 'none',
-          whiteSpace: 'nowrap',
-          minWidth: 'max-content',
+          position: "absolute",
+          top: "60%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          pointerEvents: "none",
+          whiteSpace: "nowrap",
+          minWidth: "max-content",
           zIndex: 10,
         }}
       >
@@ -170,9 +170,9 @@ interface PlaceAutocompleteProps {
 const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
   const [placeAutocomplete, setPlaceAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const places = useMapsLibrary('places');
+  const places = useMapsLibrary("places");
 
   // Initialize Autocomplete
   useEffect(() => {
@@ -186,7 +186,7 @@ const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
   useEffect(() => {
     if (!placeAutocomplete) return;
 
-    const listener = placeAutocomplete.addListener('place_changed', () => {
+    const listener = placeAutocomplete.addListener("place_changed", () => {
       const place = placeAutocomplete.getPlace();
       if (place.formatted_address) {
         setInputValue(place.formatted_address);

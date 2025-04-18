@@ -1,18 +1,20 @@
-'use client';
+"use client";
 
-import { useFormContext } from 'react-hook-form';
-import dynamic from 'next/dynamic';
+import { useFormContext } from "react-hook-form";
+import dynamic from "next/dynamic";
 
-import { eventFormValues } from '@/lib/validator';
+import { eventFormValues } from "@/lib/validator";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@ui/form';
+} from "@ui/form";
 
-const RichTextEditor = dynamic(() => import('./TiptapEditor'));
+const RichTextEditor = dynamic(
+  () => import("../../../../../../components/shared/TiptapEditor"),
+);
 
 export default function DescriptionEditor() {
   const { control } = useFormContext<eventFormValues>();

@@ -1,14 +1,14 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext } from "react-hook-form";
 
-import { eventFormValues } from '@/lib/validator';
+import { eventFormValues } from "@/lib/validator";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@ui/form';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+} from "@ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export default function LocationTypeSelector() {
   const { control } = useFormContext<eventFormValues>();

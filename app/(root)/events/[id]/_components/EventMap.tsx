@@ -12,7 +12,7 @@ import {
 import { FC, memo, useEffect, useMemo, useState } from "react";
 
 import { EventMapProps } from "@/types";
-import CustomTooltip from "./ToolTip";
+import CustomTooltip from "../../../../../components/shared/ToolTip";
 import Image from "next/image";
 
 const containerStyle = {

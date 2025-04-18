@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from "react";
 
-import { EventMapProps } from '@/types';
-import EventMap from './EventMap';
+import { EventMapProps } from "@/types";
+import EventMap from "./EventMap";
 
 const EventMapWrapper: FC<EventMapProps> = ({
   coordinates,

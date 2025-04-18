@@ -1,8 +1,8 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext } from "react-hook-form";
 
-import { eventFormValues } from '@/lib/validator';
-import { FormField, FormItem, FormLabel, FormMessage } from '@ui/form';
-import TypesDropdown from './TypesDropdown';
+import { eventFormValues } from "@/lib/validator";
+import { FormField, FormItem, FormLabel, FormMessage } from "@ui/form";
+import TypesDropdown from "./TypesDropdown";
 
 export default function EventTypeSelector() {
   const { control } = useFormContext<eventFormValues>();

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useUser } from '@clerk/nextjs';
+import { useUser } from "@clerk/nextjs";
 
 const EventFormHeading = () => {
   const { isLoaded, user } = useUser();
@@ -9,7 +9,7 @@ const EventFormHeading = () => {
     return <div> </div>;
   }
 
-  const userName = user?.firstName || 'User';
+  const userName = user?.firstName || "User";
 
   return (
     <div className="wrapper text-left">

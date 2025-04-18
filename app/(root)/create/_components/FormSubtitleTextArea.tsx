@@ -1,14 +1,14 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext } from "react-hook-form";
 
-import { eventFormValues } from '@/lib/validator';
+import { eventFormValues } from "@/lib/validator";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@ui/form';
-import { Textarea } from '@ui/textarea'; 
+} from "@ui/form";
+import { Textarea } from "@ui/textarea";
 
 export default function SubtitleInput() {
   const { control } = useFormContext<eventFormValues>();
@@ -18,9 +18,7 @@ export default function SubtitleInput() {
       name="subtitle"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-sm font-medium">
-            Subtitle
-          </FormLabel>
+          <FormLabel className="text-sm font-medium">Subtitle</FormLabel>
           <FormControl>
             <Textarea
               placeholder="Event subtitle"

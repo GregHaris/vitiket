@@ -1,8 +1,8 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext } from "react-hook-form";
 
-import { Checkbox } from '@ui/checkbox';
-import { eventFormValues } from '@/lib/validator';
-import { IsFreeCheckboxProps } from '@/types';
+import { Checkbox } from "@ui/checkbox";
+import { eventFormValues } from "@/lib/validator";
+import { IsFreeCheckboxProps } from "@/types";
 
 export default function IsFreeCheckbox({
   onCheckedChange,
@@ -13,14 +13,14 @@ export default function IsFreeCheckbox({
     <div className="flex items-center mb-4">
       <Checkbox
         id="isFree"
-        {...register('isFree')}
+        {...register("isFree")}
         className="mr-2 h-5 w-5 border-2 border-primary-500 cursor-pointer"
         onCheckedChange={(checked) => {
           const isChecked = checked === true;
           onCheckedChange(isChecked);
-          setValue('isFree', isChecked);
+          setValue("isFree", isChecked);
           if (isChecked) {
-            setValue('priceCategories', []);
+            setValue("priceCategories", []);
           }
         }}
       />

@@ -1,12 +1,12 @@
 import {
   getEventById,
   getRelatedEventsByCategory,
-} from '@/lib/actions/event.actions';
-import { hasUserPurchasedEvent } from '@/lib/actions/order.actions';
-import { SearchParamProps } from '@/types';
-import Collection from '@shared/Collection';
-import EventDetails from './EventDetails';
-import getUserId from '@/utils/userId';
+} from "@/lib/actions/event.actions";
+import { hasUserPurchasedEvent } from "@/lib/actions/order.actions";
+import { SearchParamProps } from "@/types";
+import Collection from "@shared/Collection";
+import EventDetails from "../../create/_components/EventDetails";
+import getUserId from "@/utils/userId";
 
 export default async function EventDetailsPage(props: SearchParamProps) {
   const resolvedSearchParams = await props.searchParams;
@@ -18,7 +18,7 @@ export default async function EventDetailsPage(props: SearchParamProps) {
 
   // Check if user has purchased the event using userId directly
   const hasPurchased = userId
-    ? (await hasUserPurchasedEvent(userId, id)) ?? false
+    ? ((await hasUserPurchasedEvent(userId, id)) ?? false)
     : false;
 
   const relatedEvents = await getRelatedEventsByCategory({

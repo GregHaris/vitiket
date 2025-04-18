@@ -1,6 +1,6 @@
-import { getEventById } from '@/lib/actions/event.actions';
-import EventForm from '@shared/EventForm';
-import getUserId from '@/utils/userId';
+import { getEventById } from "@/lib/actions/event.actions";
+import EventForm from "@/app/(root)/events/[id]/_components/_components/EventForm";
+import getUserId from "@/utils/userId";
 
 type UpdateEventProps = {
   params: Promise<{ id: string }>;
@@ -17,7 +17,7 @@ const UpdateEvent = async (props: UpdateEventProps) => {
 
   return (
     <>
-      {' '}
+      {" "}
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
         <h3 className="wrapper h3-bold text-center sm:text-left">
           Update Event

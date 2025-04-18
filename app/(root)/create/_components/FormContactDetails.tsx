@@ -1,11 +1,11 @@
-import { useFormContext } from 'react-hook-form';
-import { FiMail, FiPhone } from 'react-icons/fi';
-import { RiLink } from 'react-icons/ri';
-import Image from 'next/image';
+import { useFormContext } from "react-hook-form";
+import { FiMail, FiPhone } from "react-icons/fi";
+import { RiLink } from "react-icons/ri";
+import Image from "next/image";
 
-import { eventFormValues } from '@/lib/validator';
-import { FormControl, FormField, FormItem, FormMessage } from '@ui/form';
-import { Input } from '@ui/input';
+import { eventFormValues } from "@/lib/validator";
+import { FormControl, FormField, FormItem, FormMessage } from "@ui/form";
+import { Input } from "@ui/input";
 
 export default function ContactDetails() {
   const { control } = useFormContext<eventFormValues>();

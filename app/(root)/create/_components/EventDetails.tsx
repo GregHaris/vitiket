@@ -19,7 +19,7 @@ import { formatDateTime } from "@/lib/utils";
 import { IOrder } from "@/lib/database/models/order.model";
 import CheckoutButton from "@shared/CheckoutButton";
 import ContactHost from "@shared/ContactHost";
-import EventMapWrapper from "@shared/EventMapWrapper";
+import EventMapWrapper from "@/app/(root)/events/[id]/_components/EventMapWrapper";
 import PriceCards from "@shared/PriceCards";
 import SafeHTMLRenderer from "@shared/SafeHTMLRenderer";
 import TicketCard from "@shared/TicketCard";

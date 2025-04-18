@@ -1,14 +1,14 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext } from "react-hook-form";
 
-import { eventFormValues } from '@/lib/validator';
+import { eventFormValues } from "@/lib/validator";
 import {
   FormField,
   FormItem,
   FormLabel,
   FormControl,
   FormMessage,
-} from '@ui/form';
-import { Input } from '@ui/input';
+} from "@ui/form";
+import { Input } from "@ui/input";
 
 export default function QuantityInput() {
   const { control } = useFormContext<eventFormValues>();
@@ -30,24 +30,24 @@ export default function QuantityInput() {
                 inputMode="numeric"
                 placeholder="Quantity"
                 className="input-field hide-number-spinners p-regular-14"
-                value={field.value || ''}
+                value={field.value || ""}
                 onChange={(e) =>
                   field.onChange(
-                    e.target.value === '' ? null : Number(e.target.value)
+                    e.target.value === "" ? null : Number(e.target.value),
                   )
                 }
                 onKeyDown={(e) => {
                   if (
                     [
-                      'Backspace',
-                      'Delete',
-                      'Shift',
-                      'Tab',
-                      'Escape',
-                      'Enter',
+                      "Backspace",
+                      "Delete",
+                      "Shift",
+                      "Tab",
+                      "Escape",
+                      "Enter",
                     ].includes(e.key) ||
-                    (e.ctrlKey && ['a', 'c', 'v', 'x'].includes(e.key)) ||
-                    ['Home', 'End', 'ArrowLeft', 'ArrowRight'].includes(e.key)
+                    (e.ctrlKey && ["a", "c", "v", "x"].includes(e.key)) ||
+                    ["Home", "End", "ArrowLeft", "ArrowRight"].includes(e.key)
                   ) {
                     return;
                   }

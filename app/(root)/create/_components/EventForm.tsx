@@ -1,38 +1,38 @@
-'use client';
+"use client";
 
-import { FormProvider, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { z } from 'zod';
-import Image from 'next/image';
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
+import Image from "next/image";
 
-import { Button } from '@ui/button';
-import { createEvent, updateEvent } from '@/lib/actions/event.actions';
-import { eventDefaultValues } from '@/constants';
-import { EventFormProps } from '@/types';
-import { eventFormSchema } from '@/lib/validator/index';
-import { Form } from '@ui/form';
-import { getUserById } from '@/lib/actions/user.actions';
-import { useUploadThing } from '@/lib/uploadthing';
+import { Button } from "@ui/button";
+import { createEvent, updateEvent } from "@/lib/actions/event.actions";
+import { eventDefaultValues } from "@/constants";
+import { EventFormProps } from "@/types";
+import { eventFormSchema } from "@/lib/validator/index";
+import { Form } from "@ui/form";
+import { getUserById } from "@/lib/actions/user.actions";
+import { useUploadThing } from "@/lib/uploadthing";
 
-import CategorySelector from './FormCategorySelector';
-import ContactDetails from './FormContactDetails';
-import Currency from './FormCurrencyInput';
-import DatePickerComponent from './FormDatePicker';
-import DescriptionEditor from './FormDescriptionEditor';
-import EventTypeSelector from './EventTypeSelector';
-import FormSection from './FormSection';
-import IsFreeCheckbox from './FormIsFreeCheckbox';
-import LocationSection from './FormLocationSection';
-import LocationTypeSelector from './FormLocationTypeSelector';
-import PriceCategoriesInput from './PriceCategoriesInput';
-import SubtitleInput from './FormSubtitleTextArea';
-import TimePickerComponent from './FormTimePicker';
-import TitleInput from './FormTitleInput';
-import QuantityInput from './FormQuantityInput';
-import Url from './FormUrlInput';
-import AddImage from './FormAddImageSection';
+import CategorySelector from "./FormCategorySelector";
+import ContactDetails from "./FormContactDetails";
+import Currency from "./FormCurrencyInput";
+import DatePickerComponent from "./FormDatePicker";
+import DescriptionEditor from "./FormDescriptionEditor";
+import EventTypeSelector from "../../../../../../components/shared/EventTypeSelector";
+import FormSection from "./FormSection";
+import IsFreeCheckbox from "./FormIsFreeCheckbox";
+import LocationSection from "./FormLocationSection";
+import LocationTypeSelector from "./FormLocationTypeSelector";
+import PriceCategoriesInput from "../../../../../../components/shared/PriceCategoriesInput";
+import SubtitleInput from "./FormSubtitleTextArea";
+import TimePickerComponent from "./FormTimePicker";
+import TitleInput from "./FormTitleInput";
+import QuantityInput from "./FormQuantityInput";
+import Url from "./FormUrlInput";
+import AddImage from "../../../../../../components/shared/FormAddImageSection";
 
 export default function EventForm({
   userId,
@@ -40,12 +40,12 @@ export default function EventForm({
   event,
   eventId,
 }: EventFormProps) {
-  const { startUpload } = useUploadThing('imageUploader');
+  const { startUpload } = useUploadThing("imageUploader");
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
 
   const initialValues =
-    event && type === 'Update'
+    event && type === "Update"
       ? {
           ...event,
           startDate: new Date(event.startDate),
@@ -57,19 +57,19 @@ export default function EventForm({
                 _id: event.category._id,
                 name: event.category.name,
               }
-            : { _id: '', name: '' },
+            : { _id: "", name: "" },
           priceCategories: event.priceCategories || [],
-          imageUrl: event.imageUrl || '',
+          imageUrl: event.imageUrl || "",
         }
-      : { ...eventDefaultValues, imageUrl: '' };
+      : { ...eventDefaultValues, imageUrl: "" };
 
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: initialValues,
   });
 
-  const locationType = form.watch('locationType');
-  const isFree = form.watch('isFree');
+  const locationType = form.watch("locationType");
+  const isFree = form.watch("isFree");
 
   async function onSubmit(values: z.infer<typeof eventFormSchema>) {
     const user = await getUserById(userId);
@@ -85,7 +85,7 @@ export default function EventForm({
     const eventData = {
       ...values,
       imageUrl: uploadedImageUrl,
-      location: values.locationType === 'Virtual' ? 'Virtual' : values.location,
+      location: values.locationType === "Virtual" ? "Virtual" : values.location,
       coordinates: values.coordinates,
       typeId: values.typeId,
     };
@@ -100,13 +100,13 @@ export default function EventForm({
       linkedin: values.contactDetails.linkedin,
     };
 
-    if (type === 'Create') {
+    if (type === "Create") {
       try {
         const newEvent = await createEvent({
           event: eventData,
           userId,
           contactDetails,
-          path: '/dashboard',
+          path: "/dashboard",
         });
 
         if (newEvent) {
@@ -116,11 +116,11 @@ export default function EventForm({
             const hasPaymentDetails = user.subaccountCode;
             if (hasPaymentDetails) {
               router.push(
-                `/organizer?userId=${userId}&eventId=${newEvent._id}`
+                `/organizer?userId=${userId}&eventId=${newEvent._id}`,
               );
             } else {
               router.push(
-                `/organizer/setup?userId=${userId}&eventId=${newEvent._id}`
+                `/organizer/setup?userId=${userId}&eventId=${newEvent._id}`,
               );
             }
           }
@@ -130,7 +130,7 @@ export default function EventForm({
       }
     }
 
-    if (type === 'Update') {
+    if (type === "Update") {
       if (!eventId) {
         router.back();
         return;
@@ -154,11 +154,11 @@ export default function EventForm({
             const hasPaymentDetails = user.subaccountCode;
             if (hasPaymentDetails) {
               router.push(
-                `/organizer?userId=${userId}&eventId=${updatedEvents._id}`
+                `/organizer?userId=${userId}&eventId=${updatedEvents._id}`,
               );
             } else {
               router.push(
-                `/organizer/setup?userId=${userId}&eventId=${updatedEvents._id}`
+                `/organizer/setup?userId=${userId}&eventId=${updatedEvents._id}`,
               );
             }
           }
@@ -175,11 +175,11 @@ export default function EventForm({
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           <div>
             <FormSection
-              title={type === 'Create' ? 'Create a New Event' : 'Update Event'}
+              title={type === "Create" ? "Create a New Event" : "Update Event"}
               description={
-                type === 'Create'
-                  ? 'Fill in the details below to list your event'
-                  : 'Update the details of your event'
+                type === "Create"
+                  ? "Fill in the details below to list your event"
+                  : "Update the details of your event"
               }
             >
               <FormProvider {...form}>
@@ -187,7 +187,7 @@ export default function EventForm({
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === "Enter") {
                         e.preventDefault();
                       }
                     }}
@@ -207,14 +207,14 @@ export default function EventForm({
                     <IsFreeCheckbox
                       onCheckedChange={(isChecked) => {
                         if (isChecked) {
-                          form.setValue('priceCategories', []);
+                          form.setValue("priceCategories", []);
                         }
                       }}
                     />
                     <QuantityInput />
                     {!isFree && (
                       <>
-                        {locationType === 'Virtual' && (
+                        {locationType === "Virtual" && (
                           <>
                             <PriceCategoriesInput />
                             <Url
@@ -224,12 +224,12 @@ export default function EventForm({
                             />
                           </>
                         )}
-                        {locationType === 'Physical' && (
+                        {locationType === "Physical" && (
                           <>
                             <PriceCategoriesInput />
                           </>
                         )}
-                        {locationType === 'Hybrid' && (
+                        {locationType === "Hybrid" && (
                           <>
                             <PriceCategoriesInput />
                             <Url
@@ -243,7 +243,7 @@ export default function EventForm({
                     )}
                     {isFree && (
                       <>
-                        {locationType === 'Virtual' && (
+                        {locationType === "Virtual" && (
                           <Url
                             name="url"
                             label="Event URL"
@@ -251,7 +251,7 @@ export default function EventForm({
                           />
                         )}
 
-                        {locationType === 'Hybrid' && (
+                        {locationType === "Hybrid" && (
                           <Url
                             name="url"
                             label="Virtual Event URL"
@@ -286,12 +286,12 @@ export default function EventForm({
                     <ContactDetails />
                     <Button
                       type="submit"
-                      size={'lg'}
+                      size={"lg"}
                       className="button w-full"
                       disabled={form.formState.isSubmitting}
                     >
                       {form.formState.isSubmitting
-                        ? 'Submitting...'
+                        ? "Submitting..."
                         : `${type} Event`}
                     </Button>
                   </form>
@@ -302,7 +302,7 @@ export default function EventForm({
 
           <div className="hidden lg:block">
             <Image
-              src={'/assets/images/logo.svg'}
+              src={"/assets/images/logo.svg"}
               alt="vitiket"
               width={600}
               height={800}

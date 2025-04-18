@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useFormContext } from 'react-hook-form';
+import { useFormContext } from "react-hook-form";
 
-import { AddImageProps } from '@/types';
-import { eventFormValues } from '@/lib/validator';
-import FileUploader from './FileUploader';
+import { AddImageProps } from "@/types";
+import { eventFormValues } from "@/lib/validator";
+import FileUploader from "./FileUploader";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@ui/form';
+} from "@ui/form";
 
 export default function AddImage({ setFiles }: AddImageProps) {
   const { control } = useFormContext<eventFormValues>();
