@@ -2,7 +2,7 @@ import { useFormContext } from "react-hook-form";
 
 import { eventFormValues } from "@/lib/validator";
 import { FormField, FormItem, FormLabel, FormMessage } from "@ui/form";
-import CategoriesDropdown from "../../../../../../components/shared/CategoriesDropdown";
+import CategoriesDropdown from "./CategoriesDropdown";
 
 export default function CategorySelector() {
   const { control } = useFormContext<eventFormValues>();

@@ -12,9 +12,7 @@ import {
   FormMessage,
 } from "@ui/form";
 
-const RichTextEditor = dynamic(
-  () => import("../../../../../../components/shared/TiptapEditor"),
-);
+const RichTextEditor = dynamic(() => import("./TiptapEditor"));
 
 export default function DescriptionEditor() {
   const { control } = useFormContext<eventFormValues>();

@@ -21,18 +21,18 @@ import ContactDetails from "./FormContactDetails";
 import Currency from "./FormCurrencyInput";
 import DatePickerComponent from "./FormDatePicker";
 import DescriptionEditor from "./FormDescriptionEditor";
-import EventTypeSelector from "../../../../../../components/shared/EventTypeSelector";
+import EventTypeSelector from "./EventTypeSelector";
 import FormSection from "./FormSection";
 import IsFreeCheckbox from "./FormIsFreeCheckbox";
 import LocationSection from "./FormLocationSection";
 import LocationTypeSelector from "./FormLocationTypeSelector";
-import PriceCategoriesInput from "../../../../../../components/shared/PriceCategoriesInput";
+import PriceCategoriesInput from "./PriceCategoriesInput";
 import SubtitleInput from "./FormSubtitleTextArea";
 import TimePickerComponent from "./FormTimePicker";
 import TitleInput from "./FormTitleInput";
 import QuantityInput from "./FormQuantityInput";
 import Url from "./FormUrlInput";
-import AddImage from "../../../../../../components/shared/FormAddImageSection";
+import AddImage from "./FormAddImageSection";
 
 export default function EventForm({
   userId,
