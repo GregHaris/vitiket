@@ -1,5 +1,5 @@
 import { getEventById } from "@/lib/actions/event.actions";
-import EventForm from "@/app/(root)/events/[id]/_components/_components/EventForm";
+import EventForm from "@/app/(root)/create/_components/EventForm";
 import getUserId from "@/utils/userId";
 
 type UpdateEventProps = {
