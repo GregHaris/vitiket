@@ -1,28 +1,28 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import Image from "next/image";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 
-import { Button } from '@ui/button';
+import { Button } from "@ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from '@ui/dialog';
-import { CurrencyKey, EventDetailsClientProps } from '@/types';
-import { currencySymbols } from '@/constants';
-import { CheckoutProvider } from '@shared/CheckoutContext';
-import { formatDateTime } from '@/lib/utils';
-import { IOrder } from '@/lib/database/models/order.model';
-import CheckoutButton from '@shared/CheckoutButton';
-import ContactHost from '@shared/ContactHost';
-import EventMapWrapper from '@shared/EventMapWrapper';
-import PriceCards from '@shared/PriceCards';
-import SafeHTMLRenderer from '@shared/SafeHTMLRenderer';
-import TicketCard from '@shared/TicketCard';
+} from "@ui/dialog";
+import { CurrencyKey, EventDetailsClientProps } from "@/types";
+import { currencySymbols } from "@/constants";
+import { CheckoutProvider } from "@shared/CheckoutContext";
+import { formatDateTime } from "@/lib/utils";
+import { IOrder } from "@/lib/database/models/order.model";
+import CheckoutButton from "@shared/CheckoutButton";
+import ContactHost from "@shared/ContactHost";
+import EventMapWrapper from "@shared/EventMapWrapper";
+import PriceCards from "@shared/PriceCards";
+import SafeHTMLRenderer from "@shared/SafeHTMLRenderer";
+import TicketCard from "@shared/TicketCard";
 
 async function fetchOrder(orderId: string): Promise<IOrder | null> {
   try {
@@ -30,7 +30,7 @@ async function fetchOrder(orderId: string): Promise<IOrder | null> {
     if (!response.ok) return null;
     return await response.json();
   } catch (error) {
-    console.error('Error fetching order:', error);
+    console.error("Error fetching order:", error);
     return null;
   }
 }
@@ -45,7 +45,7 @@ export default function EventDetails({
   const [order, setOrder] = useState<IOrder | null>(null);
 
   useEffect(() => {
-    const successOrderId = searchParams.get('success');
+    const successOrderId = searchParams.get("success");
     if (successOrderId) {
       fetchOrder(successOrderId).then((fetchedOrder) => {
         if (fetchedOrder) {
@@ -60,13 +60,13 @@ export default function EventDetails({
     formatDateTime(event.startDate).dateOnly ===
     formatDateTime(event.endDate).dateOnly;
 
-  const currencySymbol = currencySymbols[event.currency as CurrencyKey] || '';
-  const eventLocation = event.location?.split(', ||')[0] || '';
+  const currencySymbol = currencySymbols[event.currency as CurrencyKey] || "";
+  const eventLocation = event.location?.split(", ||")[0] || "";
   const hostName =
     event.organizer?.businessName ||
     (event.organizer?.firstName && event.organizer?.lastName
       ? `${event.organizer.firstName} ${event.organizer.lastName}`
-      : 'Unknown Host');
+      : "Unknown Host");
 
   const handleBackToEvent = () => {
     setIsSuccessOpen(false);
@@ -113,7 +113,7 @@ export default function EventDetails({
                   {hasPurchased && userId && (
                     <div className="bg-green-100 p-4 rounded-lg">
                       <p className="text-green-700 font-semibold">
-                        You’ve already purchased this event!{' '}
+                        You&apos;ve already purchased this event!{" "}
                         <Link
                           href={`/dashboard`}
                           className="text-blue-600 hover:underline"
@@ -125,7 +125,7 @@ export default function EventDetails({
                   )}
 
                   <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
-                    <span className="font-bold">Host:</span>{' '}
+                    <span className="font-bold">Host:</span>{" "}
                     <span>{hostName}</span>
                   </p>
                   <div className="flex gap-2 md:gap-3 items-center">
@@ -140,7 +140,7 @@ export default function EventDetails({
                         <p>{formatDateTime(event.startDate).dateOnly}</p>
                       ) : (
                         <p>
-                          {formatDateTime(event.startDate).dateOnly} -{' '}
+                          {formatDateTime(event.startDate).dateOnly} -{" "}
                           {formatDateTime(event.endDate).dateOnly}
                         </p>
                       )}
@@ -156,7 +156,7 @@ export default function EventDetails({
                     />
                     <div className="p-medium-16 lg:p-regular-20 items-center">
                       <p>
-                        {formatDateTime(event.startTime).timeOnly} -{' '}
+                        {formatDateTime(event.startTime).timeOnly} -{" "}
                         {formatDateTime(event.endTime).timeOnly}
                       </p>
                     </div>
@@ -189,8 +189,8 @@ export default function EventDetails({
                     </div>
                   </div>
 
-                  {(event.locationType === 'Physical' ||
-                    event.locationType === 'Hybrid') &&
+                  {(event.locationType === "Physical" ||
+                    event.locationType === "Hybrid") &&
                     event.coordinates && (
                       <div className="flex flex-col gap-3">
                         <h3 className="text-2xl font-bold">Direction</h3>
@@ -221,8 +221,8 @@ export default function EventDetails({
 
       <Dialog open={isSuccessOpen} onOpenChange={setIsSuccessOpen}>
         <DialogTitle className="sr-only">
-          {' '}
-          Successful checkout confirmation{' '}
+          {" "}
+          Successful checkout confirmation{" "}
         </DialogTitle>
         <DialogContent
           className="sm:max-w-[90%] md:max-w-[800px] lg:max-w-[1000px] w-full max-h-[90vh] overflow-y-auto border-none bg-white rounded-lg shadow-lg p-0"
@@ -239,8 +239,8 @@ export default function EventDetails({
                     Purchase Successful!
                   </h2>
                   <p className="text-gray-600">
-                    Your ticket has been sent to your email. Here’s your order
-                    summary:
+                    Your ticket has been sent to your email. Here&apos;s your
+                    order summary:
                   </p>
                   <TicketCard order={order} />
                 </div>
