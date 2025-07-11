@@ -1,5 +1,5 @@
-import Image from 'next/image';
-import { Separator } from '@ui/separator';
+import Image from "next/image";
+import { Separator } from "@ui/separator";
 import {
   Sheet,
   SheetContent,
@@ -7,10 +7,10 @@ import {
   SheetTitle,
   SheetDescription,
   SheetTrigger,
-} from '@ui/sheet';
+} from "@ui/sheet";
 
-import NavItems from './NavItems';
-import DisplayAdmin from './DisplayAdminButton';
+import NavItems from "./NavItems";
+import DisplayAdmin from "./DisplayAdminButton";
 
 const MobileNav = () => {
   return (
@@ -18,7 +18,7 @@ const MobileNav = () => {
       <Sheet>
         <SheetTrigger className="align-middle">
           <Image
-            src={'/assets/icons/menu.svg'}
+            src={"/assets/icons/menu.svg"}
             alt="menu"
             width={24}
             height={24}
@@ -27,13 +27,13 @@ const MobileNav = () => {
         </SheetTrigger>
         <SheetContent className="flex flex-col w-[200px] gap-6 bg-white md:hidden">
           <SheetHeader>
-            <SheetTitle className="sr-only">Mobile Navigation</SheetTitle>{' '}
+            <SheetTitle className="sr-only">Mobile Navigation</SheetTitle>{" "}
             <SheetDescription className="sr-only">
               Navigation menu for mobile devices.
-            </SheetDescription>{' '}
+            </SheetDescription>{" "}
           </SheetHeader>
           <Image
-            src={'/assets/images/logo.svg'}
+            src={"/assets/images/logo.svg"}
             alt="logo"
             width={128}
             height={38}
