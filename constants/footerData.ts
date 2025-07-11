@@ -1,11 +1,6 @@
 export const COMPANY_INFO = {
   name: "Vitiket",
-  address: [
-    "20619 Torrence Chapel Rd",
-    "Suite 116 #1040",
-    "Cornelius, NC 28031",
-    "United States",
-  ],
+  address: ["43 Etuk street, Uyo", "Akwa Ibom State", "Nigeria"],
   contact: {
     phone: "+2348100099551",
     email: "support@vitiket.com",
