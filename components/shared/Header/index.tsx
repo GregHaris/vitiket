@@ -32,11 +32,7 @@ const Header = () => {
             </div>
             <div className="flex w-32 justify-end gap-3 flex-nowrap whitespace-nowrap">
               <SignedOut>
-                <Button
-                  asChild
-                  className="cursor-pointer rounded-md"
-                  size={"lg"}
-                >
+                <Button asChild className="primary-btn">
                   <SignInButton />
                 </Button>
               </SignedOut>

@@ -22,11 +22,9 @@ export default function Footer() {
             <Input
               type="email"
               placeholder="Enter your email address"
-              className="h-12 px-4 border-gray-300 bg-neutral-white md:w-xl w-full"
+              className="h-11 px-4 border-gray-300 bg-neutral-white md:w-xl w-full"
             />
-            <Button className="h-12 px-8 bg-neutral-white hover:bg-gray-800 text-neutral-black">
-              Get started
-            </Button>
+            <Button className="light-btn">Get started</Button>
           </div>
         </div>
 

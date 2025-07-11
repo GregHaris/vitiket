@@ -11,8 +11,10 @@ export const LinkList = ({
     <h4 className="font-semibold mb-4 text-gray-400">{title}</h4>
     <ul className="space-y-3 text-sm text-gray-200">
       {links.map((link) => (
-        <li key={link} className="footerLinks">
-          <Link href="#">{link}</Link>
+        <li key={link}>
+          <Link href="#" className="footerLinks">
+            {link}
+          </Link>
         </li>
       ))}
     </ul>

@@ -150,6 +150,27 @@
   .button {
     @apply rounded-md h-[40px] cursor-pointer text-primary-50;
   }
+
+  .light-btn {
+    @apply h-11 px-8 text-base bg-neutral-white text-neutral-black transition-transform duration-200 duration-300 cursor-pointer;
+  }
+
+  .light-btn:hover {
+    @apply bg-gray-200 translate-x-1;
+  }
+
+  .primary-btn {
+    @apply h-11 px-8 text-base bg-primary text-neutral-white transition-transform duration-200 duration-300 cursor-pointer;
+  }
+
+  .primary-btn:hover {
+    @apply bg-primary-600 translate-x-1;
+  }
+
+  .nav-links:hover {
+    @apply text-primary underline
+  }
+
   .select-item {
     @apply py-3 cursor-pointer focus:bg-primary-50;
   }
@@ -170,10 +191,8 @@
   }
 
   .footerLinks:hover {
-    @apply underline text-gray-300
+    @apply underline text-gray-300;
   }
-
-
 }
 
 @layer base {

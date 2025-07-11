@@ -19,9 +19,7 @@ const NavItems = () => {
         return (
           <li
             key={link.route}
-            className={`${
-              isActive && "text-primary-500"
-            } whitespace-nowrap hover:bg-grey-50 rounded-md mb-5 md:mb-0`}
+            className={`nav-links ${isActive && "text-primary-500"}`}
           >
             <Link href={link.route} className=" p-medium-16 cursor-pointer">
               {link.label}
