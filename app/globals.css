@@ -168,6 +168,12 @@
       display: flex !important;
     }
   }
+
+  .footerLinks:hover {
+    @apply underline text-gray-300
+  }
+
+
 }
 
 @layer base {
