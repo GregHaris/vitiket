@@ -14,7 +14,7 @@ const Orders = async ({ searchParams }: SearchParamProps) => {
 
   return (
     <>
-      <section className="bg-gradient-to-r from-gray-300 to-gray-400 text-white py-8 md:py-12">
+      <section className="bg-gradient-to-r from-gray-300 to-gray-400 text-neutral-white py-8 md:py-12">
         <h1 className="wrapper text-6xl font-bold text-center tracking-tight">
           Orders
         </h1>
@@ -33,7 +33,7 @@ const Orders = async ({ searchParams }: SearchParamProps) => {
         </div>
         <table className="w-full border-collapse border-r border-l border bg-white">
           <thead>
-            <tr className="bg-gray-700 text-white text-sm uppercase tracking-wider">
+            <tr className="bg-gray-700 text-neutral-white text-sm uppercase tracking-wider">
               <th className="py-4 pl-6 text-left">Order ID</th>
               <th className="py-4 pl-6 text-left">Buyer</th>
               <th className="py-4 pl-6 text-left">Buyer Email</th>

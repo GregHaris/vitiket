@@ -34,7 +34,7 @@ const Button = ({
     onClick={onClick}
     disabled={disabled}
     className={`p-2 ${
-      isActive ? "bg-primary text-white rounded-md" : ""
+      isActive ? "bg-primary text-neutral-white rounded-md" : ""
     } ${className}`}
     title={title}
   >

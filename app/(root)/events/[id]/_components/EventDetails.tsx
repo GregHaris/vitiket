@@ -247,7 +247,7 @@ export default function EventDetails({
                 <div className="flex gap-4 flex-nowrap justify-center">
                   <Link
                     href="/"
-                    className="w-full h-[40px] bg-primary-500 p-regular-14 text-white py-2 rounded-md hover:bg-primary-600 transition text-center"
+                    className="w-full h-[40px] bg-primary-500 p-regular-14 text-neutral-white py-2 rounded-md hover:bg-primary-600 transition text-center"
                   >
                     Continue Browsing
                   </Link>

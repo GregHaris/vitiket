@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Minus, Plus } from 'lucide-react';
-import { PriceCardUIProps } from '@/types';
+import { Minus, Plus } from "lucide-react";
+import { PriceCardUIProps } from "@/types";
 
 const PriceCard = ({
   title,
@@ -9,13 +9,12 @@ const PriceCard = ({
   quantity,
   onDecrease,
   onIncrease,
-  currencySymbol = '',
+  currencySymbol = "",
 }: PriceCardUIProps) => {
-  
   const formattedPrice =
-    typeof price === 'string' && price.toLowerCase() === 'free'
-      ? 'Free'
-      : Number(price).toLocaleString('en-NG', {
+    typeof price === "string" && price.toLowerCase() === "free"
+      ? "Free"
+      : Number(price).toLocaleString("en-NG", {
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
         });
@@ -40,7 +39,7 @@ const PriceCard = ({
             className="bg-primary px-3 py-1 rounded cursor-pointer"
             onClick={onIncrease}
           >
-            <Plus className="text-sm text-white font-bold" />
+            <Plus className="text-sm text-neutral-white font-bold" />
           </button>
         </div>
       </div>

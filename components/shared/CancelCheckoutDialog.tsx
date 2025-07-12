@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   AlertDialog,
@@ -9,7 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@ui/alert-dialog';
+} from "@ui/alert-dialog";
 
 interface CancelCheckoutDialogProps {
   isOpen: boolean;
@@ -33,12 +33,12 @@ export default function CancelCheckoutDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-md h-[40px] cursor-pointer bg-primary-600 text-white hover:bg-primary-500 hover:text-white">
+          <AlertDialogCancel className="rounded-md h-[40px] cursor-pointer bg-primary-600 text-neutral-white hover:bg-primary-500 hover:text-neutral-white">
             Continue Checkout
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="button bg-red-700 text-white hover:bg-red-600"
+            className="button bg-red-700 text-neutral-white hover:bg-red-600"
           >
             Cancel Checkout
           </AlertDialogAction>

@@ -22,7 +22,7 @@ export default function ContactDetails() {
           <FormItem>
             <FormControl>
               <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
-                <FiMail className="text-white fill-primary w-5 h-5" />
+                <FiMail className="text-neutral-white fill-primary w-5 h-5" />
                 <span className="text-red-400">*</span>
                 <Input
                   placeholder="Your email"
@@ -43,7 +43,7 @@ export default function ContactDetails() {
           <FormItem>
             <FormControl>
               <div className="flex-center h-[40px] w-full overflow-hidden rounded-md border-gray-300 border bg-grey-50 px-4 py-2">
-                <FiPhone className="text-white fill-primary w-5 h-5" />
+                <FiPhone className="text-neutral-white fill-primary w-5 h-5" />
                 <Input
                   placeholder="Your phone number"
                   {...field}

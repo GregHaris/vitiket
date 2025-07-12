@@ -140,7 +140,7 @@ const EventMapContent: FC<MapContentProps> = memo(
         </Map>
 
         <div
-          className={`bg-primary text-white py-1 px-2 rounded-sm shadow-lg text-[12px] transition-opacity ${
+          className={`bg-primary text-neutral-white py-1 px-2 rounded-sm shadow-lg text-[12px] transition-opacity ${
             isMarkerHovered ? "opacity-100" : "opacity-0"
           }`}
           style={{

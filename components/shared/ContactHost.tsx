@@ -1,8 +1,8 @@
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from "next/image";
+import Link from "next/link";
 
-import { ContactHostProps } from '@/types';
-import { Mail, Phone } from 'lucide-react';
+import { ContactHostProps } from "@/types";
+import { Mail, Phone } from "lucide-react";
 
 const ContactHost = ({ contactDetails }: ContactHostProps) => {
   return (
@@ -12,7 +12,7 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
         {/* Phone Number */}
         {contactDetails.phoneNumber && (
           <div className="flex items-center gap-2">
-            <Phone className="text-white fill-primary" />
+            <Phone className="text-neutral-white fill-primary" />
             <span className="p-regular-16">{contactDetails.phoneNumber}</span>
           </div>
         )}
@@ -23,7 +23,7 @@ const ContactHost = ({ contactDetails }: ContactHostProps) => {
             href={`mailto:${contactDetails.email}`}
             className="flex items-center gap-2"
           >
-            <Mail className="text-white fill-primary" />
+            <Mail className="text-neutral-white fill-primary" />
             <span className="p-regular-16 truncate">
               {contactDetails.email}
             </span>
