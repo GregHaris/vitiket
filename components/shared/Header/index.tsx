@@ -11,9 +11,9 @@ import DisplayAdmin from "./DisplayAdminButton";
 const Header = () => {
   return (
     <header className="h-20 px-2 lg:px-6 sticky top-0 z-20 bg-neutral-white border-b">
-      <div className="max-w-[1950px] mx-auto h-full">
-        <div className="mt-5 flex justify-between items-center">
-          <Link href={"/"} className="w-36">
+      <div className="max-w-[1950px] mx-auto h-full flex items-center w-full">
+        <div className="flex justify-between items-center w-full">
+          <Link href={"/"}>
             <Image
               src="/assets/images/logo.svg"
               alt="logo image"
