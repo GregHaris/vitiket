@@ -10,7 +10,7 @@ import DisplayAdmin from "./DisplayAdminButton";
 
 const Header = () => {
   return (
-    <header className="h-20 px-10 sticky top-0 z-20 bg-neutral-white border-b">
+    <header className="h-20 px-2 lg:px-6 sticky top-0 z-20 bg-neutral-white border-b">
       <div className="max-w-[1950px] mx-auto h-full">
         <div className="mt-5 flex justify-between items-center">
           <Link href={"/"} className="w-36">

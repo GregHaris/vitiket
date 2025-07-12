@@ -1,5 +1,4 @@
 import { checkRole } from "@/utils/roles";
-import { Button } from "@ui/button";
 import Link from "next/link";
 
 const DisplayAdmin = async () => {
@@ -7,10 +6,8 @@ const DisplayAdmin = async () => {
 
   return (
     <div className="hover:bg-grey-50 rounded-md ">
-      <Link href="/admin">
-        <Button variant="ghost" className="p-medium-16 cursor-pointer">
-          Admin
-        </Button>
+      <Link href="/admin" className="nav-links p-medium-16">
+        Admin
       </Link>
     </div>
   );

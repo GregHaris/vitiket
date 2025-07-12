@@ -19,11 +19,9 @@ const NavItems = () => {
         return (
           <li
             key={link.route}
-            className={`nav-links ${isActive && "text-primary-500"}`}
+            className={`nav-links  p-medium-16 ${isActive && "text-primary"}`}
           >
-            <Link href={link.route} className=" p-medium-16 cursor-pointer">
-              {link.label}
-            </Link>
+            <Link href={link.route}>{link.label}</Link>
           </li>
         );
       })}
