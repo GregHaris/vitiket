@@ -77,6 +77,7 @@ const config = {
       },
       backgroundImage: {
         "dotted-pattern": "url('/assets/images/dotted-pattern.png')",
+        busy: "url('/assets/images/busy-bg.png')",
         "hero-img": "url('/assets/images/hero.png')",
       },
       borderRadius: {
