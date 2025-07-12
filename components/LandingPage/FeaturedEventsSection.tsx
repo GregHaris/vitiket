@@ -154,7 +154,7 @@ export function FeaturedEventsSection({ data }: FeaturedEventsSectionProps) {
                   </div>
                 </CardContent>
 
-                <CardFooter className="border-t border-gray-700/50 py-4">
+                <CardFooter className="border-t border-gray-700/50 py-4 px-4">
                   <div className="flex items-center justify-between w-full gap-3">
                     {/* Social actions */}
                     <div className="flex items-center gap-1">
