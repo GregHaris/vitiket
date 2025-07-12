@@ -160,7 +160,7 @@
   }
 
   .primary-btn {
-    @apply h-11 px-8 text-base bg-primary text-neutral-white transition-transform duration-200 duration-300 cursor-pointer;
+    @apply h-12 w-fit px-8 text-base bg-primary text-neutral-white transition-transform duration-200 duration-300 cursor-pointer;
   }
 
   .primary-btn:hover {
@@ -168,7 +168,7 @@
   }
 
   .black-btn {
-    @apply h-11 px-8 text-base bg-gray-900 text-neutral-white transition-transform duration-200 duration-300 cursor-pointer;
+    @apply h-12 px-8 text-base bg-gray-900 text-neutral-white transition-transform duration-200 duration-300 cursor-pointer;
   }
 
   .black-btn:hover {
