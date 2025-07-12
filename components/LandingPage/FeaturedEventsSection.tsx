@@ -69,7 +69,7 @@ export function FeaturedEventsSection({ data }: FeaturedEventsSectionProps) {
           <Button className="primary-btn">View all events</Button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {data.map((event) => (
             <Link href={`/events/${event._id}`} key={event._id} passHref>
               <Card className="cursor-pointer h-145 transition-all duration-500 overflow-hidden bg-gray-800 hover:bg-gray-900 backdrop-blur-sm">
