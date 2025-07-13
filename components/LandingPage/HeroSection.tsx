@@ -11,15 +11,12 @@ export function HeroSection() {
   const [date, setDate] = useState<Date>();
 
   return (
-    <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary py-20 md:py-28 overflow-hidden">
+    <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary py-20 overflow-hidden">
       <div className="relative z-10 container mx-auto px-4 lg:px-6">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight mb-8 text-neutral-white leading-tight animate-fade-in-up delay-100">
-            Where tech minds{" "}
-            <span className="bg-gradient-to-r from-primary via-blue-500 to-cyan-400 bg-clip-text text-transparent">
-              connect
-            </span>{" "}
-            and innovate
+          <h1 className="text-6xl md:text-8xl xl:text-9xl font-bold tracking-tight mb-8 text-neutral-white leading-tight animate-fade-in-up delay-100">
+            Where tech minds <span className="decorated-text">connect</span> and{" "}
+            <span className="decorated-text">innovate</span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-200">
             Discover groundbreaking conferences, workshops, and networking

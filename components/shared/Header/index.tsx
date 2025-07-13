@@ -30,7 +30,7 @@ const Header = () => {
                 </SignedIn>
               </div>
             </div>
-            <div className="flex w-32 justify-end gap-3 flex-nowrap whitespace-nowrap">
+            <div className="flex justify-end gap-3 flex-nowrap whitespace-nowrap">
               <SignedOut>
                 <Button asChild className="primary-btn">
                   <SignInButton />

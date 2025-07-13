@@ -10,7 +10,7 @@ const NavItems = () => {
   const { isSignedIn } = useUser();
 
   return (
-    <ul className="md:flex-between md:flex w-full md:gap-3 items-center md:flex-row text-grey-600 ">
+    <ul className="md:flex-between md:flex w-full md:gap-8 items-center md:flex-row text-grey-600 ">
       {headerLinks.map((link) => {
         if (link.route === "/dashboard" && !isSignedIn) {
           return null;

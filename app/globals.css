@@ -206,6 +206,10 @@
     }
   }
 
+  .decorated-text {
+    @apply bg-gradient-to-r from-primary via-blue-500 to-cyan-400 bg-clip-text text-transparent
+  }
+
   .footerLinks:hover {
     @apply underline text-gray-300;
   }
